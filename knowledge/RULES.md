@@ -24,7 +24,7 @@ E5 | Wade H2/L2 @EMA21: count from extreme, leg alive until 1tk break of last ba
 E5f| E5 on 5m, after 1030, only if D2 mv>=0.4 & pullback<0.4 | greenday_lab3 | P | PF1.14 n=67 +160pt (thin, 2024-carried)
 E6 | failed break V1: poke 2-45pt beyond PDH/PDL within 5 bars, close back, stop beyond poke+5, max 60, tgt 1R, 10:00-13:00 | ours | P | +2023/2026, -2022/24/25
 E7 | VWAP first touch after 1030 on D2-qualified days, 1m close back on trend side, stop .25ATR, tgt 1ATR | institutional | U |
-E8 | first pullback after 1030 with D2 side, tgt ~0.1ADR, stop beyond pullback | greenday_lab4 | U | next
+E8 | first pullback after 1030 with D2 side, tgt ~0.1ADR, stop beyond pullback | greenday_lab4 | X | scripts/e8_first_pullback_1030.py: all 9 variants lose every year (PF 0.61-0.84, win 33-49% < random for geometry). X=.6 best PF0.74 n=133. D2 persistence (90% close same side) is a FILTER not an entry: the drift after 1030 (~0.1ADR) < pullback stop (~0.125ADR)+3pt cost
 E9 | gap fade: gap<0.5% opening inside pd range -> tgt pd close, stop .5gap; fill 84% same day; skip >1% (55%) | nexusfi | U |
 E10| buildup: tight consolidation at level, 20MA reaching its lows -> breakout w/ stop other side of buildup | teo | U |
 

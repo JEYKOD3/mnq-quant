@@ -1,0 +1,34 @@
+name: daily
+on:
+  schedule:
+    - cron: '55 13 * * 1-5'   # 9:55 ET during EDT
+    - cron: '55 14 * * 1-5'   # 9:55 ET during EST
+    - cron: '10 20 * * 1-5'   # 16:10 ET during EDT
+    - cron: '10 21 * * 1-5'   # 16:10 ET during EST
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: pip install databento pandas
+      - run: gunzip -kf data/raw/mnq_rth_5m.txt.gz
+      - name: Decide which step this is (ET time)
+        id: when
+        run: |
+          H=$(TZ=America/New_York date +%H%M); echo "et=$H" >> $GITHUB_OUTPUT
+          if [ "$H" -lt 1200 ]; then echo "step=label" >> $GITHUB_OUTPUT; else echo "step=journal" >> $GITHUB_OUTPUT; fi
+      - name: Fetch bars
+        env: { DATABENTO_API_KEY: '${{ secrets.DATABENTO_API_KEY }}' }
+        run: |
+          if [ "${{ steps.when.outputs.step }}" = "label" ]; then python scripts/fetch_day.py --until 0945; else python scripts/fetch_day.py; fi
+      - name: Label / journal
+        run: cd scripts && node day_report.js
+      - name: Commit
+        run: |
+          git config user.name "mnq-quant bot"; git config user.email "bot@mnq-quant"
+          git add data/live journal && git commit -m "journal: $(TZ=America/New_York date +%F) ${{ steps.when.outputs.step }}" && git push || echo "nothing to commit"

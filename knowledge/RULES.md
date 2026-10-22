@@ -18,7 +18,7 @@ D8 | last 30min momentum: sign(c1530 - pdClose) -> 55% hit, only on neg-gamma/hi
 ## E. entries
 E1 | ORB retest V2: 5m close outside OR(9:30-9:45), retest touches OR edge, signal bar (close top/bottom .5, body>=.3r) -> stop order 1tk beyond; stop other side OR, min 16tk; tgt 2R; 9:45-13:00 | ours | K | base for V4
 E2 | ORB second break: first OR break fails, opposite side breaks -> continuation 68% ES30 / 72% NQ30, median gap 90min | tradingstats | U | range-day play
-E3 | IB retest: after 1.1x IB reached, level retested 87% (NQ), then continued 71%; past 1.4x -> reversal odds > continuation. entry = first retest holding within 10% IB; stop .25IB beyond; tgt 1.3xIB | tradingstats IB | U |
+E3 | IB retest: after 1.1x IB reached, level retested 87% (NQ), then continued 71%; past 1.4x -> reversal odds > continuation. entry = first retest holding within 10% IB; stop .25IB beyond; tgt 1.3xIB | tradingstats IB | X | scripts/e3_ib_retest.py: 1026 tr, win 57% @0.3W tgt but PF 0.97 (cost). Split: TREND +3.6k, MID +4.7k, RANGE -9.2k (5/140 green: by construction). No 10:30-known filter fixes it (IB/ADR buckets, mv/ADR: PF 0.91-1.19, 2026 negative in all). base rate confirmed, edge absent after 3pt cost
 E4 | depth curve: break extending <0.4x prior-bar range fails back inside 65-71%; >0.4x holds ~80% | tradingstats ext | U | fade/continue switch
 E5 | Wade H2/L2 @EMA21: count from extreme, leg alive until 1tk break of last bar; 1st entry skip; 2nd entry = trade; reset on new extreme/pivot break/double top-bottom; no 3rd entries | wade | T | 1m/3m/5m all PF<0.8 unfiltered; 5m TREND days + ; RANGE days kill it
 E5f| E5 on 5m, after 1030, only if D2 mv>=0.4 & pullback<0.4 | greenday_lab3 | P | PF1.14 n=67 +160pt (thin, 2024-carried)

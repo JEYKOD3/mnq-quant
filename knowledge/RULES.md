@@ -6,7 +6,7 @@ friction MNQ = 3pt/rt (comm 2.37x2 + ~2tk). any rule must be PF_net>1 @3pt and s
 
 ## D. day-type / bias (known at time t)
 D1 | t=945: committed = |gap|>=0.6ADR or |c15-o15|>=0.6*r15; skip if pdRange>1.2ADR; bias=sign(gap) else sign(first15) | ours (V4) | K | 2022-25 PF1.24 g117/r103; 2026 PF1.70 g23/r17
-D1b| drop gap term, keep first15 dir only | tradingstats ORB (gap dir no effect; candle dir 76-80%) | U |
+D1b| drop gap term, keep first15 dir only | tradingstats ORB | X | scripts/d1b_v4_nogap.js: dir-only .6 = 2022-25 PF1.28 g107/r91, 2026 PF1.80 but 29tr +1905 (vs V4 40tr +2684). gap-only .6 = PF1.41/1.37, 66+21 tr: gap component is real on MNQ, keep V4 as is. dir>=.7 PF1.34 but half the trades. pdRel<=1.2 filter helps 2026 (no-pd: 2026 PF1.35). gap-agrees variant 2026 PF2.02 n=25 (watch, not adopt)
 D2 | t=1030: mv=|c1030-o|/ADR. mv>=0.4 -> P(close same side)=90%; 0.6-1 -> 93%; <0.2 -> 60% & P(range)=51%; >1.0 -> exhaustion (n=18, further move negative) | greenday_lab4 | T | median further move 0.07-0.13ADR (20-45pt)
 D3 | t=1030: IB<0.35ADR -> P(range2)=66%, P(trend2)=7% (narrow IB ≠ trend on MNQ). IB>0.7ADR -> P(trend2)=27% | greenday_lab4 | T |
 D4 | honest labels: TREND2 = cl>=.8|<=.2 & rng>=1ADR & |o-c|>=.6rng (19%); RANGE2 = rng<=.7ADR | .35<=cl<=.65 (40%) | ours | K | use for post-hoc attribution only (lookahead)

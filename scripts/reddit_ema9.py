@@ -51,3 +51,21 @@ rep('EMA9 cross after 10:30, D2 side only',useD2=True)
 rep('EMA9 cross D2 side + 15m dir',useD2=True,trend15=True)
 rep('EMA9 cross D2 side, 40pt stop',useD2=True,stopPts=40)
 rep('EMA9 cross cost 0 (ceiling)',**{}) if False else None
+
+print('\n=== LAST MONTH ONLY (2026-09-21 .. 2026-10-20) ===')
+days=[(d,b) for d,b in days if d>='20260921']
+def rep2(name,**kw):
+    tot=0;n=0;w=0;gp=gl=0;rows=[]
+    for d,bars in days:
+        tr=run(bars,feats[d]['adr'],**kw); p=sum(tr); tot+=p; n+=len(tr)
+        for x in tr:
+            if x>0: w+=1; gp+=x
+            else: gl-=x
+        rows.append(f"{d[4:6]}/{d[6:]}:{round(p):+d}({len(tr)})")
+    print(f'{name:40s} net {tot:+6.0f}pt (${tot*2:+.0f}) n={n} win {w/max(n,1):.0%} PF {gp/max(gl,1):.2f} green days {sum(1 for r in rows if "+" in r and int(r.split(":")[1].split("(")[0])>0)}/{len(days)}')
+    print('   ', ' '.join(rows))
+rep2('EMA9 cross both ways 9:45-15:55')
+rep2('EMA9 cross + 15m EMA9 direction',trend15=True)
+rep2('EMA9 cross after 10:30, day direction only',useD2=True)
+rep2('EMA9 cross D2 side + 15m dir',useD2=True,trend15=True)
+rep2('EMA9 cross D2 side, 40pt stop',useD2=True,stopPts=40)

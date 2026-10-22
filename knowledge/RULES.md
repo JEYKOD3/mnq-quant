@@ -5,7 +5,7 @@ ADR = 10d avg RTH range. ATR = per-bar avg range (n given). IB = 9:30-10:30 rang
 friction MNQ = 3pt/rt (comm 2.37x2 + ~2tk). any rule must be PF_net>1 @3pt and survive @4pt.
 
 ## D. day-type / bias (known at time t)
-D1 | t=945: committed = |gap|>=0.6ADR or |c15-o15|>=0.6*r15; skip if pdRange>1.2ADR; bias=sign(gap) else sign(first15) | ours (V4) | K | 2022-25 PF1.24 g117/r103; 2026 PF1.70 g23/r17
+D1 | t=945: committed = |gap|>=0.6ADR or |c15-o15|>=0.6*r15; skip if pdRange>1.2ADR; bias=sign(gap) else sign(first15) | ours (V4) | K | 2022-25 PF1.24 g117/r103; 2026 PF1.70 g23/r17. VALIDATED scripts/v4_validate.js: cost-insensitive (slip 0-4tk: PF 1.25->1.21, 2026 1.82->1.69); plateau smooth, PF rises with stricter thresholds (gap.7/dir.8 PF1.51 n134) = no cherry-pick; by year PF 1.50/1.38/1.10/0.99/1.70 -> 2024-25 weak (2025 flat 22/28 days); tgt 2R best for 2026, 1.5-3R all PF~1.3; pd 1.0-1.5 all fine
 D1b| drop gap term, keep first15 dir only | tradingstats ORB | X | scripts/d1b_v4_nogap.js: dir-only .6 = 2022-25 PF1.28 g107/r91, 2026 PF1.80 but 29tr +1905 (vs V4 40tr +2684). gap-only .6 = PF1.41/1.37, 66+21 tr: gap component is real on MNQ, keep V4 as is. dir>=.7 PF1.34 but half the trades. pdRel<=1.2 filter helps 2026 (no-pd: 2026 PF1.35). gap-agrees variant 2026 PF2.02 n=25 (watch, not adopt)
 D2 | t=1030: mv=|c1030-o|/ADR. mv>=0.4 -> P(close same side)=90%; 0.6-1 -> 93%; <0.2 -> 60% & P(range)=51%; >1.0 -> exhaustion (n=18, further move negative) | greenday_lab4 | T | median further move 0.07-0.13ADR (20-45pt)
 D3 | t=1030: IB<0.35ADR -> P(range2)=66%, P(trend2)=7% (narrow IB ≠ trend on MNQ). IB>0.7ADR -> P(trend2)=27% | greenday_lab4 | T |

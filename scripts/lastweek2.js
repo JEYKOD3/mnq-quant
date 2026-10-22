@@ -1,0 +1,3 @@
+const E=require('../engine/js/engine.js'), fs=require('fs'); const all=E.parseBars(fs.readFileSync('../data/raw/mnq_rth_5m.txt','utf8')); const MK={pv:2,tick:0.25};
+const rt=E.simRT2(all,{risk:400,stop:'opp',tgtR:2},MK); const orb=E.simORB(all,{orMin:15,stopMode:'opp',tgtR:2,risk:300,lastEntry:1130,slip:1,both:true,comm:2.37,maxQty:20},MK);
+for (const d of [20261013,20261014,20261015,20261016,20261019,20261020]) { const a=rt.get(d)||[], b=orb.get(d)||[]; console.log(d,'retest setups(any side):',a.map(t=>`${t.side>0?'L':'S'}@${t.tIn||t.t||''} pnl${Math.round(t.pnl)}`).join(' ')||'none','| plain ORB breaks:',b.map(t=>`${t.side>0?'L':'S'} pnl${Math.round(t.pnl)}`).join(' ')||'none'); }

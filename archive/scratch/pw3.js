@@ -1,0 +1,10 @@
+const {chromium}=require('playwright'); const http=require('http'),fs=require('fs'),path=require('path');
+const root='/home/claude/mnqscalp/lab';
+const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]).replace(/^\/$/,'/index.html'));fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'content-type':(f.endsWith('.html')?'text/html':f.endsWith('.js')?'text/javascript':'text/plain')+'; charset=utf-8'});r.end(d)})}).listen(8767);
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell'});const p=await b.newPage({viewport:{width:1300,height:1500}});
+const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8767/index.html');await p.waitForTimeout(6000);
+await p.evaluate(()=>document.getElementById('dayCard').scrollIntoView());
+const el=await p.$('#dayCard'); await el.screenshot({path:'daycard.png'});
+console.log(await p.evaluate(()=>document.getElementById('calAs').innerText+' || '+document.getElementById('calBs').innerText));
+console.log('errors',errs.filter(e=>!/language tag/.test(e)));await b.close();srv.close();})();

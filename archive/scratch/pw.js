@@ -1,0 +1,11 @@
+const {chromium}=require('playwright'); const http=require('http'),fs=require('fs'),path=require('path');
+const root='/home/claude/mnqscalp/lab';
+const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]).replace(/^\/$/,'/index.html'));fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'content-type':f.endsWith('.html')?'text/html':f.endsWith('.js')?'text/javascript':'text/plain'});r.end(d)})}).listen(8765);
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell'});const p=await b.newPage({viewport:{width:1300,height:1800}});
+const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
+await p.goto('http://localhost:8765/index.html');await p.waitForTimeout(6000);
+const read=async()=>p.evaluate(()=>document.getElementById('status').textContent+' | '+document.getElementById('bigline').textContent+' | '+document.getElementById('kpis').innerText.replace(/\n/g,' ').slice(0,200));
+console.log('ORB:',await read());
+await p.click('#strat button[data-v="rt2"]');await p.click('#runBtn');await p.waitForTimeout(5000);console.log('RT2:',await read());
+await p.fill('#xTp1','1');await p.check('#xBe');await p.click('#runBtn');await p.waitForTimeout(5000);console.log('RT2 tp1:',await read());
+await p.screenshot({path:'lab_clean.png',fullPage:false});console.log('errors',errs.slice(0,5));await b.close();srv.close();})();

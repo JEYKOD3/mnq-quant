@@ -1,0 +1,428 @@
+# Wade price-action rules, batch 3 (9 videos)
+
+Source: auto-captions in /home/claude/wade/tx3/*.txt. Caption garble normalized: "lag/lack/flag" = leg, "century" = entry, "price session" = price action, "felt/fell" = failed, "ema" = 21-bar EMA, "single bar" = signal bar, "double tap" = double top, "country trend / kind of trend / canon trend" = counter-trend, "option" = uptrend, "dumpster/downstream" = downtrend, "train line / treadmill" = trendline, "take" = tick, "sculp/scout" = scalp, "rita's / retailers / arrears" = retest. Seven of the nine transcripts were duplicated end-to-end (Ajq4FELRa1s, GD6D3r2cwZQ, aJ7EMrUG_zk, ayMhgoErg0A, oYeSn3HMnkI, v5HqLD8kcRc, vHaDDLX9lOc); two were not (DVNSeqUS3Lc, mbzdZ-JH64k). Each section covers the content once.
+
+Recurring vocabulary (same as batch 1, restated so sections can reference it):
+- Key entry point (KEP): trendline / channel line, support or resistance (key level, including prior-day close and prior-day OHL), or the 21-bar EMA. "Two key entry points" = two of these coinciding (EMA + trendline, trendline + level, etc.).
+- High probability setup (HPS): second entry (two-legged pullback) with the trend at a KEP; failed second entry against the trend (two failed attempts in the old direction); higher-low / lower-high confirmation; failed breakout (fade) of a trading range or congestion; double/triple top or bottom at a key level; breakout-pullback only when it is also a second entry at a KEP.
+- Trendline rule: after a break of a trendline/channel, expect at least a retest of the old extreme and most likely a new extreme ("9 out of 10 times"); only after the new extreme forms, look for correction or reversal. Applies to the shortest micro trendlines (corrections) exactly as to big ones.
+- Entry trigger: 1 tick beyond the signal bar. Stop: 1 tick beyond the other side of the signal bar.
+
+---
+
+## Ajq4FELRa1s — How To Use Market Close To PREDICT GOOD Trades (OHL Indicator) (15:23)
+
+- Core claim: the previous session's close (and secondarily prior-day high/low/open) is a key level that repeatedly produces bounces and failed breaks; plot it (NinjaTrader "Current Day OHL" indicator) or draw it by hand and combine it with the normal rules (trendlines, EMA, second entries) to predict where the high probability setups will occur. "We don't care why it works... we are price action day traders... as long as it works that is fine with us." Second half is a full walkthrough of the day's ES chart with the two trades he took.
+- ENTRIES:
+  - Prior-close level is used like any other support/resistance: "you get into this trading range and all of a sudden all these longs are very justifiable"; "we broke below this support and instantly continued working higher" (failed break of the close level = long). "We have a failed break above this, prices are turning down" (failed break above the close level = short).
+  - Breakout-pullback at the close level: "we have a little bit break higher, we came back, we tested the close of the day, instantly turned down lower, came back again, instantly turned down and now we have a breakout pullback pattern."
+  - Do not trade the level blindly: "don't just go out there and start plotting the close and just trading blindly... it is a very useful tool to help you predict the high probability setups when you're already trying to read the price action."
+  - Pre-market: selloff, break and new low, pullback to EMA, retest of the low, spike through EMA, two-legged move up. "According to our rules we are expecting two-legged pullbacks at the trendline but this is very early pre-market." A first entry alone is not taken.
+  - After the break of the "pyramid pattern" channel he expects first "some sort of support at the EMA and possible retest", but none appeared, prices rallied lower; first entry long, pullback, second entry long "deep below EMA... after such a strong move down you don't want to go long... it still would have worked for a scalp but we want to find the highest probability setups."
+  - First entry short, pullback, second entry short at the trendline with a lower high, but "still way too early to go short because the strong move up looked very strong" (prior uptrend had not played out: no break and new high yet).
+  - First good trade of the day: new high, first entry long, pullback, second entry long -> failed second entry long. Conditions he lists: trendline found from the first two swings and confirmed, "beautiful trap, beautiful bearish reversal bar", price below EMA, "we're not looking for second entry long now because we're in a downtrend, we're looking for people who are trying to pick bottoms and going long way too late." Entry = 1 tick below the bearish reversal bar.
+  - Next: first entry short, second entry short, but "the second entry short triggered below this bearish bar which we cannot go short below because we are looking to sell so we need as bearish bars as possible" (the bar below which the trigger happens was already the signal bar, i.e. the trigger bar was wrong). Then a "little bit of break and a new high of the very short-term trendline", EMA holding, trendline holding -> "beautiful bearish reversal bar, two key entry points, high probability setup; it is a form of a second entry even though technically it is a third entry short." Rule stated: "if it works once, very similar pattern, it's most likely going to work twice."
+  - Untakeable good trade: "the bar is way too big and it didn't really go much lower... you couldn't even sneak in with the limit order, you just had to let this go."
+  - New uptrend: break, new high, "only first entry long and far away from EMA so you cannot take this." New high -> "this uptrend is over and we should be expecting correction or possible reversal."
+  - Double bottom in the middle of a trading range after pushing above EMA: tempting but "this signal bar is too bearish to my liking", skipped.
+  - Second trade of the day: trendline up, break and new high, "nice double top and a nice bearish bar and you're quite a bit away from EMA so you're most likely going to pull back." Shortened trendline drawn; break, new low; return to the resistance = "third confirmation of this resistance... nice bearish reversal bar."
+  - Lower high "of the day" that he did not take: "twice we bounced fairly in the middle or the lower third" of the range, meaning "there might be some bulls in the market ready to buy", so he skipped it even though "hindsight it obviously looks good".
+  - Potential loser he flags: bounce near (not at) support, "some trader will definitely try to take it or try to sneak in with the limit order... nothing you can do about this."
+  - Failed break below support -> "most breakouts will fail, you want to definitely now go long because all these people that went short a little bit too early... were forced to get out... everybody re-entered right here."
+  - First entry short, pullback, second entry short "and we are looking for failed second entry short in this instance because we're coming off the support and we are expecting prices to go higher"; but price below EMA and "starting to get a little bit of a congestion", so he draws the trendline, waits for the push above EMA ("buyers are confirming that they are in the market") and a reversal bar whose body was "one tick bearish" but "at the very close of the bar we traded up higher"; EMA + trendline = KEPs held.
+  - Rule on bar closes: "this is how important it is to focus on the close of the bars, not to trade when the bar is in the middle, because this bar looked very bearish... and at the very end of the bar the key entry points held."
+  - Congestion at the end: "find the support, find the resistance, and you fade the breakout."
+- STOP LOSS: not stated numerically; implied 1 tick beyond the signal bar (he refers to being "trapped" / "potential loser" when a bar fails).
+- TARGETS / EXITS / TRADE MANAGEMENT: scalps ("it still would have worked for a scalp, this is why we scalp"). No explicit target size. Bar too big = untakeable; cannot sneak a limit order in when the bar closes the wrong way.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY:
+  - Time-of-day: "the trader should not be trading like an hour or two hours before the close... I recommend traders not to be trading like the two hours before the close at least" because traders are liquidating, "volatility is slowing down tremendously".
+  - Pre-market open is "very early", first entries there are not taken.
+  - "I only took two trades today."
+  - He deliberately does not use the OHL indicator himself "because I want to force myself to draw it and find it myself so I'm really immersed in trading"; recommends it for beginners to verify key levels are drawn correctly.
+  - Overnight holding risk is why the market close behaves as a liquidation point.
+- TRENDLINES & CHANNELS:
+  - "You can find the trendline of these first two swings, this is how you normally find the trendline."
+  - "Draw the shortened trendline to keep you on the right side of the market." "Draw them as much as you can because it will really force you to follow the rules... if you're a little bit new it will come back to bite you because you really need to draw them."
+  - Shortened trendline "doesn't have to be perfect."
+  - "Pyramid pattern": a channel that narrows into a pyramid shape; after its break, expect support at EMA and a retest.
+  - Overshoots: "a slightly small little overshoot right here and it led to a break... prices neatly overshoot and instantly lead to the break... the rules of overshoots are 95% legit, overshoots will most likely lead to a break of the trendline or even straight-up reversal."
+  - Break and new high ends the uptrend: "perfect price action, played out to the T, so this uptrend is over and we should be expecting correction or possible reversal."
+- MARKET READING / CONTEXT:
+  - Prior session close = key level; prior-day high is useful in volatile markets "so you don't go long into the high of the day"; the indicator can show/hide open, high, low, close separately.
+  - "If it works once, very similar pattern, it's most likely going to work twice."
+  - Trading range tell: in a "legit trading range you're supposed to go to the support" (opposite side); bouncing "in the middle or the lower third" twice means buyers are present and the range may break up.
+  - "Most breakouts will fail."
+  - Congestion = consolidation where you find support/resistance and fade the breakout.
+  - Signal bar quality judged at close, not mid-bar.
+- NUMBERS: "an hour or two hours before the close" no-trade (he recommends at least 2 hours); prior close "a few ticks" off is not important; "95% legit overshoots" lead to a break or reversal; "I only took two trades today"; "third confirmation of this resistance"; "one tick bearish body" signal bar still acceptable because of the close; "technically it is a third entry short" treated as a second entry.
+- QUOTES:
+  - "We don't care why it works like this, we are price action day traders, we don't care about the fundamentals."
+  - "If it works once, very similar pattern, it's most likely going to work twice."
+  - "The rules of overshoots are 95% legit; overshoots will most likely lead to a break of the trendline or even straight-up reversal."
+  - "Focus on the close of the bars, not to trade when the bar is in the middle."
+  - "Most breakouts will fail. You want to definitely now go long because all these people that went short a little bit too early were forced to get out."
+- LIVE TRADES (walkthrough of the day, he says he took exactly two):
+  - Trade 1 (~7:06-7:52 in the video): after a new high, first entry long then second entry long failed at a trendline drawn from the first two swings, bearish reversal bar, price below EMA. Setup: failed second entry (short). Key entry point: trendline (from first two swings) + below EMA. Market state: turning down into a downtrend. Result: worked, "prices continue working lower."
+  - Trade 2 (~11:06-11:57): after a trendline up, break and new high, double top and bearish bar far from EMA; then after a shortened-trendline break and new low, price returns to the same resistance for a "third confirmation", bearish reversal bar. Setup: double/triple top at resistance (failed retest) after break and new low. Key entry point: resistance (third touch). Market state: trading range after uptrend ended. Result: implied win (prices fell to a lower high, "overshoot which leads to a break").
+  - Skipped/untakeable (mentioned explicitly): second entry long deep below EMA (~6:18); second entry short too early (~6:43); third-entry short at EMA+short trendline that "nicely traded lower" (~8:34, takeable but he does not say he took it); big-bar trade (~8:56) untakeable; first entry long far from EMA (~9:37); double bottom with bearish signal bar (~10:47); lower high in range (~12:17); late failed-breakout long (~13:04-13:27, not stated as taken); EMA+trendline long with one-tick-bearish body (~14:09, not stated as taken).
+- VISUAL TIMESTAMPS: [0:42] vertical session line and prior close level; [1:47]-[2:37] applying the Current Day OHL indicator and hiding high/low; [5:36] pyramid pattern channel; [7:32] trendline drawn from the first two swings for trade 1; [10:00]-[10:22] shortened trendlines and overshoot leading to break; [11:30] shortened trendline and third touch of resistance for trade 2.
+
+---
+
+## DVNSeqUS3Lc — How to Find a High Probability Trades while Trading (15:54)
+
+- Core claim: the swings in a trend bounce off a trendline (a channel) because "market geometry is very real"; the job is to find second entries with the trend (or failed second entries against it) at key entry points (trendline, EMA, support/resistance), and to let every short-term correction play out (break and new extreme) before taking the with-trend entry. Walkthrough of a strong uptrend day with the trades he took.
+- ENTRIES:
+  - "These setups are second entries with the trend at key entry points; the key entry points are trendlines, EMA, support and resistance lines." Why second entries: "connected to human psychology, when we fail at something we will normally attempt to do it once more before we give up."
+  - In an uptrend: second entry longs with the trend, and "failed second entry shorts because we're looking to find the people who went short in an uptrend which is a mistake and they went short way too early."
+  - "You don't just want to go long all over the chart... wait for the best setups at the key entry points."
+  - "The deeper the pullback is, the lower you buy, the safer it is and the higher probability the trade is going to work." Waiting for more confirmation costs: "you will always pay a small price for additional information from the market... you pay in the risk you take."
+  - Before going long, draw the trendline of the correction: break and new low -> "from this point on I can expect some sort of bounce and I can be looking for reasons to go long." Correction had "two-legged move, first leg, consolidation, second leg".
+  - Example HPS: new low, first entry short, pullback, second entry short that failed, "fourth bounce off the trendline", signal bar with one-tick bearish body but long tail: "it's still a bullish bar, look at the tail... we traded lower during the bar and at the very close we traded higher, there was buying power at the very close, this is what I want to see. Two failed attempts to go short and we're bouncing off the trendline."
+  - First entry taken on a very valid trendline: "this is just a first entry... but you cannot ignore how many times you already bounced the trendline... you have to take a chance." Higher low: "notice how you push through EMA, the EMA is putting no resistance, and you pull back, EMA's holding prices, nice reversal bullish bar."
+  - Not at a KEP = skip: "we don't want to go long here, we are not at the key entry point, this is not high probability setup, anything can happen here even though it would have worked, we are in the middle of the trend channel, you're not even close to the EMA."
+  - Second entry long with a doji signal bar far from the KEP: "trigger one tick higher above this bar but you're far away from key entry point... it is a doji bar so not a good bar either." Proper trade = the one that touched the EMA.
+  - Trader who "sold this market directly into this trendline" trapped shorts -> higher low long (one more push lower, higher low, trendline holding).
+  - Gigantic signal bar on a trendline bounce: "you would be risking a lot of money" -> skipped.
+  - His loser: new high, first entry long, second entry long before a new low of the correction was made, "betting that this market is starting to be so strong that you might not even get to the trendline"; stopped out; re-entered on the trendline bounce bar that was a failed break lower out of a congestion.
+  - Congestion rule (repeated): EMA flat in the middle of the bars, bars stacked, "the only way to trade it is to fade the breakout"; in an uptrend only fade the downside break (go long), do not fade an upside break. "I would be OK buying this congestion if we touch the trendline."
+  - Missed trades: second entry long at EMA after break and new low (did not take); two-legged pullback to EMA where "I put my limit a little bit back and prices didn't fill"; second entry long at trendline skipped because "I was really respecting these trendlines and waiting for a new low."
+  - Another first entry taken: "once again we bounce the key entry point, it is just the first entry but the market is so strong you just have to take the chance and you have to buy these deep pullbacks."
+  - Reversal pattern at the end: first entry short, rally through EMA, second entry short fails at the EMA, reversal bar -> "failed second entry short... and you have a break and a new high."
+- STOP LOSS: 1 tick beyond the signal bar implied ("you can push a little bit higher, pull back a little bit lower, and you can get stopped out and then go higher"). Gigantic signal bar = too much risk, skip.
+- TARGETS / EXITS / TRADE MANAGEMENT: scalps; waiting for more confirmation "you already missed a big portion of this move and potentially your scalp." Limit orders placed "a little bit back" may not fill.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY:
+  - "Trading is a zero-sum game... be on the winning side, be the smart trader." "Be the casino... the owner of the slot machine."
+  - Beginners "are way too scared to go long deep at these pullbacks but this is exactly where you need to go long."
+  - "Market is not your friend; the more information it gives you, it wants something from you."
+  - Strong trend days are rare: "we normally get like one or two big trends up or down... you can make a month worth of profits on a day like this."
+  - "Even though I took a loser here, the loser was nothing compared to the winners."
+  - No indicators: "you don't need to find the perfect combination of 300 indicators... stochastic, ichimoku cloud... it's marketed for people who don't know what they're doing."
+- TRENDLINES & CHANNELS:
+  - He first tried shorter trendlines, then "once we bounced right here... this is the three touches off the trendline so I copied it, put it to the top" -> channel.
+  - "Don't neglect short-term trendlines, they work the same way as the bigger pattern." Short-term trendlines of corrections tell you when the correction is over (break and new low) so you can buy.
+  - Trendline rule: "after a break of a trendline there is most likely going to be a retest of a new extreme, and after there is a retest of a new extreme there's going to be a correction or possibly a full-blown reversal."
+  - Trend health: "the trend still keeps a 45 degree angle, this is a healthy trend; the trend that goes 90 degree up is not healthy... don't expect trends to last if they are very steep."
+- MARKET READING / CONTEXT:
+  - Healthy uptrend: EMA pointing higher, small bars, bars getting smaller as the day goes on, 45-degree angle.
+  - Congestion: "EMA is flat, it is exactly in the middle of those bars, the bars are stacked next to each other, you cannot go both highs both lows."
+  - Spike and channel: "I didn't know this was going to be a spike and a channel."
+  - "Market is counter-intuitive... people think they see the market reversing... no, we're just trapping the people who don't know what they're doing."
+- NUMBERS: 21-bar EMA; three touches to confirm the trendline then copy to the other side; fourth bounce off trendline; 1-tick trigger above the signal bar; 45-degree trend = healthy, 90-degree = unhealthy; "one or two big trends" per typical period; "300 indicators" (mocking).
+- QUOTES:
+  - "The deeper the pullback is, the lower you buy, the safer it is."
+  - "You will always pay a small price for additional information from the market. Market is not your friend."
+  - "Don't neglect short-term trendlines, they work the same way as the bigger pattern."
+  - "You want to be the owner of the slot machine, so you have the odds in your favor."
+  - "Trading can become very simple: you don't need no fancy indicators."
+- LIVE TRADES (walkthrough of the day's trend; trades he says he took):
+  - Loser (~10:22-10:47): new high, first entry long, second entry long taken before the short-term correction had made its break and new low; trendline not yet touched. Setup: second entry long (premature). KEP: none reached (bet on strength). Market: strong uptrend. Result: stopped out.
+  - Re-entry (~10:47-11:33): same bar sequence, "another bounce off the trendline, break, attempt to make a new low, failed break lower" out of a flat-EMA congestion; nice bullish bar. Setup: failed breakout (fade) + trendline bounce / higher low. KEP: trendline. Market: uptrend. Result: worked ("market is really starting to look strong").
+  - First-entry long taken (~13:09-13:32): bounce off the KEP (trendline) in a very strong trend, deep pullback. Setup: first entry (exception justified by trend strength and multiple trendline touches). KEP: trendline. Market: uptrend. Result: worked.
+  - Missed: second entry long at EMA after break/new low (~11:54, "I didn't take this"); two-leg pullback to EMA, limit not filled (~12:19); second entry long at trendline skipped waiting for new low (~12:19-12:42).
+- VISUAL TIMESTAMPS: [0:25]-[0:56] swings bouncing off the channel trendline; [4:20]-[5:03] trying shorter trendlines then the 3-touch trendline copied to the top; [5:48]-[6:11] drawing short-term trendlines of the correction, two-leg count; [8:42] flat EMA congestion marked; [10:47]-[11:11] loser and re-entry bars on the trendline; [12:42]-[13:09] 45-degree trend angle.
+
+---
+
+## GD6D3r2cwZQ — The ONLY Way To Successfully Trade Trading Ranges - A Complete Guide To Price Action (18:07)
+
+- Core claim: trading ranges (which he says are the majority of days) are traded by (1) drawing the current support and resistance, (2) avoiding the middle, buying low and selling high, (3) above all fading breakouts because most range breakouts fail, (4) still drawing the shortened trendlines so the prior micro-trend is allowed to play out (break and new extreme) before buying the low or selling the high, and (5) holding runners because range extremes and failed breakouts produce the biggest moves. Part 1 (0:42-6:27) is a live recording with no narration (music only in the captions); part 2 explains the trades.
+- ENTRIES:
+  - Step 1: "find the current key level"; he drew the current high and low of the pre-market session "so it helps me remember where the lows and the highs are."
+  - "Avoid trading in the middle and just focus on buying low and selling high, but more importantly fading the breakouts... most breakouts of trading ranges will fail; just because one breakout out of 10 will eventually work doesn't mean it is a winning strategy."
+  - Step 2: draw shortened trendlines; "just because trendline broke doesn't mean that the trend is reversing, the traders will wait and will retest the previous high. In order to buy the low or sell the high I need to wait for the previous trend to play out" (downtrend: break and new low -> safe to buy).
+  - Trade 1 (long at the range low): downtrend line working lower, break and new low, big bearish bar; "a lot of traders are afraid to buy after such a big bearish bar because it indicates momentum... indicators are lagging"; institutions keep "resting limit orders" at the low and "buy blindly"; "I saw a big bullish reversal bar, so this was my first trade."
+  - Middle-of-range failed second entry short: first entry short (bears' first attempt), push above EMA, second entry short fails -> HPS because "it is a failed second attempt... we pushed above the EMA, EMA was holding prices, the trendline was holding prices... key entry point is the point when high probability setups occur." He did not take it because he was still holding his runner.
+  - When the range fails to reach the other side ("there is a gap and instantly sold off"), he hesitates to buy: "since we didn't make it to the highs of the trading range there's something telling you there are not a lot of buyers left... a proper trading range goes from one side to the other."
+  - Low of range: first entry short, pullback, second entry short "we're not looking to short because we would be shorting the support, we are looking for failures"; signal bar "way too big for sticking to our rules"; otherwise "two failed attempts in the previous direction, pushed above EMA, bullish sentiment established."
+  - Missed short at resistance: bearish bar and instant selloff, "you wouldn't even have had a chance to enter... you cannot enter this late... your scalp portion is already fulfilled, wait for another opportunity."
+  - Trade 2 (fade of the breakout above resistance): "you don't want to buy the breakout, you want to fade the breakout, sell the breakout to the upside." Price was far from EMA, pulled back to the EMA (still inside the uptrend line) where leftover buyers "created a double top and a big bearish reversal bar"; the breakout-pullback longs "all kept their stop right here" -> trap; "a nice bearish bar, a double top, still quite away from the EMA." Recognizing a trap: "the momentum that's being generated by this trap is really substantial."
+  - Triple top re-entry: after the uptrend made a new high (so it "is over"), "three touches to the resistance and one push higher"; he tightened his runner and got stopped, "re-entered instantly, this is a triple top, one push higher, failed trap and a nice bearish reversal bar"; runner stopped again.
+  - Do not short quickly when the range bounced from the middle instead of reaching the low: "you want to let the bulls get trapped, so you don't want to sell here."
+  - After the triple attempt makes a new high: "now it is safe to go long"; first entry short, second entry short, close below EMA with a "gigantic" bearish bar = "first break of this channel so we are expecting a new low"; then "failed break lower and instantly pull back into trading range."
+- STOP LOSS: 1 tick beyond signal bar (implied; "everybody was keeping their buy stop right here" above the double top is the trap mechanism). Tightening the runner's stop cost him twice: "I should have kept my runner in place."
+- TARGETS / EXITS / TRADE MANAGEMENT:
+  - "When you're trading trading ranges you need to hold the runners... some of the biggest trades you can catch is when you buy the lows or sell the highs or fade the breakouts... scalp and scale out with the runner."
+  - He skipped a valid HPS because he was still holding a runner (one position at a time implied).
+  - Runner management: he tightened the runner into the third touch of resistance and was stopped; lesson stated: leave the runner in place.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY:
+  - "The market is counter-intuitive... forget everything you've learned in real life... anything that makes common sense you want to throw out of the window."
+  - "Don't be afraid to take these trades because what you don't want to do is miss all these trades and then take one trade and that will be a loser. Stick to your edge, stick to your strategy, take all of these trades."
+  - Blind limit buyers at the low: "if you're buying blindly three times a year, all three trades would have won and eventually one trade will fail, you still put the odds in your favor."
+- TRENDLINES & CHANNELS:
+  - Shortened trendlines inside the range decide when it is safe to buy the low / sell the high (break and new extreme first).
+  - Overshoot: "overshoot of the trendline will at least lead to a break or possibly straight-up reversal."
+  - First break of a channel = expect a new extreme of that channel before reversal.
+- MARKET READING / CONTEXT:
+  - Range = support + resistance; find them first (pre-market high and low as he arrived).
+  - Range health: proper range travels side to side; bouncing from the middle, or a gap before reaching the far side, signals one side is weak and the range may break.
+  - Failed breakouts and trapped stops: stops rest just above the breakout high / below the low; institutions use them as liquidity.
+  - Indicators lag; big momentum bar into support is not a reason to avoid the long.
+  - 21-bar EMA + trendline = key entry points.
+- NUMBERS: "one breakout out of 10 will eventually work" (most range breakouts fail); 21-bar EMA; three touches of resistance + one push higher = trap; "buying blindly three times a year... one trade will fail"; part 1 live segment runs roughly 0:42-6:27 of the video.
+- QUOTES:
+  - "You don't want to buy the breakout, you want to fade the breakout."
+  - "Most breakouts of trading ranges will fail. Just because one breakout out of 10 will eventually work doesn't mean it is a winning strategy."
+  - "Indicators are lagging, they always show you only after the fact."
+  - "Forget about common sense."
+  - "You don't want to miss all these trades and then take one trade and that will be a loser."
+- LIVE TRADES (part 1 is recorded live without narration; part 2 names the trades):
+  - Trade 1 (~8:46-9:50): at the range low after a shortened downtrend line broke and made a new low; big bearish momentum bar then a big bullish reversal bar. Setup: buy the low after the prior micro-downtrend played out (lower-low exhaustion / range-low reversal bar). KEP: support (range low). Market: trading range. Result: win; he held a runner through the next failed-second-entry-short setup.
+  - Skipped (~9:50-10:35): failed second entry short at EMA + trendline in the middle of the range, not taken because still holding the runner.
+  - Trade 2 (~13:05-14:10): after the breakout above resistance, pullback to EMA inside the uptrend line, double top, big bearish reversal bar, far from EMA. Setup: failed breakout (fade) / double top at resistance, trap of breakout-pullback longs. KEP: resistance + EMA. Market: trading range, uptrend inside it had made its new high. Result: win; he held a runner, tightened it at the third touch of resistance and was stopped out.
+  - Trade 3 (~14:49-15:14): re-entered instantly on the triple top + one push higher + bearish reversal bar. Setup: failed breakout (triple top trap). KEP: resistance. Market: range. Result: scalp implied, runner stopped out again.
+- VISUAL TIMESTAMPS: [6:50]-[7:10] drawing the pre-market high/low key levels; [7:56]-[8:46] shortened trendlines inside the range and the break/new-low count; [10:35]-[10:56] failed second entry short marked at EMA + trendline; [13:05]-[13:49] breakout, pullback to EMA, double top and trap; [14:30]-[14:49] overshoot of the downtrend line and the two-leg count to a new high; [15:56]-[16:20] channel break and expected new low.
+
+---
+
+## aJ7EMrUG_zk — Is It Safe To Trade INSIDE BARS Or Not? (12:38)
+
+- Core claim: an inside bar (highs and lows, including tails, inside the previous bar) is rare and is never a reason by itself to trade or not trade; market context and key entry points decide. When the setup is valid, an inside bar is beneficial because it lets you trigger 1 tick beyond a smaller bar, entering earlier with a smaller stop. The only time to refuse the inside-bar trigger is when the inside bar's body is strongly against the trade direction.
+- ENTRIES:
+  - Definition: "inside bar is just the bar that its closes, highs and lows are still contained by the previous bar, and that means even the tails... not just the body."
+  - "We really don't have the option to avoid trading inside bars because we're trying to find the highest probability setups at the key entry points"; example: three bullish inside bars all confirming the trendline, congruent support, second entry long, prior correction had break and new low -> "we just have to take the trade."
+  - Benefit mechanism: after a correction's break and new low, trendline bounce, the first bullish bar did not trigger (no 1 tick above its high); the next bar is an inside bar; "all we have to do is wait for one tick trigger higher above this bar and we can drop our order in... we saved one tick of our entry."
+  - Downtrend example: lower high formed by a bearish bar; "I'm waiting for trigger below this bar so I can go short, but I have a double inside bar"; triggering 1 tick below the second inside bar instead of the original bar "saved three ticks... our stop loss in case the trade would have failed was much smaller."
+  - More examples: bearish inside bar after a correction's break and new high in a downtrend (must take, "very high probability because we are waiting for a break and a new low"); second entry short at the EMA where the bearish inside bar is the entry bar; uptrend break and new high where the bearish inside bar closed "in the middle of this bullish bar, we don't have to wait for prices to close below this previous bullish bar."
+  - How NOT to use it: uptrend, new high, first entry long, pullback, second entry long; the next bar was a bearish inside bar; "since we are in an uptrend we need the signal bars to be bullish, this inside bar is heavily bearish... entering on this inside bar would not be smart." Correct action: "wait for break above this [original bullish] bar and potentially drop your limit order further back if you don't want to risk a lot of money." A bullish doji inside bar would have been acceptable.
+  - Observed regularity: "every time we entered the inside bar, the inside bar had a little resemblance to the body in the direction we were taking the trade"; the bad case "is very rare."
+- STOP LOSS: 1 tick beyond the (inside) signal bar; smaller inside bar = smaller stop ("we saved quite some money because our stop loss... was much smaller than the previous entry bar").
+- TARGETS / EXITS / TRADE MANAGEMENT: not covered beyond entry improvement; limit order "further back" as the alternative when the trigger bar is unfavorable.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY: "Market context and market structure is everything, trading the candlesticks alone is not the way to do it." "You cannot trade on candlesticks alone... pin bars, inside bars, outside bars, harami... you would have been losing a lot of money." Signal bars are "a little tool that we use to help us filter the good or bad trade."
+- TRENDLINES & CHANNELS: trendline drawn in each example to identify the trend; corrections get their own trendline and must show break and new extreme before the with-trend entry ("this downtrend has played out and this correction is over, after this correction is over we can be safely looking for longs"). "Congruent support running here" alongside a trendline = multiple key levels.
+- MARKET READING / CONTEXT: "The core of a trader's skill set is learning to identify the market context, find a key entry point and find the high probability setups." Checklist he restates at the end: "at the key entry point, it is a second entry long or we have multiple key levels running congruently, and the previous correction played out, that's the most important thing."
+- NUMBERS: 1 tick trigger; saved 1 tick (single inside bar) and 3 ticks (double inside bar); inside bars are "quite rare"; "I looked through a lot of days" and found only one bad example.
+- QUOTES:
+  - "Market context and market structure is everything."
+  - "We really don't have the option to avoid trading inside bars."
+  - "The inside bars allow us to enter a little bit further back and to enter much safer, and we are risking less money."
+  - "Don't just think that learning about candlestick patterns will make you a successful trader."
+  - "If we are taking the bullish trade, the inside bar was bullish."
+- VISUAL TIMESTAMPS: [0:44]-[1:31] marking highs/lows of the previous bar around the inside bars; [2:37]-[3:22] three inside bars confirming the trendline + congruent support; [4:48]-[5:33] one-tick saving shown (chart zoomed); [6:13]-[7:24] double inside bar at the lower high, three ticks saved; [9:45]-[10:49] the bearish inside bar that should not be used.
+
+---
+
+## ayMhgoErg0A — Sniping Entries in Consolidating Market | Price Action Trading For Beginners (18:21)
+
+- Core claim: six or seven days out of ten are some form of trading range; trade them by (1) drawing support and resistance from the pre-market price action, (2) looking only for second entries with the move and failed second entries against it, (3) drawing shortened trendlines so each micro-trend's break and new extreme tells you which side is now safe, (4) fading breakouts of the range, and (5) adapting when the range stops reaching its far side. ES 2000-tick chart, 21-bar EMA.
+- ENTRIES:
+  - HPS = two-legged moves: "the market moves in twos... second entries are high probability setups if you find them on the right places; for counter-trend entries we are looking for failed second entries." Taking all second entries/traps alone "you probably can have like 65% win percentage" but he filters further with shortened trendlines to reduce losers.
+  - Walkthrough: downtrend line, break and new low, consolidation, "second leg to a new low... first leg to a new low, pullback, second leg to a new low, so from this point I was expecting a move up because this downtrend played out."
+  - Very short trendline attempts, then a bigger trendline found off the tops ("adjusted... how nicely it fits off the top... you don't have to find it always off the bottoms"); copied to the bottom.
+  - First HPS: new high, first entry long (triggered 1 tick above the bar) failed, pullback, second entry long = two-legged pullback, plus "first break of this channel... in a trading range you go from lows to highs... looking for a new high of this uptrend and for prices to reach the resistance." Scalp only: "attempt to make a new high is close enough."
+  - Failed break below support/double bottom: "most breakouts of trading ranges will fail at least temporarily, you almost always get some sort of pullback back into the support or resistance line... this is a failed break below this double bottom and this is the way we want to capitalize on it" (stops resting a few ticks below the lows are used as liquidity).
+  - Uptrend from the low: "we push through the EMA nicely... no rejection from the EMA... strong leg up"; first entry long, pullback, second entry long = HPS and first break of the trendline; but "already very close to the resistance... this bar is way too big and we are quite far away from EMA; I would like for prices to touch EMA a little bit better" -> skipped, though it worked.
+  - Breakout above resistance: "failed breakout... shorts here, here, here all would have worked because you would be keeping your stops above the signal bars but for my liking these trades are still a little bit too aggressive even though this is a failed breakout and you're very far away from EMA."
+  - Preferred trade: after the uptrend played out, "I'm looking for failures of second entries, so I started a count over from this bar because all these highs are matching; first attempt to go higher failed, second attempt to go higher, nice rejection bearish bar." Reason not to take it as a second entry long: "the uptrend already played out and this is a trading range... if this was a very strong uptrend I could potentially take additional second entries even if the trend played out." => failed second entry long + failed break higher, short.
+  - Adaptation: when price was supposed to go to the low of the range but instead held above the old resistance ("this bullish bar is now relying on the support that previously acted as resistance"), he looks for a bigger trendline; new low, first entry short, second entry short, bullish bar at trendline + old resistance -> long. "Switch the gears a little bit because you don't want to keep forcing selling the market when it's giving you clear signs."
+  - "Break, attempt to make a new low, but there's a trendline in play so this is close enough, just an attempt... failed second entry short, nice bullish bar, quick for a scalp."
+  - Later: double top, snap back, first entry long, second entry long failure "off the EMA and off the resistance"; push below EMA with EMA holding = sign of trend change; first entry short at EMA skipped ("just a first entry even though we have a break of this channel, we're waiting for a new low"); lower high = "another confirmation of the EMA, gigantic bearish bar, a form of two attempts to go lower, another HPS."
+- STOP LOSS: 1 tick beyond the signal bar ("you would be keeping your stops above the signal bars"); big signal bar = skip.
+- TARGETS / EXITS / TRADE MANAGEMENT: "We're mainly scalpers, quick easy trade"; "good enough for scalp"; attempt at a new extreme counts as close enough for the scalp.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY: "My goal is to have as few losers as possible; everybody has losers, I'm no trading guru"; "nothing is ever 100% in price action"; pre-market is slow, low volatility; "trading takes quite some time to learn because you have to learn how to adapt."
+- TRENDLINES & CHANNELS:
+  - Trendline rule restated: after the break, "traders are going to look for the retest of a new extreme, and after the new extreme is retested there may possibly be correction or straight-up reversal."
+  - Finding the line off the tops: "if you learn to spot it off the top you will get an edge because you will have your trendline much quicker in place... you can take this trade very early."
+  - When the shortened line "feels too far away from this downtrend", draw the downtrend "like this and just copy it and put it to the other side... I like to do it the old-fashioned way" (no tool).
+  - Each micro-trend gets a line so the first break + new extreme can be awaited.
+- MARKET READING / CONTEXT:
+  - Identifying a range: "if you're in an uptrend or downtrend you already know; the situation where you're not sure what's going to happen, you cannot find the best setups, that is some form of trading range. It doesn't have to have perfect support and resistance."
+  - EMA flat most of the time = range; EMA is "a supportive indicator... sometimes serves as a key entry point"; "EMA acts as a magnet, the further you are away from EMA the bigger the likelihood you're going to snap back."
+  - Pre-market analysis: eyeball double top -> resistance line; support line where prices reacted.
+  - Range failing to reach the far side = regime change; move from short bias to long bias.
+  - Trend-change tell: "this move was gigantic below EMA, this move was slow choppy, a lot of bullish bars; multiple bearish consecutive bars... push below EMA, beautiful bearish reversal bar and the EMA holds prices."
+  - Price action is universal: "our rules work on all markets on all time frames."
+- NUMBERS: "six or seven out of ten" days are ranges; ES 2000-tick chart; 21-bar EMA; "65% win percentage" trading second entries/traps alone; stops a "few ticks below" important lows; 1 tick trigger.
+- QUOTES:
+  - "At least six or seven out of ten times the market is going to be in some form of trading range."
+  - "You don't have to find it always off the bottoms; if you learn to spot it off the top you will get an edge."
+  - "Most breakouts of trading ranges will fail, at least temporarily."
+  - "I'm just using the shortened trendlines and relying on trendline and trading range rules."
+  - "You have to learn how to adapt."
+- VISUAL TIMESTAMPS: [2:35]-[2:58] drawing resistance (double top) and support from pre-market; [4:48]-[5:33] first downtrend line and the two-leg new-low count; [5:33]-[6:16] very short trendline replaced by the line found off the tops and copied to the bottom; [12:27]-[12:50] count restarted from the matching highs for the failed second entry; [13:36]-[13:59] downtrend drawn and copied to the other side; [15:12]-[15:36] bigger trendline found after the range stopped reaching its low.
+
+---
+
+## mbzdZ-JH64k — SHOULD TRADERS TRADE NEWS? | Stock Market Technical Analysis (15:12)
+
+- Core claim: do not trade news releases. Stop trading 10-15 minutes before and resume 10-15 minutes after; price action stays valid during and after news (only volatility changes), but slippage and whipsaws make the release itself a big-players' game. Exit runners before the release. Includes a chart walkthrough of an FOMC day with setups marked "according to our rules" and a near-identical pattern from a month earlier.
+- ENTRIES (walkthrough after the FOMC spike):
+  - Post-news rally: new high, two-legged pullback with "almost measured" legs ("this is the first leg, a little correction, second leg, measure the second leg"), far from EMA ("use this EMA as a magnet"); break and new low of the pullback's trendline -> safe to look long; first entry short failed, second entry short failed, bullish bar, EMA holding -> long: "this is the setup just like any other setup."
+  - Earlier in the day: downtrend with first break -> expecting a new low; "first entry long, pullback, second entry long that failed, but this was just a trap and you would have gotten stopped out... then you had the chance to re-enter" (same failed-second-entry-long setup repeated; "sometimes they like to fake out these people, it doesn't happen often").
+  - Double bottom (one tick short of a new low counts: "it looks like a new low, it is close to being a new low"); first entry short, push through EMA, second entry short failed = reversal pattern, "you have to go long here because we're expecting prices to reach this upper resistance."
+  - First-entry short taken as an exception: "clearly defined resistance, three tops... such a gigantic leg down... nice pullback to the EMA, EMA holding prices to the T... nice breakout pullback sort of... each time you go higher you just make one little move, you instantly slap back"; "a little bit aggressive, you may skip it."
+  - Second entry short at the EMA after a double bottom where "support is acting now as a resistance"; justified by the earlier instance on the same day where a second entry short far from EMA was followed by one more leg down.
+  - Break and new low -> expect correction/reversal; second entry short failed but "no way to enter because this bar is way too big"; next chance "EMA holding, trendline holding, two key entry points merging."
+  - Correction uptrend: new high, first entry long, second entry long "two-legged move", break and new low "so this correction has played out"; shortened trendlines drawn for each.
+  - Pre-FOMC: "a first entry long, pullback, second entry long that failed, good setup because we are waiting for a new low of this shortened trendline, and we got a new low."
+- STOP LOSS: 1 tick beyond signal bar implied; during news "the slippage is going to happen... their stop loss is going to be twice as big, even three times as big."
+- TARGETS / EXITS / TRADE MANAGEMENT:
+  - "I would even exit the runners here... exit even before the news. I know it is very tempting... that you can catch a gigantic runner but if you are on the wrong side you can have slippage and it is not your broker's fault."
+  - Stop trading / exit positions 15 minutes before the release.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY:
+  - "Skip trading news completely because it is simply just not worth it... this is just a game of big hedge funds, big institutions."
+  - "Start trading like 10-15 minutes after the news and stop trading 10-15 minutes before the news."
+  - Before a big FOMC "the market will usually go into this consolidation... people are sitting on their hands."
+  - Beginner straddle strategies (small stop + huge target both ways) fail because of slippage and because "the market will go high enough but not quite reach their target profit, go back, hit their stop loss and maybe then go in the opposite direction."
+  - "You're not gonna outsmart the market." News commentary "describes the chart"; price action works because "it's still tied down to human psychology... the only way this is not going to work is when Thanos will snap."
+  - Patterns repeat: today's downtrend -> trading range -> break -> uptrend -> correction -> new high was "almost identical" to a day a month earlier, "and this pattern happened 40 years ago, so it will never be outdated."
+- TRENDLINES & CHANNELS: shortened trendlines drawn for every correction; break and new low = correction played out; copy the trendline to the top to form the channel ("you can copy, put it to the top, we have a break, new high").
+- MARKET READING / CONTEXT:
+  - EMA as a magnet: far from EMA -> expect snap back.
+  - Measured legs: "the legs I guarantee you they're almost measured"; measure the first leg, project the second.
+  - Double bottom one tick above the low still counts as a double bottom / near new low.
+  - Pre-news consolidation looks unclear live even though "it doesn't look congested at all" in hindsight.
+  - Structure sequence of the day: downtrend into trading range, break lower, few legs lower, reversal uptrend, correction, new high (repeated from a month earlier).
+- NUMBERS: FOMC at 7 o'clock (his local time); stop 10-15 minutes before news, resume 10-15 minutes after (he repeats "15 minutes" for both); slippage makes stops "twice as big, even three times as big"; pattern repeated "a month ago", "two months ago", "40 years ago"; "one tick higher" short of a new low still treated as a double bottom; 21-bar EMA.
+- QUOTES:
+  - "Skip trading news completely because it is simply just not worth it."
+  - "Start trading like 10-15 minutes after the news and stop trading 10-15 minutes before the news."
+  - "Listen guys, you're not gonna outsmart the market."
+  - "The only way this is not going to work is when Thanos will snap and completely redesign human psychology."
+  - "Price action still works even if it's after the news."
+- VISUAL TIMESTAMPS: [5:01]-[5:27] measuring the two post-news legs; [6:34]-[7:17] month-old pattern compared with today's, trendline copied to the top; [8:42]-[9:27] first break / trap and re-entry marked; [11:38]-[12:23] new-low count and two key entry points merging; [12:45]-[13:30] shortened trendlines for the correction and the failed second entry long before FOMC.
+
+---
+
+## oYeSn3HMnkI — Simple Tips On How To Identify Market Structure + Applicable Example (17:14)
+
+- Core claim: the biggest breakthrough is identifying market structure, not patterns. Procedure: (1) locate the single most significant key level (e.g. three matching lows at the prior close), (2) decide trend vs range, (3) draw short-term trendlines to know which micro-trends have ended, (4) take only two-legged pullbacks / second entries at key entry points in the direction of the structure, (5) recognize congestion vs orderly channels, (6) use spike-and-channel and two-tier channel measurement to project where the channel will hold. Ends with a live trade taken on camera.
+- ENTRIES:
+  - "I want to find the one [level] that is probably the strongest one"; three matching lows at the end of the prior session -> horizontal line; confirmed at the start of the day; "from that point on prices are in a trading range."
+  - After the uptrend line breaks: "my first instinct is for prices to retest this uptrend... but I don't want to take any setup after break, I want to take two-legged pullback because a second entry is a high probability setup." Draw the correction's shortened trendline, wait for break and new low, then: at the EMA, double top, first entry long, pullback, second entry long = "the first safe and high probability trade of today."
+  - Second entry long at the newly confirmed trendline with "a horrible looking doji" signal bar = "fairly aggressive trade but it is a high probability setup."
+  - Congestion (14-15 stacked bars, multiple stems) under resistance: "the best way to trade congestion is to fade the breakout"; prices broke the congestion, got rejected off the previously confirmed trendline, "nice bullish reversal pin bar, this is now a good entry because there's a confluence of two key entry points; it was just enough for a scalp."
+  - After the trendline breaks: still expect retest of the new high; "the question is can we start selling, only if there is a high probability setup at the key entry point." First entry far from EMA = "no safe setup."
+  - Downtrend correction: break and new low "but there is no setup for smart traders because there is no second entry and we don't want to go long below EMA far away from the key level... longs out of the question and shorts out of the question."
+  - Spike: "four big bullish bars... spiked through the EMA like it's not even there"; then he searches for a spike-and-channel. Second entry long off trendline + EMA was "a little bit riskier"; better: breakout-pullback ("broke the double top resistance, pulled back, retested it, triple touch of the trendline, of the EMA, a very smart entry").
+  - Second entry long at the top of the channel with a trigger above a bearish-body doji: "not what we want to see."
+  - Bearish trap then "a nice bullish bar, higher low" at the projected second tier of the two-tier channel -> "a good long to take."
+  - New low of the move: first entry short, second entry short "we're not looking for shorts even though it's a second entry, the market structure is up." Failed second entry short "is a trap but we are far away from both key entry points so it is better to wait."
+  - Tiny doji at the KEP: "it is so tiny that it may be worth taking a chance because you're risking almost nothing but it is fairly aggressive."
+  - Live trade: channel/uptrend just broke; "I'm going to find my leg, this is the one leg, this is the second leg, move my target profit below the signal bar... first leg, correction, second leg almost measured to the T; I'm going for eight ticks." Entered short on the break; "two ticks away from getting filled"; filled: "quick easy trade."
+  - After the trade: downtrend played out with "two measured legs lower", push above EMA, first entry long but "the EMA is holding prices so nicely, it's a third confirmation of a trendline and overall the day is starting to look like a big uptrend."
+- STOP LOSS: 1 tick beyond signal bar implied; tiny doji = "risking almost nothing".
+- TARGETS / EXITS / TRADE MANAGEMENT:
+  - Measured move used to place the target: measure leg 1, project from the correction to get leg 2; "move my target profit below the signal bar"; chose 8 ticks because he had to leave quickly.
+  - "It was just enough for a scalp but this is all we care about, the runner is just gravy, we are mainly scalpers."
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY:
+  - "If you wait for confirmation you're scared to take the trade and scared traders do not make money in this business."
+  - "Smart traders are trying to find the earliest entry they can, right after they found the channel"; late longs after the whole move get caught when the channel breaks.
+  - "Trust the process"; "just follow the market structure."
+- TRENDLINES & CHANNELS:
+  - "Using the first two swings is always the right way to find the trendline, you just copy it and put it to the other side."
+  - A new low rejected exactly at the trendline "definitely got confirmed."
+  - Spike and channel: after a spike, "try to find some sort of potential channel"; measure the first leg of the uptrend ("one piece"), correction, "second piece of the puzzle."
+  - Two-tier channel trick: "if you have a spike and a channel, measure the one tier and try to find what the second tier is most likely going to be... measure the move of the tier, copy and put it over, you will see there is a two-tier channel working upwards" (the lower parallel projected one tier-width away catches the higher low).
+  - "Prices will not keep doing this forever, eventually the channel will get broken, and it normally happens when you go long way too late."
+- MARKET READING / CONTEXT:
+  - One strongest key level, not many lines.
+  - Range when no clear uptrend/downtrend after the level is confirmed.
+  - Congestion vs channel: congestion = "many bars stacked next to each other... lows are static, not higher, and you can even make a case for the highs being lower"; healthy channel = "multiple gaps in between, each new low is higher than the previous one and each new high is higher than the previous one." Congestion "usually traps people because it is tempting to go short and long at the same time."
+  - Two kinds of spike: four clean bullish bars vs a mixed spike with bearish bars and stems.
+  - In an up structure, every selling opportunity quickly rejected and dips below EMA snap back = big uptrend.
+  - "Trade the market structure, not the singular pattern."
+- NUMBERS: three matching lows for the key level; 14-15 bars in the congestion; four big bullish bars = spike; 8 ticks target on the live trade; "two ticks away from getting filled"; live time stamp "it's 17:13" (his clock); triple touch of trendline/EMA; third confirmation of the trendline.
+- QUOTES:
+  - "The biggest breakthrough in my trading career was not just focusing on the patterns themselves but trying to identify the current market structure."
+  - "Using the first two swings is always the right way to find the trendline."
+  - "Scared traders do not make money in this business."
+  - "The runner is just gravy, we are mainly scalpers."
+  - "Just follow the market structure."
+- LIVE TRADES:
+  - Live short (~13:24-16:42): uptrend/channel just broke; first leg down measured, correction, second leg projected; entered short with target set 8 ticks (target placed below the signal bar, trimmed for time). Setup: measured-move second leg after channel break (other). KEP: channel/trendline break. Market: bullish structure overall, short-term correction down. Result: filled for the 8-tick scalp ("quick easy trade").
+  - Walkthrough trades marked as HPS earlier that day (not explicitly stated as taken): second entry long at EMA after correction break/new low (~2:43-3:05, "first safe trade of today"); doji second entry long at trendline (~3:52-4:18, aggressive); congestion breakout fade at trendline + EMA with pin bar (~5:06-5:31, scalp); breakout-pullback / triple touch of trendline + EMA (~8:20-8:45); two-tier channel higher-low long (~11:47-12:13).
+- VISUAL TIMESTAMPS: [0:48] horizontal key level at three matching lows; [1:35] measuring first leg vs second leg of the correction; [3:28]-[3:52] trendline from first two swings copied to the other side; [5:06] counting the 14-15 congestion bars; [7:53]-[8:20] measuring the spike's first leg as "one piece"; [11:22]-[12:13] measuring one tier and projecting the second tier of the channel.
+
+---
+
+## v5HqLD8kcRc — How To Filter THE BEST Trades With Trend And What To Do When Trendline Breaks (Beginners Guide) (27:56)
+
+- Core claim: never sell/buy a trendline blindly. A trendline trade (with trend) is high probability only if (1) the counter-trend correction has played out (its own trendline broke and made a new extreme), and/or (2) the entry is a second entry (two-legged pullback) at the trendline, ideally both; (3) if neither is available, wait for two failed attempts in the counter-trend direction (failed second entry). After a trendline break the same filters apply while waiting for the retest/new extreme; do not reverse on the break. Second half is a walkthrough of the day's ES chart.
+- ENTRIES:
+  - Question answered: "do we sell blindly the trendline expecting prices to reverse off the trendline? The answer is no, a big no." Resting limit orders at the trendline "only work sometimes."
+  - Rule 1: "pay attention to the previous trend in the opposite direction, the counter-trend... these corrections are tiny little trends inside of the bigger trend and the rules of the trendline apply as well... we need to wait for a break and a new high [of the correction]; when the price has retested with a new extreme then it's safe for us to take the trade."
+  - Signal bar: "in this downtrend should be as bearish as possible, some nice bearish reversal bar."
+  - Rule 2: second entry: "first entry short, pullback, second entry short... if this was just a first entry this would not be ideal because we are inside of this [correction] trendline, but because it is a second entry... and it confirms the trendline, the second entry is high probability in itself. We either wait for a break and a new high or we wait for a second entry and if we get both that's ideal."
+  - Counter-example: a trendline touch while the counter-trend two-tier channel is still intact "barely worked... in a lot of instances it won't work at all."
+  - Rule 3 (when rules 1 and 2 are not met): "we wait for two failed attempts in the counter-trend direction, meaning a failed second entry long [in a downtrend]." Example: new high of the correction, first entry long triggered above the bar, "push through the EMA, pull back, second entry long, second trigger above this bar but this move is way too low, way below EMA, in a downtrend looking for a new low" -> failed second entry long = HPS, "prices made a new low."
+  - After a trendline break (uptrend example): "we are expecting a new extreme... first thing, let the counter-trend play out... break and a new low... don't start buying early viciously, you will get stopped out, this is just the first break and the first entry... obviously you don't want to sell either just because you have a break of a trendline." Two-legged move: "one leg, pullback, second leg, not quite measured because we are located at the EMA." Second entry long far from EMA "is not a good setup to take; now you're locating at the EMA and this is a two-legged pullback, this is the safe place."
+  - Downtrend break with a big bullish bar: "most people's first instinct would be to start buying this and this is wrong, give the sellers a little bit more breathing room... first entry short, pullback, second entry short at the EMA... prices made eventually a new low just by one single tick."
+  - Counting note: second entry "appeared here, although you can make a case for second entry being this as well if you count it a little bit differently."
+  - Today's walkthrough: pre-market double/near-triple top -> he expected a reversal (first entry long, second entry long failure hoped for) that did not happen; triple bottom formed, "rangy straight off the bat." First entry short, pullback, second entry short failed above EMA ("EMA holding prices each time") -> long, "worked for a scalp." "Trade the market you get, not the market you want."
+  - Do not go long into resistance: "even though EMA is holding prices here, you're going long exactly into this resistance and this is a sure way to get trapped."
+  - Breakout above resistance "most breakouts will fail, 90% of breakouts of trading ranges will fail" but "quite still early for me to fade this because this is still a little bit bullish." The eventual failed second entry long came "way too late, far away from EMA, too close to the support... you obviously have to skip this."
+  - Short at EMA after break/new high but "very close to this support, quadruple bottom confirmed: only when you want to take this you want to place your limit order further back, that way you can get safely out, put your target profit at this support."
+  - Reversal pattern at the high: "first entry short, pullback, second entry short, nice big bullish reversal bar but you're going long at the very high of the move; I like to take the reversal patterns a little bit closer to the EMA, the pullback a little bit deeper... almost 90% of the time you're gonna get a little bit of a pullback"; the safer entry is the next bar whose body is closer to the EMA and still part of the second-entry-short failure.
+  - Failed breakout below a quintuple bottom, far from EMA, first breakout to the low side = "very safe setup... learn to trust these failed breakouts."
+  - Second entry short where the bullish signal bar closed below EMA: "you don't want to take this"; reversal pattern needs prices holding above the EMA. Second entry long below EMA in a small range with EMA in the middle of the bars: skip, "looking too congested."
+  - Short where "a lot of longs got trapped going long below EMA when the break and new high already happened": "worthwhile short even though it's not ideal."
+  - Perfect reversal pattern: "second entry short failure, big bullish reversal bar, off the trendline, off the EMA, hugging EMA nicely, two failed attempts in the previous direction which was the downtrend but the downtrend already played out, so it's safe to go long."
+  - After break and new high, expected failure of a second entry long did not come; "big bearish bar... this break is close enough to being an attempt to make a new high"; then sellers failed twice ("second entry short triggered and failed on this big bullish reversal bar above the EMA") -> new high.
+  - "Three massive bars lower, new low, first entry short, pullback, second entry short, quite far away from EMA but a strong move down; if this was just the first entry I wouldn't take this trade but since it is a second entry and a nice bearish bar it's worth taking."
+- STOP LOSS: 1 tick beyond signal bar implied ("you will get stopped out here"); limit order further back when the target would be at a nearby strong support.
+- TARGETS / EXITS / TRADE MANAGEMENT: scalps; "put your target profit at this support" when shorting toward a proven quadruple bottom; limit entry "further back" to make the scalp reachable; runners not discussed.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY: "We don't want to take losers that are unnecessary"; "hindsight is always 20/20"; "study the market every single day... patterns will repeat over and over again... get as much screen time as you can"; "you trade the market you get and not the market you want... I said okay this is what you guys want to do and I'm just going to follow you."
+- TRENDLINES & CHANNELS:
+  - Two-tier channel in the downtrend shown at the open; a two-tier channel up as the correction.
+  - Corrections get their own trendline; a correction still inside its channel vetoes the with-trend entry even at the main trendline.
+  - After the break: expect retest of the extreme; new low "just by one single tick" still counts; breaks that are "close enough" to an attempt at a new high are treated as new extremes.
+  - Measured legs: "first leg up, two-legged pullback, second leg up to the very tick... two legged pullbacks inside of two legged pullbacks."
+  - Spike and channel named when a very big bar is followed by a steep orderly move.
+  - "Draw these trendlines, you will have such an advantage over other traders it's ridiculous."
+- MARKET READING / CONTEXT:
+  - Who makes corrections: "mostly people taking their profits but also some people trying to pick bottoms."
+  - Big players' intent persists through corrections; the correction's break and new high can coexist with the bigger channel making a new low.
+  - EMA = key entry point serving as support/resistance; 21-bar; "sliced through the EMA like it's not even there" = strength.
+  - Trading range tells: triple/quadruple/quintuple bottom; range starts "straight off the bat" of the day.
+  - Prior-day 100-point downtrend used as the big-picture example; "works the same way on the smaller trendlines."
+- NUMBERS: "90% of breakouts of trading ranges will fail"; "almost 90% of the time" a reversal bar at the very high gets a pullback; new low "by one single tick"; "hundred point move" downtrend example; 21-bar EMA; quadruple/quintuple bottom (five bounces); three massive bars = strong move allowing a second entry short far from EMA.
+- QUOTES:
+  - "Do we sell blindly the trendline? No, it's a big no."
+  - "We either wait for prices to have a break and a new high, or we wait for a second entry, and if we get both that's ideal."
+  - "Give the sellers a little bit more breathing room and they're going to retest a new extreme after the bulls are trapped."
+  - "You trade the market you get and not the market you want."
+  - "Learn to trust these failed breakouts."
+- VISUAL TIMESTAMPS: [0:00]-[0:21] two-tier channel down; [2:06]-[3:07] correction trendlines and their break/new high before the main-trendline short; [5:41]-[6:34] measuring leg 1 and leg 2 "to the very tick", two-legged pullbacks inside two-legged pullbacks; [13:30]-[14:36] counting first and second entry long (two triggers) for the rule-3 failed second entry; [19:23]-[19:46] limit order further back with target at the quadruple bottom; [20:48]-[21:10] spike and channel drawn.
+
+---
+
+## vHaDDLX9lOc — Understanding MEASURED MOVES and Two-Legged Pullback In Price Action Trading (10:26)
+
+- Core claim: market geometry and price action are one thing; the market moves in twos, so measuring the first leg and projecting it from the end of the pullback predicts where the second leg (and a runner) is likely to go. Measured moves are a supporting tool, never a standalone signal. Includes the day's walkthrough with the two trades he took and the mistake of not drawing key levels.
+- ENTRIES:
+  - Two-legged pullback = second entry; "first entry long, second entry long, this is a two-legged move"; "there are two-legged moves inside of two-legged moves."
+  - After the opening downtrend's break and new low, correction up in a channel; overshoot -> break; two-legged move and new high "so this bullish correction is over, but at the same time this very downtrend was over, so price action right here was really consolidation and it was hard to read."
+  - His mistake: did not draw the double top / triple top and multiple bottoms as key levels, "relying solely on these trendlines... my cardinal sin today."
+  - New high, first entry long, second entry long trap "but look how far away you're from EMA... so far away from key entry point that market is most likely going to snap soon... not a high probability setup."
+  - Missed reversal: "I was hoping for market to give me a failed second entry short at the EMA, this would be brilliant, but it didn't happen... second entry short happened this far away from EMA at the very high of the move; the reversal pattern needs to be at the EMA, much closer, this is already way too late."
+  - Trade 1 taken: new high, first entry long, pullback, second entry long "if we measure the legs, this is the first leg working lower, a bullish bar is the correction, and the second measured leg down, two-legged move to the EMA"; signal bar was bearish and the bullish bar "way too big", so "I dropped my limit order exactly to the end of this bar, got filled, made the scalp, of course they came back and got the runner."
+  - Safer entry after an uncertain new high: second entry long after break and new low of the short-term downtrend.
+  - Trade 2 (missed by a gap): double top new high -> expect correction; first entry long, push through EMA, big bearish bars, second entry long closing below EMA, "EMA is rejecting the prices, not letting prices close above", bearish reversal bar; "I dropped my limit order, there is a gap, I didn't get filled, prices didn't even take one tick back."
+  - First entry short, push through EMA, second entry short closing above EMA: not taken live because key levels were not drawn; with the quadruple bottom and triple top drawn "it gives validity to this trade, two key entry points, failed break lower, support holding, second attempt support holding, big bullish bar pushing through the EMA." Preferred version: trendline drawn, first entry long, second entry long off the KEP.
+  - Breakout-pullback rule: "I normally don't mark breakout pullbacks because they are not reliable; only reason you want to mark a breakout pullback is when it is at a good key entry point and is the second entry": trendline + EMA + old resistance as support = valid; with only the level "it will be like 50/50 but with the key entry point together this can be 80 or 90% probability." Signal bar not ideal -> "I would definitely use the limit order here."
+- STOP LOSS: 1 tick beyond signal bar implied; big bullish bar as entry bar -> too much risk, so limit order at the far end of the bar instead.
+- TARGETS / EXITS / TRADE MANAGEMENT:
+  - Measured move for runners: "if you're holding a runner or some sort of swing position, where is the move most likely going to go: measure the first leg; the second leg wasn't quite measured" (projection from the end of the pullback). "Measured moves can be used to help you navigate the markets and where you should be keeping your runners."
+  - Scalp first; runner "unfortunately" taken out when price came back.
+  - Limit order at the end of a big entry bar to improve the fill; limit orders can miss when there is a gap.
+- RISK / MONEY MANAGEMENT / PSYCHOLOGY: "I only took two trades today." "Always draw the key levels, trading will become so much simpler"; "I got too comfortable." Rules "nine out of ten times are going to work."
+- TRENDLINES & CHANNELS: short-term trendlines drawn for each move; overshoot of the channel "most likely going to lead to a break"; break and new extreme -> correction or reversal; channel that "fits prices nicely"; trendline + EMA + level = three KEPs.
+- MARKET READING / CONTEXT:
+  - "Market loves to move in twos; there are two-legged moves on lower time frames as well."
+  - Measured move method: measure leg 1 (swing high to swing low), apply the same length from the end of the correction to project leg 2; works on nested scales (a two-legged move can be one leg of a bigger two-legged move).
+  - Shooting through the EMA after an uptrend's new high = "no bulls left"; EMA rejecting closes = sellers in control.
+  - Reversal pattern validity requires proximity to the EMA.
+  - Key levels (double/triple top, quadruple bottom) must be drawn, not only trendlines.
+- NUMBERS: two trades taken; "nine out of 10 times" rules work; breakout-pullback at a level alone "50/50", with KEP confluence "80 or 90%"; quadruple bottom and triple top; limit order "exactly to the end of this bar"; gap of less than one tick retrace ("didn't even take one tick back").
+- QUOTES:
+  - "Market geometry is a real thing, and together with price action they are interrelated."
+  - "Market loves to move in twos."
+  - "The reversal pattern needs to be at the EMA; this is already way too late."
+  - "I normally don't mark breakout pullbacks because they are not reliable."
+  - "It was my mistake, I got too comfortable; you always have to draw these."
+- LIVE TRADES (he took exactly two):
+  - Trade 1 (~5:18-6:02): short. New high, first entry long, pullback, second entry long at EMA; measured first leg down, correction, second measured leg projected; bearish bar, big bullish bar; limit order placed at the end of the big bar. Setup: failed second entry long / measured second leg down at EMA. KEP: EMA. Market: turning down after the uptrend's new high. Result: scalp taken, runner stopped when price came back.
+  - Trade 2 (~6:43-7:05): short attempted. Double top new high, first entry long, push through EMA, second entry long closing below EMA, bearish reversal bar; limit order not filled because of a gap. Setup: failed second entry long at EMA. Result: missed.
+  - Untaken valid trades: second entry short failure (reversal) with support/trendline/EMA confluence (~7:29-8:38) missed because key levels were not drawn; breakout-pullback second entry long at trendline + EMA + old resistance (~8:38-9:25).
+- VISUAL TIMESTAMPS: [1:09]-[1:30] measuring first leg and projecting second leg in the downtrend; [1:30]-[2:23] nested two-legged moves (bigger leg one / leg two); [3:35] channel overshoot leading to the break; [3:58]-[4:18] the undrawn double/triple top and multiple bottoms he should have marked; [5:37]-[6:02] measured legs down to the EMA and limit order at the end of the bar; [8:38]-[9:01] breakout-pullback with trendline, EMA and old resistance.

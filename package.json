@@ -1,0 +1,1 @@
+{"name":"mnq-quant","private":true,"version":"0.1.0","description":"MNQ strategy research: Databento data, backtest engines, day features, strategy library, journal","scripts":{"features":"node scripts/featdump.js","plan":"node scripts/plan.js","orb":"node scripts/orb26.js"},"devDependencies":{"playwright":"1.47.2"}}

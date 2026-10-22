@@ -1,0 +1,142 @@
+//@version=5
+strategy("MNQ ORB Retest V1", overlay=true, initial_capital=25000, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, margin_long=0, margin_short=0, max_bars_back=500)
+
+// ===== Inputs =====
+orMins    = input.int(15, "Opening range minutes", options=[5, 10, 15, 30])
+brkTF     = input.string("5m", "Breakout = candle close of", options=["5m", "15m"])
+entryMode = input.string("Bounce", "Entry on retest", options=["Bounce", "Limit"])
+stopMode  = input.string("Other side", "Stop at", options=["Other side", "Middle", "Retest"])
+cancelIn  = input.bool(true, "Cancel day if a candle closes back inside before entry")
+tgtR      = input.float(2.0, "Target (R multiple, 0 = none)")
+riskUSD   = input.float(500, "Risk per trade ($)")
+maxQty    = input.int(20, "Max contracts")
+lastEnt   = input.int(1300, "Last entry time (HHMM ET)")
+maxHold   = input.int(0, "Max minutes in trade (0 = no limit)", minval=0)
+tolTicks  = input.int(0, "Retest zone (ticks past edge)", minval=0)
+comm      = input.float(2.37, "Commission per contract per side (sizing)")
+
+tz    = "America/New_York"
+m     = hour(time, tz) * 60 + minute(time, tz)
+orS   = 9 * 60 + 30
+orE   = orS + orMins
+lastM = int(lastEnt / 100) * 60 + lastEnt % 100
+flatM = 15 * 60 + 55
+tick  = syminfo.mintick
+pv    = syminfo.pointvalue
+tol   = tolTicks * tick
+
+var float orHi = na
+var float orLo = na
+var int   dir = 0
+var bool  done = false
+var bool  inRt = false
+var float rtLow = na
+var float rtHigh = na
+var float sigLvl = na
+var int   tradesBefore = 0
+
+newDay = ta.change(dayofmonth(time, tz)) != 0
+if newDay
+    orHi := na
+    orLo := na
+    dir := 0
+    done := false
+    inRt := false
+    rtLow := na
+    rtHigh := na
+    sigLvl := na
+    tradesBefore := strategy.closedtrades + strategy.opentrades
+
+if m >= orS and m < orE
+    orHi := na(orHi) ? high : math.max(orHi, high)
+    orLo := na(orLo) ? low : math.min(orLo, low)
+
+// one trade per day: once a trade happened today, stop looking
+if strategy.closedtrades + strategy.opentrades > tradesBefore
+    done := true
+
+w = orHi - orLo
+mid = math.round(((orHi + orLo) / 2) / tick) * tick
+afterOR = m >= orE and not na(orHi)
+inWindow = afterOR and m + 5 <= lastM and m < flatM
+
+// breakout on a candle close outside the range
+span = brkTF == "15m" ? 15 : 5
+closesSpan = (minute(time, tz) + 5) % span == 0
+justBroke = false
+if inWindow and not done and dir == 0 and closesSpan
+    if close > orHi
+        dir := 1
+        justBroke := true
+    else if close < orLo
+        dir := -1
+        justBroke := true
+
+// fake-out: close back inside before entry cancels the day
+flat = strategy.position_size == 0
+if cancelIn and not done and dir != 0 and not justBroke and flat
+    touchLim = entryMode == "Limit" and (dir > 0 ? low <= orHi + tol : high >= orLo - tol)
+    if (dir > 0 ? close < orHi : close > orLo) and not touchLim
+        done := true
+
+stopFor(ext) =>
+    stopMode == "Other side" ? (dir > 0 ? orLo - tick : orHi + tick) : stopMode == "Middle" ? mid : (dir > 0 ? ext - tick : ext + tick)
+
+// retest tracking (bounce): latest candle trading into the edge zone
+if dir != 0 and not done and not justBroke and flat and entryMode == "Bounce"
+    touch = dir > 0 ? low <= orHi + tol : high >= orLo - tol
+    if touch
+        if not inRt
+            inRt := true
+            rtLow := low
+            rtHigh := high
+        else
+            rtLow := math.min(rtLow, low)
+            rtHigh := math.max(rtHigh, high)
+        sigLvl := dir > 0 ? high + tick : low - tick
+
+canOrder = dir != 0 and not done and flat and inWindow and not justBroke
+if canOrder and entryMode == "Bounce" and not na(sigLvl)
+    stp = stopFor(dir > 0 ? rtLow : rtHigh)
+    eP  = sigLvl + dir * tick
+    r   = math.abs(eP - stp)
+    q   = r > 0 ? math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm))) : 0
+    if q >= 1
+        if dir > 0
+            strategy.entry("L", strategy.long, qty=q, stop=sigLvl)
+            strategy.exit("XL", "L", stop=stp, limit=tgtR > 0 ? eP + tgtR * r : na)
+        else
+            strategy.entry("S", strategy.short, qty=q, stop=sigLvl)
+            strategy.exit("XS", "S", stop=stp, limit=tgtR > 0 ? eP - tgtR * r : na)
+if canOrder and entryMode == "Limit"
+    edge = dir > 0 ? orHi + tol : orLo - tol
+    stp0 = stopMode == "Retest" ? (dir > 0 ? orHi - math.max(8 * tick, 0.2 * w) : orLo + math.max(8 * tick, 0.2 * w)) : stopFor(0)
+    stp  = math.round(stp0 / tick) * tick
+    r    = math.abs(edge - stp)
+    q    = r > 0 ? math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm))) : 0
+    if q >= 1
+        if dir > 0
+            strategy.entry("L", strategy.long, qty=q, limit=edge)
+            strategy.exit("XL", "L", stop=stp, limit=tgtR > 0 ? edge + tgtR * r : na)
+        else
+            strategy.entry("S", strategy.short, qty=q, limit=edge)
+            strategy.exit("XS", "S", stop=stp, limit=tgtR > 0 ? edge - tgtR * r : na)
+if not canOrder or done
+    strategy.cancel("L")
+    strategy.cancel("S")
+
+// scalp mode: close after max minutes in trade
+if maxHold > 0 and strategy.position_size != 0
+    held = (bar_index - strategy.opentrades.entry_bar_index(0) + 1) * 5
+    if held >= maxHold
+        strategy.close_all(comment="Time", immediately=true)
+
+if m >= flatM and m < 16 * 60 + 30
+    strategy.close_all(comment="EOD", immediately=true)
+
+// ===== Visuals =====
+plot(afterOR and m < flatM ? orHi : na, "OR high", color=color.teal, style=plot.style_linebr)
+plot(afterOR and m < flatM ? orLo : na, "OR low", color=color.maroon, style=plot.style_linebr)
+bgcolor(m >= orS and m < orE ? color.new(color.blue, 90) : na)
+plotshape(justBroke and dir > 0, "Breakout up", shape.triangleup, location.belowbar, color.teal, size=size.tiny)
+plotshape(justBroke and dir < 0, "Breakout down", shape.triangledown, location.abovebar, color.maroon, size=size.tiny)

@@ -1,0 +1,88 @@
+//@version=5
+strategy("MNQ ORB V1 - NY Open", overlay=true, initial_capital=25000, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, margin_long=0, margin_short=0, max_bars_back=500)
+
+// Inputs
+orMins   = input.int(15, "Opening range minutes", options=[5, 10, 15, 30])
+lastEnt  = input.int(1130, "Last entry time (HHMM ET)")
+flatT    = input.int(1555, "Flatten time (HHMM ET)")
+riskUSD  = input.float(300, "Risk per trade ($)")
+maxQty   = input.int(20, "Max contracts")
+tgtR     = input.float(2.0, "Target (R multiple)")
+both     = input.bool(true, "Allow other side after first trade")
+comm     = input.float(2.37, "Commission per contract per side (for sizing)")
+
+tz   = "America/New_York"
+m    = hour(time, tz) * 60 + minute(time, tz)
+orS  = 9 * 60 + 30
+orE  = orS + orMins
+lastM = int(lastEnt / 100) * 60 + lastEnt % 100
+flatM = int(flatT / 100) * 60 + flatT % 100
+tick = syminfo.mintick
+pv   = syminfo.pointvalue
+
+var float orHi = na
+var float orLo = na
+var bool usedL = false
+var bool usedS = false
+var int prevClosed = 0
+var int trades = 0
+
+newDay = ta.change(dayofmonth(time, tz)) != 0
+if newDay
+    orHi := na
+    orLo := na
+    usedL := false
+    usedS := false
+    trades := 0
+
+if m >= orS and m < orE
+    orHi := na(orHi) ? high : math.max(orHi, high)
+    orLo := na(orLo) ? low : math.min(orLo, low)
+
+// mark sides used (catches same-bar entry+exit too)
+if strategy.position_size > 0
+    usedL := true
+if strategy.position_size < 0
+    usedS := true
+if strategy.closedtrades > prevClosed
+    for i = prevClosed to strategy.closedtrades - 1
+        if strategy.closedtrades.entry_id(i) == "L"
+            usedL := true
+        if strategy.closedtrades.entry_id(i) == "S"
+            usedS := true
+    trades += strategy.closedtrades - prevClosed
+    prevClosed := strategy.closedtrades
+
+// orders are placed at bar close and fill from the next bar (open time m+5)
+canPlace = m >= orE - 5 and m + 5 <= lastM and not na(orHi) and (both or trades == 0)
+flat = strategy.position_size == 0
+
+if flat and canPlace and not usedL
+    e  = orHi + tick
+    s  = orLo - tick
+    r  = e + tick - s
+    q  = math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm)))
+    if q >= 1
+        strategy.entry("L", strategy.long, qty=q, stop=e, oca_name="orb", oca_type=strategy.oca.cancel)
+        strategy.exit("XL", "L", stop=s, limit=e + tick + tgtR * r)
+else
+    strategy.cancel("L")
+
+if flat and canPlace and not usedS
+    e  = orLo - tick
+    s  = orHi + tick
+    r  = s - (e - tick)
+    q  = math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm)))
+    if q >= 1
+        strategy.entry("S", strategy.short, qty=q, stop=e, oca_name="orb", oca_type=strategy.oca.cancel)
+        strategy.exit("XS", "S", stop=s, limit=e - tick - tgtR * r)
+else
+    strategy.cancel("S")
+
+if m >= flatM and m < 16 * 60 + 30
+    strategy.close_all(comment="EOD", immediately=true)
+
+// visuals
+plot(m >= orE and m < flatM ? orHi : na, "OR high", color=color.teal, style=plot.style_linebr)
+plot(m >= orE and m < flatM ? orLo : na, "OR low", color=color.maroon, style=plot.style_linebr)
+bgcolor(m >= orS and m < orE ? color.new(color.blue, 90) : na)

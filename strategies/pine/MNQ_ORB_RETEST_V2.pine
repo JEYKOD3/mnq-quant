@@ -1,0 +1,132 @@
+//@version=5
+strategy("MNQ ORB Retest V2", overlay=true, initial_capital=25000, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, margin_long=0, margin_short=0, max_bars_back=500)
+
+// ===== Inputs =====
+orMins   = input.int(15, "Opening range minutes", options=[5, 10, 15, 30])
+brkTF    = input.string("5m", "Breakout = candle close of", options=["5m", "15m"])
+stopMode = input.string("Other side", "Stop at", options=["Other side", "Middle", "Structure", "Signal bar"])
+bufTicks = input.int(4, "Structure stop buffer (ticks)")
+minStopT = input.int(16, "Min stop (ticks)")
+tgtR     = input.float(2.0, "Target (R multiple)")
+riskUSD  = input.float(400, "Risk per trade ($)")
+maxQty   = input.int(20, "Max contracts")
+lastEnt  = input.int(1300, "Last entry time (HHMM ET)")
+maxTrades = input.int(6, "Max trades per day (safety cap)")
+dayLoss  = input.float(550, "Stop for the day at loss $ (0 = off)")
+dayTgt   = input.float(600, "Stop for the day at profit $ (0 = off)")
+sigFrac  = input.float(0.5, "Signal bar: close in top/bottom fraction")
+minBody  = input.float(0.3, "Signal bar: min body / range")
+comm     = input.float(2.37, "Commission per contract per side (sizing)")
+
+tz    = "America/New_York"
+m     = hour(time, tz) * 60 + minute(time, tz)
+orS   = 9 * 60 + 30
+orE   = orS + orMins
+lastM = int(lastEnt / 100) * 60 + lastEnt % 100
+flatM = 15 * 60 + 55
+tick  = syminfo.mintick
+pv    = syminfo.pointvalue
+
+var float orHi = na
+var float orLo = na
+var int   dir = 0
+var bool  sawRt = false
+var float rtExt = na
+var int   dayTrades = 0
+var float dayStart = 0.0
+
+newDay = ta.change(dayofmonth(time, tz)) != 0
+if newDay
+    orHi := na
+    orLo := na
+    dir := 0
+    sawRt := false
+    rtExt := na
+    dayTrades := 0
+    dayStart := strategy.netprofit
+
+if m >= orS and m < orE
+    orHi := na(orHi) ? high : math.max(orHi, high)
+    orLo := na(orLo) ? low : math.min(orLo, low)
+
+pos  = strategy.position_size
+prev = nz(pos[1])
+if pos != 0 and prev == 0
+    dayTrades += 1
+if pos == 0 and prev != 0
+    sawRt := false
+    rtExt := na
+dayPnl = strategy.netprofit - dayStart + strategy.openprofit
+
+afterOR = m >= orE and not na(orHi)
+rng   = high - low
+bull  = close > open and rng > 0 and (close - low) >= sigFrac * rng and math.abs(close - open) >= minBody * rng
+bear  = close < open and rng > 0 and (high - close) >= sigFrac * rng and math.abs(close - open) >= minBody * rng
+inside = close <= orHi and close >= orLo
+span   = brkTF == "15m" ? 15 : 5
+closesSpan = (minute(time, tz) + 5) % span == 0
+
+// breakout state: close outside arms that side; close back inside only disarms (no day cancel)
+if afterOR and closesSpan and close > orHi and dir != 1
+    dir := 1
+    sawRt := false
+    rtExt := na
+else if afterOR and closesSpan and close < orLo and dir != -1
+    dir := -1
+    sawRt := false
+    rtExt := na
+if afterOR and inside and dir != 0
+    dir := 0
+    sawRt := false
+    rtExt := na
+
+// retest tracking
+if dir == 1 and low <= orHi
+    sawRt := true
+    rtExt := na(rtExt) ? low : math.min(rtExt, low)
+if dir == -1 and high >= orLo
+    sawRt := true
+    rtExt := na(rtExt) ? high : math.max(rtExt, high)
+
+canTrade = afterOR and pos == 0 and m + 5 <= lastM and m < flatM and dayTrades < maxTrades and (dayLoss <= 0 or dayPnl > -dayLoss) and (dayTgt <= 0 or dayPnl < dayTgt)
+mid = math.round(((orHi + orLo) / 2) / tick) * tick
+
+stopFor(side) =>
+    stopMode == "Other side" ? (side > 0 ? orLo - tick : orHi + tick) : stopMode == "Middle" ? (side > 0 ? math.min(mid, rtExt) - tick : math.max(mid, rtExt) + tick) : stopMode == "Signal bar" ? (side > 0 ? low - tick : high + tick) : (side > 0 ? math.min(rtExt, orHi) - bufTicks * tick : math.max(rtExt, orLo) + bufTicks * tick)
+
+placedL = false
+placedS = false
+if canTrade and dir == 1 and sawRt and not inside and bull
+    e   = high + tick
+    stp = stopFor(1)
+    r   = math.max(e + tick - stp, minStopT * tick)
+    stp2 = e + tick - r
+    q   = math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm)))
+    if q >= 1
+        strategy.entry("L", strategy.long, qty=q, stop=e)
+        strategy.exit("XL", "L", stop=stp2, limit=e + tick + tgtR * r)
+        placedL := true
+if canTrade and dir == -1 and sawRt and not inside and bear
+    e   = low - tick
+    stp = stopFor(-1)
+    r   = math.max(stp - (e - tick), minStopT * tick)
+    stp2 = e - tick + r
+    q   = math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * comm)))
+    if q >= 1
+        strategy.entry("S", strategy.short, qty=q, stop=e)
+        strategy.exit("XS", "S", stop=stp2, limit=e - tick - tgtR * r)
+        placedS := true
+if not placedL
+    strategy.cancel("L")
+if not placedS
+    strategy.cancel("S")
+
+if m >= flatM and m < 16 * 60 + 30
+    strategy.close_all(comment="EOD", immediately=true)
+
+// ===== Visuals =====
+plot(afterOR and m < flatM ? orHi : na, "OR high", color=color.teal, style=plot.style_linebr)
+plot(afterOR and m < flatM ? orLo : na, "OR low", color=color.maroon, style=plot.style_linebr)
+bgcolor(m >= orS and m < orE ? color.new(color.blue, 90) : na)
+plotshape(placedL, "Long setup", shape.triangleup, location.belowbar, color.teal, size=size.tiny)
+plotshape(placedS, "Short setup", shape.triangledown, location.abovebar, color.maroon, size=size.tiny)

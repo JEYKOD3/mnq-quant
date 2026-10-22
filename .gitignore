@@ -1,0 +1,7 @@
+data/cache/
+data/raw/*.txt
+node_modules/
+__pycache__/
+*.pkl
+journal/*.db
+.env

@@ -1,0 +1,46 @@
+{====================================}
+{ MNQ ORB BREAK - 5 MINUTE CHART     }
+{ Opening range 9:30-9:45 ET         }
+{ Buy stop 1 tick above range high   }
+{ Sell stop 1 tick below range low   }
+{ Stop = other side, target = 2R     }
+{ Last entry 11:30 ET, flat 15:55 ET }
+{====================================}
+
+{===== PARAMETERS =====}
+{ LABEL_END: 1 if the first bar after the 9:30 open shows 09:35, 0 if it shows 09:30 }
+LABEL_END:=1;
+RISK_USD:=300;
+TGT_R:=2;
+MAX_QTY:=20;
+TK:=0.25;
+
+{===== OPENING RANGE (last OR bar = 9:40-9:45) =====}
+ORE:=IF(LABEL_END=1,945,940);
+LASTE:=IF(LABEL_END=1,1135,1130);
+ORH:=VALUEWHEN(TIME=ORE,HHV(H,3));
+ORL:=VALUEWHEN(TIME=ORE,LLV(L,3));
+N:=BARSLAST(TIME=ORE);
+WINDOW:=TIME>ORE AND TIME<=LASTE;
+
+{===== LEVELS =====}
+BUY_STOP:ORH+TK,COLOR25B77B;
+SELL_STOP:ORL-TK,COLORE79332;
+R_PTS:=BUY_STOP-SELL_STOP;
+LONG_TP:BUY_STOP+TGT_R*R_PTS,COLOR087A42;
+SHORT_TP:SELL_STOP-TGT_R*R_PTS,COLORC93636;
+QTY:MIN(MAX_QTY,FLOOR(RISK_USD/(R_PTS*2+4.74))),NODRAW;
+
+{===== FIRST TOUCH EACH SIDE =====}
+HIT_L:=WINDOW AND H>=BUY_STOP;
+HIT_S:=WINDOW AND L<=SELL_STOP;
+FIRST_L:=HIT_L AND COUNT(HIT_L,N)=1;
+FIRST_S:=HIT_S AND COUNT(HIT_S,N)=1;
+
+DRAWTEXT(FIRST_L AND QTY>=1,L-15,'ORB BUY'),COLOR25B77B;
+DRAWTEXT(FIRST_S AND QTY>=1,H+15,'ORB SELL'),COLORE79332;
+DRAWTEXT((FIRST_L OR FIRST_S) AND QTY<1,H+30,'SKIP: RANGE TOO WIDE'),COLORF2D365;
+
+{ Outputs for the data window }
+LONG_SIGNAL:IF(FIRST_L AND QTY>=1,1,0),NODRAW;
+SHORT_SIGNAL:IF(FIRST_S AND QTY>=1,1,0),NODRAW;

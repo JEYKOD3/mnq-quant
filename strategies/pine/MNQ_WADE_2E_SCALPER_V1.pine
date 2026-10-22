@@ -1,0 +1,215 @@
+//@version=5
+strategy("MNQ Wade 2E Scalper V1", overlay=true, initial_capital=25000, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, margin_long=0, margin_short=0, max_bars_back=1000)
+
+// ===== Inputs =====
+g1 = "Setup (Wade 2nd entry)"
+emaLen    = input.int(21, "EMA length (key entry point)", group=g1)
+slopeBars = input.int(3, "Trend: EMA must slope over N bars", group=g1)
+keyTolT   = input.int(8, "Key point: pullback must reach within N ticks of EMA", group=g1)
+sigFrac   = input.float(0.5, "Signal bar: close in top/bottom fraction", group=g1)
+minBody   = input.float(0.3, "Signal bar: min body / range", group=g1)
+allowFirst = input.bool(false, "Also take 1st entries (Wade: not reliable)", group=g1)
+congBars  = input.int(6, "Congestion: lookback bars", group=g1)
+congMult  = input.float(0.0, "Congestion: skip if range of last N bars < X * ATR (0 = off)", group=g1)
+
+g2 = "Trade management (scalp)"
+stopMode  = input.string("Signal bar", "Stop beyond", options=["Signal bar", "Pullback extreme"], group=g2)
+minStopT  = input.int(12, "Min stop (ticks)", group=g2)
+maxStopT  = input.int(100, "Skip if stop wider than (ticks)", group=g2)
+riskUSD   = input.float(200, "Risk per trade ($)", group=g2)
+maxQty    = input.int(20, "Max contracts", group=g2)
+tp1R      = input.float(1.0, "TP1 (R multiple)", group=g2)
+tp1Pct    = input.int(50, "TP1 closes this % of the position", group=g2)
+runR      = input.float(2.0, "Runner target (R multiple)", group=g2)
+beOn      = input.bool(true, "Move stop to breakeven after TP1", group=g2)
+maxHold   = input.int(30, "Max minutes in trade (0 = off)", group=g2)
+
+g3 = "Daily goals and risk"
+maxTrades = input.int(3, "Max setups traded per day", group=g3)
+dayTarget = input.float(600, "Stop for the day once profit reaches $ (0 = off)", group=g3)
+dayLoss   = input.float(550, "Stop for the day once loss reaches $ (0 = off)", group=g3)
+maxConsec = input.int(2, "Stop after N losing trades in a row (0 = off)", group=g3)
+
+g4 = "Session (ET)"
+sessStart = input.int(930, "First entry (HHMM)", group=g4)
+sessEnd   = input.int(1530, "Last entry (HHMM)", group=g4)
+flatT     = input.int(1555, "Flatten all (HHMM)", group=g4)
+
+// ===== Basics =====
+tz    = "America/New_York"
+m     = hour(time, tz) * 60 + minute(time, tz)
+toM(x) => int(x / 100) * 60 + x % 100
+tick  = syminfo.mintick
+pv    = syminfo.pointvalue
+tfMin = timeframe.in_seconds() / 60
+ema   = ta.ema(close, emaLen)
+atr   = ta.atr(14)
+rng   = high - low
+biasUp = close > ema and ema > ema[slopeBars]
+biasDn = close < ema and ema < ema[slopeBars]
+cong   = congMult > 0 and (ta.highest(high, congBars) - ta.lowest(low, congBars)) < congMult * atr
+nextBarM = m + tfMin
+inSess = nextBarM >= toM(sessStart) and nextBarM <= toM(sessEnd)
+
+// ===== Leg counting (Wade): count from the extreme, 1 tick break of the prior bar = entry =====
+// Longs: pullback after a new high. H event = a bar trades above the prior bar's high.
+var float hh = na
+var int   hCnt = 0
+var bool  pbDn = false
+var bool  leg2Dn = false
+var float pbLow = na
+newHH = na(hh) or high > hh
+if newHH
+    hh := high
+    hCnt := 0
+    pbDn := false
+    leg2Dn := false
+    pbLow := low
+else
+    pbLow := math.min(pbLow, low)
+    if not pbDn and (high < high[1] or low < low[1])
+        pbDn := true
+    if pbDn and high > high[1]
+        hCnt += 1
+        leg2Dn := false
+    if pbDn and hCnt >= 1 and low < low[1]
+        leg2Dn := true
+
+// Shorts: pullback after a new low. L event = a bar trades below the prior bar's low.
+var float ll = na
+var int   lCnt = 0
+var bool  pbUp = false
+var bool  leg2Up = false
+var float pbHigh = na
+newLL = na(ll) or low < ll
+if newLL
+    ll := low
+    lCnt := 0
+    pbUp := false
+    leg2Up := false
+    pbHigh := high
+else
+    pbHigh := math.max(pbHigh, high)
+    if not pbUp and (low > low[1] or high > high[1])
+        pbUp := true
+    if pbUp and low < low[1]
+        lCnt += 1
+        leg2Up := false
+    if pbUp and lCnt >= 1 and high > high[1]
+        leg2Up := true
+
+// Signal bars
+bullSig = close > open and rng > 0 and (close - low) >= sigFrac * rng and math.abs(close - open) >= minBody * rng
+bearSig = close < open and rng > 0 and (high - close) >= sigFrac * rng and math.abs(close - open) >= minBody * rng
+keyLong  = pbLow <= ema + keyTolT * tick
+keyShort = pbHigh >= ema - keyTolT * tick
+
+// Setup on this bar's close -> stop order for the next bar
+// 2nd entry long: one H already happened, a 2nd down leg is in progress, this bar is the bullish signal bar
+setLong  = biasUp and not newHH and pbDn and keyLong and bullSig and not cong and ((hCnt == 1 and leg2Dn) or (allowFirst and hCnt == 0))
+setShort = biasDn and not newLL and pbUp and keyShort and bearSig and not cong and ((lCnt == 1 and leg2Up) or (allowFirst and lCnt == 0))
+
+// ===== Daily state =====
+var float dayStartNet = 0.0
+var int   dayTrades = 0
+var int   consecL = 0
+var float netAtEntry = 0.0
+var float tRisk = na
+var float tStop = na
+var float tEntry = na
+var float pRisk = na
+var float pStop = na
+var int   entryBar = na
+newDay = ta.change(dayofmonth(time, tz)) != 0
+if newDay
+    dayStartNet := strategy.netprofit
+    dayTrades := 0
+    consecL := 0
+
+pos  = strategy.position_size
+prev = nz(pos[1])
+// new trade filled
+if pos != 0 and prev == 0
+    dayTrades += 1
+    netAtEntry := strategy.netprofit
+    tEntry := strategy.opentrades.entry_price(0)
+    tRisk := pRisk
+    tStop := pStop
+    entryBar := bar_index
+// trade fully closed
+if pos == 0 and prev != 0
+    if strategy.netprofit - netAtEntry < 0
+        consecL += 1
+    else
+        consecL := 0
+
+dayPnl = strategy.netprofit - dayStartNet + strategy.openprofit
+canTrade = inSess and pos == 0 and dayTrades < maxTrades and (dayTarget <= 0 or dayPnl < dayTarget) and (dayLoss <= 0 or dayPnl > -dayLoss) and (maxConsec <= 0 or consecL < maxConsec)
+
+// ===== Orders =====
+f_qty(r) => r > 0 ? math.min(maxQty, math.floor(riskUSD / (r * pv + 2 * 2.37))) : 0
+
+placedL = false
+placedS = false
+if canTrade and setLong
+    e   = high + tick
+    sx  = stopMode == "Signal bar" ? low - tick : pbLow - tick
+    r   = math.max(e + tick - sx, minStopT * tick)
+    sx2 = e + tick - r
+    q   = f_qty(r)
+    if q >= 1 and r <= maxStopT * tick
+        pRisk := r
+        pStop := sx2
+        strategy.entry("L", strategy.long, qty=q, stop=e)
+        placedL := true
+if canTrade and setShort
+    e   = low - tick
+    sx  = stopMode == "Signal bar" ? high + tick : pbHigh + tick
+    r   = math.max(sx - (e - tick), minStopT * tick)
+    sx2 = e - tick + r
+    q   = f_qty(r)
+    if q >= 1 and r <= maxStopT * tick
+        pRisk := r
+        pStop := sx2
+        strategy.entry("S", strategy.short, qty=q, stop=e)
+        placedS := true
+if not placedL
+    strategy.cancel("L")
+if not placedS
+    strategy.cancel("S")
+
+// exits for the pending order (attach to the entry so they work on the fill bar)
+if placedL
+    strategy.exit("L-TP1", "L", qty_percent=tp1Pct, stop=pStop, limit=high + 2 * tick + tp1R * pRisk)
+    strategy.exit("L-RUN", "L", stop=pStop, limit=high + 2 * tick + runR * pRisk)
+if placedS
+    strategy.exit("S-TP1", "S", qty_percent=tp1Pct, stop=pStop, limit=low - 2 * tick - tp1R * pRisk)
+    strategy.exit("S-RUN", "S", stop=pStop, limit=low - 2 * tick - runR * pRisk)
+
+// in a trade: breakeven after TP1, time stop, end of day
+if pos > 0 and not na(tEntry)
+    var bool beL = false
+    if pos != prev and prev == 0
+        beL := false
+    if pos < prev and prev > 0
+        beL := true
+    newStop = beOn and beL ? math.max(tStop, tEntry) : tStop
+    strategy.exit("L-RUN", "L", stop=newStop, limit=tEntry + runR * tRisk)
+if pos < 0 and not na(tEntry)
+    var bool beS = false
+    if pos != prev and prev == 0
+        beS := false
+    if pos > prev and prev < 0
+        beS := true
+    newStopS = beOn and beS ? math.min(tStop, tEntry) : tStop
+    strategy.exit("S-RUN", "S", stop=newStopS, limit=tEntry - runR * tRisk)
+
+if maxHold > 0 and pos != 0 and not na(entryBar) and (bar_index - entryBar + 1) * tfMin >= maxHold
+    strategy.close_all(comment="Time", immediately=true)
+if m >= toM(flatT) and m < 16 * 60 + 30
+    strategy.close_all(comment="EOD", immediately=true)
+
+// ===== Visuals =====
+plot(ema, "EMA 21", color=color.new(color.orange, 0), linewidth=2)
+plotshape(setLong and biasUp, "2EL signal", shape.triangleup, location.belowbar, color.teal, size=size.tiny, text="2EL")
+plotshape(setShort and biasDn, "2ES signal", shape.triangledown, location.abovebar, color.maroon, size=size.tiny, text="2ES")

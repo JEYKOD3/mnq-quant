@@ -1,0 +1,479 @@
+//@version=6
+strategy("MNQSCALP V7.2 - Price Action", overlay=true, initial_capital=50000, default_qty_type=strategy.fixed, default_qty_value=2, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, margin_long=5, margin_short=5, max_labels_count=500, max_lines_count=500, process_orders_on_close=false)
+
+// ================= INPUTS =================
+g1 = "Risk + management"
+contracts    = input.int(2, "Contracts", minval=1, group=g1)
+maxRiskUSD   = input.float(150.0, "Max risk per trade $ (skip if wider)", group=g1)
+minRiskTicks = input.int(8, "Min stop distance (ticks)", group=g1)
+tp1R         = input.float(1.0, "TP1 = R multiple (1 = 1:1)", group=g1)
+runnerR      = input.float(3.0, "Runner max target (R)", group=g1)
+useKeyTgt    = input.bool(true, "Runner targets next key level", group=g1)
+lowVolMode   = input.bool(true, "Low volatility: all contracts at TP1", group=g1)
+lowVolRatio  = input.float(0.8, "Low vol if ATR / ATR(100) below", group=g1)
+maxHoldB     = input.int(36, "Max hold (bars) 36 = 3h", group=g1)
+tp1TimeoutB  = input.int(99, "Exit if TP1 not hit after N bars (6 = 30 min)", group=g1)
+beOffTicks   = input.int(4, "Breakeven offset after TP1 (ticks, covers fees)", group=g1)
+deepLimit    = input.bool(false, "Big signal bar: limit entry at bar midpoint", group=g1)
+stopMode     = input.string("Signal bar", "Stop placement", options=["Signal bar", "Pullback swing"], group=g1)
+trailRunner  = input.bool(true, "Trail runner behind swings after TP1", group=g1)
+skipLondon   = input.bool(true, "No new trades 04:00-09:30 ET (London)", group=g1)
+maxTrades    = input.int(6, "Max trades per session", group=g1)
+dailyLossUSD = input.float(600.0, "Daily loss stop $", group=g1)
+sizeDown     = input.bool(true, "Big stop: trade fewer contracts instead of skipping", group=g1)
+stopBufATR   = input.float(0.0, "Extra stop buffer (x ATR)", group=g1)
+maxConsecL   = input.int(0, "Stop session after N losses in a row (0 = off)", group=g1)
+dayProfitUSD = input.float(0.0, "Stop session after profit $ (0 = off)", group=g1)
+
+g2 = "Setups"
+allowLong  = input.bool(true, "Longs", group=g2)
+allowShort = input.bool(true, "Shorts", group=g2)
+useSE      = input.bool(true, "Second entry (H2/L2) at EMA", group=g2)
+useLHHL    = input.bool(true, "Lower high / higher low after break", group=g2)
+useBP      = input.bool(true, "Breakout pullback", group=g2)
+useDT      = input.bool(true, "Double top (short)", group=g2)
+useDB      = input.bool(true, "Double bottom (long)", group=g2)
+hlStrict   = input.bool(false, "HL/LH: pullback must reach EMA + EMA sloping with trade", group=g2)
+useSW      = input.bool(false, "Liquidity sweep reversal", group=g2)
+
+g3 = "Context filters"
+emaLen    = input.int(21, "EMA length", group=g3)
+useVwapF  = input.bool(true, "VWAP filter: longs above, shorts below", group=g3)
+useHTF    = input.bool(false, "Higher timeframe trend filter", group=g3)
+htfTf     = input.timeframe("15", "Higher timeframe", group=g3)
+sigBeyond = input.bool(true, "Signal bar must close beyond prior bar close", group=g3)
+volConf   = input.bool(false, "Signal bar volume >= N x avg", group=g3)
+volMult   = input.float(1.0, "Volume multiple", group=g3)
+dtTol     = input.float(0.25, "Double top/bottom tolerance (x ATR)", group=g3)
+pivLen    = input.int(2, "Swing strength (bars each side)", group=g3)
+trendBars = input.int(20, "Trend lookback (bars)", group=g3)
+chopBars  = input.int(10, "Chop lookback", group=g3)
+chopMax   = input.int(6, "Chop if EMA inside >= N bars", group=g3)
+maxPushes = input.int(3, "Trend played out after N pushes", group=g3)
+emaTol    = input.float(0.3, "EMA touch tolerance (x ATR)", group=g3)
+sigFrac   = input.float(0.6, "Signal bar close in top/bottom fraction", group=g3)
+roomR     = input.float(1.0, "Min room to key level (R)", group=g3)
+wickMult  = input.float(2.0, "Long wick = wick >= N x body", group=g3)
+sweepBlock = input.int(0, "Block opposite side N bars after liquidity sweep", group=g3)
+showStats = input.bool(true, "Show stats table", group=g3)
+statsView = input.string("Setups", "Stats view", options=["Setups", "Hours", "Losers"], group=g3)
+primeOnly = input.bool(false, "Prime window only (NY 09:30-11:30 + Asia 18:00-20:00)", group=g1)
+
+tz   = "America/New_York"
+tick = syminfo.mintick
+pv   = syminfo.pointvalue
+
+// ================= HELPERS =================
+nearestAbove(float px, float a, float b, float c, float d, float e) =>
+    float r = na
+    if not na(d) and d > px and (na(r) or d < r)
+        r := d
+    if not na(e) and e > px and (na(r) or e < r)
+        r := e
+    if not na(a) and a > px and (na(r) or a < r)
+        r := a
+    if not na(b) and b > px and (na(r) or b < r)
+        r := b
+    if not na(c) and c > px and (na(r) or c < r)
+        r := c
+    r
+
+nearestBelow(float px, float a, float b, float c, float d, float e) =>
+    float r = na
+    if not na(d) and d < px and (na(r) or d > r)
+        r := d
+    if not na(e) and e < px and (na(r) or e > r)
+        r := e
+    if not na(a) and a < px and (na(r) or a > r)
+        r := a
+    if not na(b) and b < px and (na(r) or b > r)
+        r := b
+    if not na(c) and c < px and (na(r) or c > r)
+        r := c
+    r
+
+sessName(int t) =>
+    hm = hour(t, tz) * 100 + minute(t, tz)
+    hm >= 930 and hm < 1640 ? "NY" : hm >= 300 and hm < 930 ? "LDN" : "ASIA"
+
+cntSince(bool cond, bool evt) =>
+    var int n = 0
+    if evt
+        n := 0
+    else
+        n += cond ? 1 : 0
+    n
+
+// ================= CORE SERIES =================
+ema   = ta.ema(close, emaLen)
+atr   = ta.atr(14)
+atrL  = ta.sma(atr, 100)
+rng   = high - low
+emaUp = ema > ema[3]
+emaDn = ema < ema[3]
+aboveCnt = math.sum(close > ema ? 1 : 0, trendBars)
+emaInside = low <= ema and high >= ema
+chopCnt = math.sum(emaInside ? 1 : 0, chopBars)
+chop = chopCnt >= chopMax
+vwapV = ta.vwap(hlc3)
+// HTF: last CLOSED higher-timeframe bar vs its EMA (no repaint)
+[htfC, htfE, htfE3] = request.security(syminfo.tickerid, htfTf, [close[1], ta.ema(close, emaLen)[1], ta.ema(close, emaLen)[4]], lookahead=barmerge.lookahead_on)
+htfUp = htfC > htfE and htfE > htfE3
+htfDn = htfC < htfE and htfE < htfE3
+avgVol = ta.sma(volume, 20)
+volOk = not volConf or volume >= avgVol * volMult
+hh40 = ta.highest(high, 20)
+ll40 = ta.lowest(low, 20)
+
+// ================= SWINGS + STRUCTURE =================
+ph = ta.pivothigh(high, pivLen, pivLen)
+pl = ta.pivotlow(low, pivLen, pivLen)
+var float sh1 = na
+var float sh2 = na
+var float sl1 = na
+var float sl2 = na
+var int upPushes = 0
+var int dnPushes = 0
+if not na(ph)
+    sh2 := sh1
+    sh1 := ph
+    upPushes := not na(sh2) and sh1 > sh2 ? upPushes + 1 : 0
+if not na(pl)
+    sl2 := sl1
+    sl1 := pl
+    dnPushes := not na(sl2) and sl1 < sl2 ? dnPushes + 1 : 0
+
+upStruct = sh1 > sh2 and sl1 > sl2
+dnStruct = sh1 < sh2 and sl1 < sl2
+playedOutUp = upPushes >= maxPushes
+playedOutDn = dnPushes >= maxPushes
+
+longTrend  = emaUp and aboveCnt >= math.round(trendBars * 0.5) and not chop
+shortTrend = emaDn and aboveCnt <= math.round(trendBars * 0.5) and not chop
+
+// ================= SIGNAL BARS =================
+insideBar = high <= high[1] and low >= low[1]
+bullSig = (not sigBeyond or close > close[1]) and close > open and rng > 0 and (close - low) >= rng * sigFrac and rng >= atr * 0.4 and not insideBar
+bearSig = (not sigBeyond or close < close[1]) and close < open and rng > 0 and (high - close) >= rng * sigFrac and rng >= atr * 0.4 and not insideBar
+
+// ================= WICKS, REJECTION ZONES, LIQUIDITY SWEEPS =================
+body = math.abs(close - open)
+upWick = high - math.max(open, close)
+dnWick = math.min(open, close) - low
+longUpWick = rng >= atr and upWick >= wickMult * body and upWick >= rng * 0.5
+longDnWick = rng >= atr and dnWick >= wickMult * body and dnWick >= rng * 0.5
+var float wickRes = na
+var float wickSup = na
+if longUpWick
+    wickRes := high
+if longDnWick
+    wickSup := low
+if not na(wickRes) and close > wickRes
+    wickRes := na
+if not na(wickSup) and close < wickSup
+    wickSup := na
+// sweep: wick takes out last swing then closes back inside = stops run, reversal risk
+sweepLows  = low < sl1 and close > sl1 and dnWick >= rng * 0.4
+sweepHighs = high > sh1 and close < sh1 and upWick >= rng * 0.4
+bsSweepLows  = ta.barssince(sweepLows)
+bsSweepHighs = ta.barssince(sweepHighs)
+noShortSweep = na(bsSweepLows) or bsSweepLows > sweepBlock
+noLongSweep  = na(bsSweepHighs) or bsSweepHighs > sweepBlock
+
+// ================= LEG COUNTING (H1/H2, L1/L2) =================
+var int hCount = 0
+var bool hArm = false
+var float pbLow = na
+if high >= hh40
+    hCount := 0
+    hArm := false
+    pbLow := low
+else
+    pbLow := math.min(nz(pbLow, low), low)
+    if high < high[1]
+        hArm := true
+    if high > high[1] and hArm
+        hCount += 1
+        hArm := false
+
+var int lCount = 0
+var bool lArm = false
+var float pbHigh = na
+if low <= ll40
+    lCount := 0
+    lArm := false
+    pbHigh := high
+else
+    pbHigh := math.max(nz(pbHigh, high), high)
+    if low > low[1]
+        lArm := true
+    if low < low[1] and lArm
+        lCount += 1
+        lArm := false
+
+// ================= SETUPS =================
+// 1. Second entry at EMA (H2 long / L2 short): with-trend, pullback reached EMA, one failed attempt already
+seLong  = useSE and longTrend and not playedOutUp and hCount >= 1 and hCount <= 2 and hArm and pbLow <= ema + emaTol * atr and close > ema - emaTol * atr and bullSig
+seShort = useSE and shortTrend and not playedOutDn and lCount >= 1 and lCount <= 2 and lArm and pbHigh >= ema - emaTol * atr and close < ema + emaTol * atr and bearSig
+
+// 2. Lower high below EMA after break of structure (short) / higher low above EMA (long)
+brokeDn = ta.crossunder(close, sl1[1])
+brokeUp = ta.crossover(close, sh1[1])
+bsDn = ta.barssince(brokeDn)
+bsUp = ta.barssince(brokeUp)
+upsSinceDn = cntSince(high > high[1], brokeDn)
+dnsSinceUp = cntSince(low < low[1], brokeUp)
+lhShort = useLHHL and bsDn >= 2 and bsDn <= 15 and upsSinceDn >= 1 and high < ema + emaTol * atr and close < ema and high < sh1 and bearSig and not upStruct and (not hlStrict or (emaDn and pbHigh >= ema - emaTol * atr))
+hlLong  = useLHHL and bsUp >= 2 and bsUp <= 15 and dnsSinceUp >= 1 and low > ema - emaTol * atr and close > ema and low > sl1 and bullSig and not dnStruct and (not hlStrict or (emaUp and pbLow <= ema + emaTol * atr))
+
+// 3. Breakout pullback: broken swing level retested from the other side
+bpLvlUp = ta.valuewhen(brokeUp, sh1[1], 0)
+bpLvlDn = ta.valuewhen(brokeDn, sl1[1], 0)
+bpLong  = useBP and bsUp >= 2 and bsUp <= 10 and dnsSinceUp >= 1 and low <= bpLvlUp + emaTol * atr and close > bpLvlUp and close > ema and bullSig
+bpShort = useBP and bsDn >= 2 and bsDn <= 10 and upsSinceDn >= 1 and high >= bpLvlDn - emaTol * atr and close < bpLvlDn and close < ema and bearSig
+
+// 4. Double bottom / double top: two swings at the same level, strong signal bar off it
+dbLong  = useDB and not na(sl2) and math.abs(sl1 - sl2) <= dtTol * atr and low <= sl1 + 0.3 * atr and close > sl1 and bullSig
+dtShort = useDT and not na(sh2) and math.abs(sh1 - sh2) <= dtTol * atr and high >= sh1 - 0.3 * atr and close < sh1 and bearSig
+
+// 5. Liquidity sweep reversal: wick runs the swing, closes back strong (stops taken, reversal)
+swLong  = useSW and sweepLows and close > open and (close - low) >= rng * sigFrac
+swShort = useSW and sweepHighs and close < open and (high - close) >= rng * sigFrac
+
+vwapLongOk  = (not useVwapF or close > vwapV) and (not useHTF or not htfDn)
+vwapShortOk = (not useVwapF or close < vwapV) and (not useHTF or not htfUp)
+
+longSetup  = allowLong and noLongSweep and volOk and vwapLongOk and (seLong or dbLong or swLong or hlLong or bpLong)
+shortSetup = allowShort and noShortSweep and volOk and vwapShortOk and (seShort or dtShort or swShort or lhShort or bpShort)
+longName   = seLong ? "H2" : dbLong ? "DB" : swLong ? "SW L" : hlLong ? "HL" : "BP L"
+shortName  = seShort ? "L2" : dtShort ? "DT" : swShort ? "SW S" : lhShort ? "LH" : "BP S"
+
+// ================= SESSION + KEY LEVELS =================
+tB = hour(time_close, tz) * 100 + minute(time_close, tz)
+sessDay = dayofmonth(time + 6 * 3600000, tz)
+newSess = sessDay != sessDay[1]
+var float sHigh = na
+var float sLow = na
+var float pdh = na
+var float pdl = na
+var float sessStartNet = 0.0
+var int tradesToday = 0
+var int consecL = 0
+if newSess
+    consecL := 0
+    pdh := sHigh
+    pdl := sLow
+    sHigh := high
+    sLow := low
+    sessStartNet := strategy.netprofit
+    tradesToday := 0
+else
+    sHigh := math.max(nz(sHigh, high), high)
+    sLow := math.min(nz(sLow, low), low)
+
+flatWindow = tB >= 1640 and tB < 1800
+noNewWindow = (tB >= 1630 and tB < 1800) or (tB >= 0 and tB < 400) or (skipLondon and tB >= 400 and tB < 930) or (primeOnly and not ((tB >= 930 and tB < 1130) or (tB >= 1800 and tB < 2000)))
+sessPnl = strategy.netprofit + strategy.openprofit - sessStartNet
+lossHit = sessPnl <= -dailyLossUSD or (maxConsecL > 0 and consecL >= maxConsecL) or (dayProfitUSD > 0 and sessPnl >= dayProfitUSD)
+
+// ================= POSITION STATE =================
+inPos = strategy.position_size != 0
+opened = inPos and not inPos[1]
+var bool pend = false
+var int pendBar = na
+var string pendId = ""
+var float pStop = na
+var float pTgt = na
+var bool pLowVol = false
+var int pQty = 0
+var int posQ = 0
+var float posStop = na
+var float posTgt = na
+var bool posLowVol = false
+var string posId = ""
+
+var float netAtOpen = 0.0
+if not inPos and inPos[1]
+    consecL := strategy.netprofit - netAtOpen < 0 ? consecL + 1 : 0
+if opened
+    netAtOpen := strategy.netprofit[1]
+    posStop := pStop
+    posTgt := pTgt
+    posLowVol := pLowVol
+    posQ := pQty
+    posId := pendId
+    pend := false
+    tradesToday += 1
+
+if pend and not inPos and bar_index > pendBar
+    strategy.cancel(pendId)
+    strategy.cancel("TP1")
+    strategy.cancel("RUN")
+    pend := false
+
+// ================= ENTRY =================
+lowVol = lowVolMode and atr / atrL < lowVolRatio
+canTrade = not inPos and not pend and not noNewWindow and not lossHit and tradesToday < maxTrades
+
+if canTrade and longSetup
+    ePx = high + tick
+    sPx = (stopMode == "Pullback swing" ? math.min(low, nz(pbLow, low)) - tick : low - tick) - stopBufATR * atr
+    useLmt = false
+    if deepLimit and (ePx - sPx) * pv * contracts > maxRiskUSD
+        ePx := math.round_to_mintick((high + low) / 2)
+        useLmt := true
+    risk = math.max(ePx - sPx, minRiskTicks * tick)
+    sPx := ePx - risk
+    keyUp = nearestAbove(ePx, sh1, sHigh, pdh, wickRes, na)
+    roomOk = na(keyUp) or keyUp - ePx >= roomR * risk
+    qty = sizeDown ? math.min(contracts, int(math.floor(maxRiskUSD / (risk * pv)))) : (risk * pv * contracts <= maxRiskUSD ? contracts : 0)
+    riskOk = qty >= 1
+    if roomOk and riskOk
+        tp1 = ePx + tp1R * risk
+        tgtMax = ePx + runnerR * risk
+        keyBeyond = nearestAbove(tp1, sh1, sHigh, pdh, wickRes, na)
+        tgt = useKeyTgt and not na(keyBeyond) ? math.min(keyBeyond - tick, tgtMax) : tgtMax
+        q1 = lowVol or qty == 1 ? qty : 1
+        id = longName
+        if useLmt
+            strategy.entry(id, strategy.long, qty=qty, limit=ePx, comment=id + " lmt" + (lowVol ? " lv" : ""))
+        else
+            strategy.entry(id, strategy.long, qty=qty, stop=ePx, comment=id + (lowVol ? " lv" : ""))
+        strategy.exit("TP1", id, qty=q1, limit=tp1, stop=sPx, comment_profit="TP1", comment_loss="SL")
+        if qty - q1 > 0
+            strategy.exit("RUN", id, qty=qty - q1, limit=tgt, stop=sPx, comment_profit="RUN TGT", comment_loss="SL")
+        pend := true
+        pendBar := bar_index
+        pendId := id
+        pStop := sPx
+        pTgt := tgt
+        pLowVol := lowVol
+        pQty := qty
+
+if canTrade and not pend and shortSetup
+    ePx = low - tick
+    sPx = (stopMode == "Pullback swing" ? math.max(high, nz(pbHigh, high)) + tick : high + tick) + stopBufATR * atr
+    useLmt = false
+    if deepLimit and (sPx - ePx) * pv * contracts > maxRiskUSD
+        ePx := math.round_to_mintick((high + low) / 2)
+        useLmt := true
+    risk = math.max(sPx - ePx, minRiskTicks * tick)
+    sPx := ePx + risk
+    keyDn = nearestBelow(ePx, sl1, sLow, pdl, wickSup, na)
+    roomOk = na(keyDn) or ePx - keyDn >= roomR * risk
+    qty = sizeDown ? math.min(contracts, int(math.floor(maxRiskUSD / (risk * pv)))) : (risk * pv * contracts <= maxRiskUSD ? contracts : 0)
+    riskOk = qty >= 1
+    if roomOk and riskOk
+        tp1 = ePx - tp1R * risk
+        tgtMax = ePx - runnerR * risk
+        keyBeyond = nearestBelow(tp1, sl1, sLow, pdl, wickSup, na)
+        tgt = useKeyTgt and not na(keyBeyond) ? math.max(keyBeyond + tick, tgtMax) : tgtMax
+        q1 = lowVol or qty == 1 ? qty : 1
+        id = shortName
+        if useLmt
+            strategy.entry(id, strategy.short, qty=qty, limit=ePx, comment=id + " lmt" + (lowVol ? " lv" : ""))
+        else
+            strategy.entry(id, strategy.short, qty=qty, stop=ePx, comment=id + (lowVol ? " lv" : ""))
+        strategy.exit("TP1", id, qty=q1, limit=tp1, stop=sPx, comment_profit="TP1", comment_loss="SL")
+        if qty - q1 > 0
+            strategy.exit("RUN", id, qty=qty - q1, limit=tgt, stop=sPx, comment_profit="RUN TGT", comment_loss="SL")
+        pend := true
+        pendBar := bar_index
+        pendId := id
+        pStop := sPx
+        pTgt := tgt
+        pLowVol := lowVol
+        pQty := qty
+
+// ================= MANAGEMENT: TP1 -> breakeven runner =================
+posQty = math.abs(strategy.position_size)
+entryPx = strategy.position_avg_price
+tp1Done = inPos and not posLowVol and posQ > 1 and posQty < posQ
+barsIn = inPos ? bar_index - strategy.opentrades.entry_bar_index(0) : 0
+
+beStop = strategy.position_size > 0 ? entryPx + beOffTicks * tick : entryPx - beOffTicks * tick
+trailStop = strategy.position_size > 0 ? math.max(beStop, nz(sl1, beStop) - tick) : math.min(beStop, nz(sh1, beStop) + tick)
+runStop = trailRunner ? trailStop : beStop
+if inPos and tp1Done
+    strategy.exit("RUN", posId, qty=posQty, limit=posTgt, stop=runStop, comment_profit="RUN TGT", comment_loss=runStop == beStop ? "BE+" : "TRAIL")
+if inPos and not tp1Done and barsIn >= tp1TimeoutB
+    strategy.close_all(comment="TP1 timeout")
+if inPos and barsIn >= maxHoldB
+    strategy.close_all(comment="Max hold")
+if inPos and flatWindow
+    strategy.close_all(comment="Session flat")
+
+// ================= STATS TABLE =================
+var map<string, float> mPnl = map.new<string, float>()
+var map<string, int> mCnt = map.new<string, int>()
+var map<string, int> mWin = map.new<string, int>()
+var int seen = 0
+if strategy.closedtrades > seen
+    for i = seen to strategy.closedtrades - 1
+        p = strategy.closedtrades.profit(i)
+        et = strategy.closedtrades.entry_time(i)
+        hET = hour(et, tz)
+        dur = strategy.closedtrades.exit_bar_index(i) - strategy.closedtrades.entry_bar_index(i)
+        sid = strategy.closedtrades.entry_id(i)
+        keys = array.new<string>()
+        keys.push("ALL")
+        if statsView == "Setups"
+            keys.push("SETUP " + sid)
+            keys.push("SESS " + sessName(et))
+            keys.push("EXIT " + strategy.closedtrades.exit_comment(i))
+            keys.push("SIDE " + (strategy.closedtrades.size(i) > 0 ? "LONG" : "SHORT"))
+        else if statsView == "Hours"
+            keys.push("H" + (hET < 10 ? "0" : "") + str.tostring(hET))
+        else if p <= 0
+            keys.push("LOSS " + sid)
+            keys.push("LOSS dur " + (dur <= 1 ? "0-1 bars" : dur <= 3 ? "2-3 bars" : "4+ bars"))
+            keys.push("LOSS H" + (hET < 10 ? "0" : "") + str.tostring(hET))
+            keys.push("LOSS " + (strategy.closedtrades.size(i) > 0 ? "LONG" : "SHORT"))
+        for k in keys
+            mPnl.put(k, nz(mPnl.get(k)) + p)
+            mCnt.put(k, nz(mCnt.get(k)) + 1)
+            mWin.put(k, nz(mWin.get(k)) + (p > 0 ? 1 : 0))
+    seen := strategy.closedtrades
+
+var table tb = table.new(position.bottom_right, 4, 30, bgcolor=color.new(color.black, 15), border_width=1)
+if showStats and (barstate.islastconfirmedhistory or barstate.isrealtime)
+    ks = mPnl.keys()
+    ks.sort()
+    table.cell(tb, 0, 0, "Group", text_color=color.white, text_size=size.small)
+    table.cell(tb, 1, 0, "Legs", text_color=color.white, text_size=size.small)
+    table.cell(tb, 2, 0, "Net $", text_color=color.white, text_size=size.small)
+    table.cell(tb, 3, 0, "Win %", text_color=color.white, text_size=size.small)
+    for [j, k] in ks
+        if j < 28
+            pn = mPnl.get(k)
+            c = mCnt.get(k)
+            table.cell(tb, 0, j + 1, k, text_color=color.white, text_size=size.small)
+            table.cell(tb, 1, j + 1, str.tostring(c), text_color=color.white, text_size=size.small)
+            table.cell(tb, 2, j + 1, str.tostring(pn, "#.##"), text_color=pn >= 0 ? color.lime : color.red, text_size=size.small)
+            table.cell(tb, 3, j + 1, str.tostring(100.0 * mWin.get(k) / c, "#") + "%", text_color=color.white, text_size=size.small)
+
+// ================= VISUALS =================
+plot(vwapV, "VWAP", color.new(color.fuchsia, 0), 1)
+plot(ema, "EMA", color.new(color.yellow, 0), 2)
+plot(sHigh, "Session high", color.new(color.teal, 60), 1, plot.style_stepline)
+plot(sLow, "Session low", color.new(color.maroon, 60), 1, plot.style_stepline)
+plot(pdh, "Prev session high", color.new(color.teal, 30), 1, plot.style_stepline)
+plot(pdl, "Prev session low", color.new(color.maroon, 30), 1, plot.style_stepline)
+plot(inPos ? (tp1Done ? runStop : posStop) : na, "Stop", color.red, 2, plot.style_linebr)
+plot(inPos ? posTgt : na, "Runner target", color.lime, 1, plot.style_linebr)
+plotshape(seLong and allowLong, "H2", shape.labelup, location.belowbar, color.new(color.green, 0), text="H2", textcolor=color.white, size=size.tiny)
+plotshape(hlLong and allowLong, "HL", shape.labelup, location.belowbar, color.new(color.teal, 0), text="HL", textcolor=color.white, size=size.tiny)
+plotshape(bpLong and allowLong, "BP long", shape.labelup, location.belowbar, color.new(color.blue, 0), text="BP", textcolor=color.white, size=size.tiny)
+plotshape(seShort and allowShort, "L2", shape.labeldown, location.abovebar, color.new(color.red, 0), text="L2", textcolor=color.white, size=size.tiny)
+plotshape(lhShort and allowShort, "LH", shape.labeldown, location.abovebar, color.new(color.orange, 0), text="LH", textcolor=color.white, size=size.tiny)
+plotshape(bpShort and allowShort, "BP short", shape.labeldown, location.abovebar, color.new(color.purple, 0), text="BP", textcolor=color.white, size=size.tiny)
+plot(wickRes, "Wick resistance", color.new(color.orange, 40), 1, plot.style_linebr)
+plot(wickSup, "Wick support", color.new(color.aqua, 40), 1, plot.style_linebr)
+plotshape(sweepLows, "Sweep of lows", shape.xcross, location.belowbar, color.new(color.aqua, 0), size=size.tiny)
+plotshape(sweepHighs, "Sweep of highs", shape.xcross, location.abovebar, color.new(color.orange, 0), size=size.tiny)
+bgcolor(noNewWindow ? color.new(color.blue, 93) : na, title="No new trades")
+plotshape(dbLong and allowLong, "DB", shape.labelup, location.belowbar, color.new(color.lime, 0), text="DB", textcolor=color.black, size=size.tiny)
+plotshape(dtShort and allowShort, "DT", shape.labeldown, location.abovebar, color.new(color.fuchsia, 0), text="DT", textcolor=color.white, size=size.tiny)
+plotshape(swLong and allowLong, "SW long", shape.labelup, location.belowbar, color.new(color.aqua, 0), text="SW", textcolor=color.black, size=size.tiny)
+plotshape(swShort and allowShort, "SW short", shape.labeldown, location.abovebar, color.new(color.orange, 0), text="SW", textcolor=color.black, size=size.tiny)
+bgcolor(chop ? color.new(color.gray, 90) : na, title="Chop zone")

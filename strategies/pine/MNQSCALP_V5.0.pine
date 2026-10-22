@@ -1,0 +1,155 @@
+//@version=6
+strategy("MNQSCALP V5.0", overlay=true, initial_capital=50000, default_qty_type=strategy.fixed, default_qty_value=2, commission_type=strategy.commission.cash_per_contract, commission_value=2.37, slippage=1, process_orders_on_close=false, calc_on_every_tick=false, max_labels_count=500, margin_long=5, margin_short=5)
+
+// ===== INPUTS =====
+contracts   = input.int(2, "Contracts (TP1 + runner)", minval=2)
+maxRiskUSD  = input.float(100.0, "Max risk per trade $")
+stopBuffer  = input.float(2.0, "Stop buffer below swing (pts)")
+tp1Pct      = input.float(0.0333, "TP1 distance % of price")
+tp1TimeoutB = input.int(4, "TP1 timeout (bars)")
+maxHoldB    = input.int(36, "Max hold (bars)")
+cooldownB   = input.int(2, "Cooldown after exit (bars)")
+maxTrades   = input.int(5, "Max trades per session")
+useVwap     = input.bool(true, "VWAP filter")
+tz          = "America/New_York"
+
+// ===== HELPERS =====
+// Mai REF(raw,k) -> raw[k-1]; derived REF(X,k) -> X[k] (evaluated at bar close, entry next open)
+cntSince(bool cond, bool evt) =>
+    var int n = 0
+    if evt
+        n := cond ? 1 : 0
+    else
+        n += cond ? 1 : 0
+    n
+
+cntAge(bool cond, bool evt) =>
+    var int n = 0
+    age = ta.barssince(evt)
+    if na(age) or age <= 1
+        n := cond ? 1 : 0
+    else
+        n += cond ? 1 : 0
+    n
+
+// ===== MNQSCALPV4 LOGIC =====
+RETEST_BARS = 8
+rng   = high - low
+avgR  = ta.sma(rng, 14)
+avgV  = ta.sma(volume, 20)
+hh6   = ta.highest(high, 6)
+vwapV = ta.vwap(hlc3)
+
+PH = high[2] > high[3] and high[2] > high[4] and high[2] > high[1] and high[2] > high
+PL = low[2] < low[3] and low[2] < low[4] and low[2] < low[1] and low[2] < low
+
+HIGH_LEVEL = ta.valuewhen(PH, high[2], 0)
+LOW_LEVEL  = ta.valuewhen(PL, low[2], 0)
+
+UP_RAW = HIGH_LEVEL[1] > 0 and close > HIGH_LEVEL[1]
+DN_RAW = LOW_LEVEL[1] > 0 and close < LOW_LEVEL[1]
+
+upBrkCnt = cntSince(close > HIGH_LEVEL[1], PH[1])
+dnBrkCnt = cntSince(close < LOW_LEVEL[1], PL[1])
+UP_FIRST = UP_RAW and upBrkCnt == 1
+DN_FIRST = DN_RAW and dnBrkCnt == 1
+BR_UP = UP_FIRST
+BR_DN = DN_FIRST
+
+UP_LEVEL = ta.valuewhen(BR_UP, HIGH_LEVEL[1], 0)
+UP_TOL   = ta.valuewhen(BR_UP, math.max(10, avgR * 0.75), 0)
+UP_AGE   = ta.barssince(BR_UP)
+DN_AGE   = ta.barssince(BR_DN)
+LAST_DIR = ta.valuewhen(BR_UP or BR_DN, BR_UP ? 1 : -1, 0)
+UP_WINDOW = LAST_DIR == 1 and UP_AGE >= 1 and UP_AGE <= RETEST_BARS
+
+BULL_CANDLE = rng > 0 and close > open and (close - low) >= rng * 0.50
+UP_TOUCH   = low <= UP_LEVEL + UP_TOL and high >= UP_LEVEL - UP_TOL
+UP_RECLAIM = close > UP_LEVEL
+UP_INVALID = close < UP_LEVEL - UP_TOL
+invCnt = cntAge(UP_INVALID, BR_UP)
+UP_CONFIRM = UP_WINDOW and UP_TOUCH and UP_RECLAIM and BULL_CANDLE and invCnt == 0
+confCnt = cntAge(UP_CONFIRM, BR_UP)
+UP_ENTRY_RAW = UP_CONFIRM and confCnt == 1
+
+hET = hour(time_close, tz)
+mET = minute(time_close, tz)
+tET = hET * 100 + mET
+ENTRY_OK = tET >= 1800 or tET < 1630
+
+RANGE_EXPANSION = avgR[1] > 0 and rng >= avgR[1] * 1.30
+STRONG_VOLUME   = avgV[1] > 0 and volume >= avgV[1] * 1.40
+RETEST_VOLUME   = avgV[1] > 0 and volume >= avgV[1] * 1.10
+STRONG_BULL     = rng > 0 and close > open and (close - low) >= rng * 0.75
+
+MOM_LONG    = BR_UP and RANGE_EXPANSION and STRONG_VOLUME and STRONG_BULL
+RETEST_LONG = UP_ENTRY_RAW and RETEST_VOLUME
+RAW_LI = (MOM_LONG or RETEST_LONG) and ENTRY_OK
+LI_SIG = RAW_LI and not RAW_LI[1]
+
+FAST_BULL_BASE = ENTRY_OK and avgR[1] > 0 and avgV[1] > 0 and close > hh6[1] and close > open and (close - low) >= rng * 0.65 and rng >= avgR[1] * 0.80 and volume >= avgV[1] * 0.80
+FAST_BULL_EVENT = FAST_BULL_BASE and not FAST_BULL_BASE[1]
+BULL_POWER = ENTRY_OK and avgR[1] > 0 and avgV[1] > 0 and close > hh6[1] and STRONG_BULL and rng >= avgR[1] * 1.40 and volume >= avgV[1] * 1.25
+SB_EVENT = BULL_POWER and not BULL_POWER[1]
+
+V4_LONG_ENTRY = (LI_SIG or FAST_BULL_EVENT or SB_EVENT) and ENTRY_OK
+SWING_LOW = LOW_LEVEL[1]
+
+// ===== SESSION (18:00 ET start) =====
+sessDay = dayofmonth(time_close + 6 * 3600000, tz)
+newSess = sessDay != sessDay[1]
+var int tradesToday = 0
+if newSess
+    tradesToday := 0
+flatWindow = tET >= 1640 and tET < 1800
+
+// ===== FILTERS =====
+vwapOk = not useVwap or close > vwapV
+pv = syminfo.pointvalue
+maxRiskPts = maxRiskUSD / (contracts * pv)
+
+var int lastExitBar = -1000
+if strategy.closedtrades > strategy.closedtrades[1]
+    lastExitBar := bar_index
+flat = strategy.position_size == 0
+cooldownOk = bar_index - lastExitBar >= cooldownB
+
+// ===== ENTRY + RISK CLAMP =====
+var float planStop = na
+var float tp1Dist = na
+entryRef = close
+structStop = SWING_LOW - stopBuffer
+dist = entryRef - structStop
+riskOk = SWING_LOW > 0 and dist > 0
+planned = dist > maxRiskPts ? entryRef - maxRiskPts : structStop
+
+goLong = V4_LONG_ENTRY and vwapOk and riskOk and flat and cooldownOk and tradesToday < maxTrades and not flatWindow
+if goLong
+    planStop := planned
+    tp1Dist := entryRef * tp1Pct / 100
+    strategy.entry("L", strategy.long, qty=contracts, comment=dist > maxRiskPts ? "L clamp" : "L")
+    tradesToday += 1
+
+// ===== MANAGEMENT =====
+inPos = strategy.position_size > 0
+entryPx = strategy.position_avg_price
+barsIn = inPos ? bar_index - strategy.opentrades.entry_bar_index(0) : 0
+tp1Done = inPos and strategy.position_size < contracts
+runStop = tp1Done ? math.max(planStop, entryPx) : planStop
+
+if inPos
+    if not tp1Done
+        strategy.exit("TP1", "L", qty=1, limit=entryPx + tp1Dist, stop=planStop, comment_profit="TP1", comment_loss="SL")
+    strategy.exit("RUN", "L", qty=contracts - 1, stop=runStop, comment_loss=tp1Done ? "BE" : "SL")
+
+    if strategy.position_size == contracts and barsIn >= tp1TimeoutB
+        strategy.close_all(comment="TP1 timeout")
+    if barsIn >= maxHoldB
+        strategy.close_all(comment="Max hold")
+if flatWindow and inPos
+    strategy.close_all(comment="Session flat")
+
+// ===== VISUALS =====
+plot(vwapV, "VWAP", color.orange)
+plot(inPos ? runStop : na, "Stop", color.red, style=plot.style_linebr)
+plotshape(V4_LONG_ENTRY and not goLong, "Signal skipped", shape.circle, location.belowbar, color.new(color.gray, 40), size=size.tiny)

@@ -1,0 +1,441 @@
+# Brooks, Trading Price Action Reversals (2012): Part II Day Trading (Ch 11-16) and Part III The First Hour (Ch 17-20)
+
+Machine-first reference. All clock times in the book are PST (Brooks trades from California). ET = PST + 3h. Day session open 6:30 PST = 9:30 ET. "Bar" = 5-min ES bar unless stated. Probabilities are Brooks' stated guidelines, not measured.
+
+## Ch 11 Key times of the day
+
+- Day splits into three periods: first third (open to ~8:30-9:30 PST / 11:30-12:30 ET), middle third (to ~11:00-11:30 PST / 14:00-14:30 ET, sometimes to 12:30 PST / 15:30 ET), final third (to the close 13:00 PST / 16:00 ET).
+- First hour or two: most likely time of day to find a trade paying 2-3x risk. "Most important time of the day." Easiest to make money and easiest to lose it.
+- Reports often at 7:00 a.m. PST (10:00 ET); they commonly lead to the trend of the day. Even with no listed report, the market usually behaves as if there was one.
+- Reports also at 5:30 a.m. PST (8:30 ET) premarket; they produce quick trends and reversals.
+- FOMC at 11:15 a.m. PST (14:15 ET in 2011; 14:00 ET today), sometimes several minutes late. Expect large bars, outside bars, several reversals in the following 30 minutes.
+- Report rule: slippage on entry and exit, risk larger, reward smaller, probability ~50% -> bad trader's equation. Wait seconds to minutes until orderly.
+- Computers have the speed edge after reports; wait for that edge to disappear (first 1-3 bars), then take the trend trade. Missing the first bar or two of a strong trend still leaves plenty of points.
+- Opening reversal mechanic: if bulls expect a strong bull day and it sells off for the first few bars (3-bar sell-off), they treat that as the probable low of the day and buy. Probability at least 50%. Shows up as a small tail under the daily bull bar.
+- The high or low of the day forms in the first third of the day on ~90% of days.
+- Middle third is when traders decide whether the initial trend resumes or reverses.
+- Middle third content: two-sided trading, trading ranges, channels, tight trading ranges (most common here), many reversals, trend bars without follow-through, lots of dojis.
+- Middle third rule: terrible environment for stop entries. Institutions buy low and sell high. If trading, scalp; buy low, sell high.
+- Experienced traders sell on limit orders above weak high 1 / high 2 buy signal bars at the range top, and buy on limit orders below weak low 1 / low 2 signal bars at the range bottom. Beginners should avoid limit entries.
+- Stop-entry rule inside a range: only sell on a stop at the top of the range as it turns down; only buy on a stop near the bottom as it turns up.
+- The market "races to the top and bottom" of a 20-bar range to trap stop-entry traders.
+- The market often reverses around 8:30 a.m. PST (11:30 ET) and then trends for the rest of the middle third.
+- Midday reversal window: 8:00-9:30 a.m. PST (11:00-12:30 ET), usually ~8:30 a.m. PST.
+- The trend of the open may not last all day; the exact opposite can develop after the first couple of hours.
+- Rule: if your middle-third losses exceed first-third gains, do not trade the middle third unless signals are especially strong ("close the losing store").
+- Better to take no trades than trades where losses exceed wins; a tight trading range will always be difficult no matter how much experience you have.
+- Wait until the always-in direction is clear so follow-through odds are high.
+- Trend resumption pattern: the three periods often form up-down-up or down-up-down. Example: sell-off for a couple of hours, rally into ~11:30 a.m. PST (14:30 ET), then sell-off resumes.
+- Many traders treat any middle-third move reversing the first-third move as a pullback, and look for the original trend to resume around 11:30 a.m. PST.
+- The market often makes some move around 11:30 a.m. PST that carries into the close (institutions' final trading). It can be a reversal or a breakout; be ready for either direction.
+- Final period: often resumes the earlier trend (trend resumption day), sometimes reverses (reversal day).
+- Daily-chart bias: strong daily bull trend -> most days close above the open and the market usually tries to rally in the final 30-60 minutes. Daily bear trend -> more closes below the open; often sells off into the close.
+- Daily bull trend -> more bull trend bars than bear bars on the daily; daily bear trend -> the reverse.
+- Daily bear trend + moderate rally into the last hour -> traders expect a close near the low and short any late rally that starts to reverse down.
+- Example stat: tight daily bull channel; only 2 of the past 32 days closed near the low; 21 of 32 closed above the open.
+- Final 30-60 minutes, type 1: relentless trend into the close (risk managers force cover of losers, momentum programs, mutual/hedge fund fills). No pullback comes. Rule: enter with trend on the close of the current bar, protective stop beyond the other end of that bar; or buy above brief 1-bar pullbacks with stop below the entry bar low.
+- Final 30-60 minutes, type 2: trend into the close with large bars, big tails, 2-3 reversals that run stops without hitting the stop beyond the signal bar. Rule: swing, keep the initial stop until after the pullback, then tighten to just beyond the pullback. Needs a wide stop.
+- Only very experienced traders should stay in when the market enters a tight trading range at the end of the day.
+- Trend into the close with dojis forming: the stop on a long must be below the spike, or at least below the low of the second large bull trend bar of the spike. Once dojis appear, expect a sharp pullback risk.
+- Fig 11.1: opening range for the first couple of hours was about half an average daily range -> alert for a breakout into a trending trading range day. "Most reversal days begin as trending trading range days."
+- Fig 11.1: middle third sideways; the first-third bear trend tried to resume in the final third; the failed downside breakout made the midday range the final flag.
+- Fig 11.2: trend resumption day: rally in the first third, trading range in the middle, bull resumption into the close. Final rally began 11:15 a.m. PST; upside breakout came 12:30 p.m. PST.
+- Fig 11.3: after the trend of the day is established within the first hour or so, the market often reverses at the start of the middle third (8:00-9:30 PST, usually ~8:30). Sometimes it instead ranges for several hours and breaks out in the final hour or two (trend resumption or reversal day).
+- Fig 11.3: first-hour double top with bar 1 at the MA = possible high of the day; traders then look for a breakout of the bottom of the opening range and a measured move down.
+- Fig 11.3: always-in flipped long on an outside up bar; most believed it was long by the end of the bull spike bar that followed.
+- Tired, bored, or distracted -> do not trade; computers trade the close as well as the open.
+
+## Ch 12 Markets
+
+- Preferred: 5-min Emini S&P (ES). Many entries per day; handles any individual order size without slippage; "you will never outgrow it."
+- Russell: trends well intraday, small margin relative to swing size, but cannot handle large size without slippage.
+- Beginners: trade SPY instead of ES. 1 ES = 500 SPY. ES tick = 2.5x SPY tick. 8-tick (2-point) ES scalp = 20-cent SPY scalp.
+- SPY starter setup: 100 SPY, 20-cent target, 20-cent stop (equals a 2-point ES stop), risk $20 + commissions. Requires commissions ~$1.00 per 100 shares and fast order entry; otherwise swing trade only until consistently profitable.
+- SPY often hits a 1-tick entry/exit stop when the ES does not; some use a 2-3 tick stop in SPY.
+- Switch SPY -> ES once size reaches 1,000-1,500 SPY.
+- Currency futures, forex, bonds and notes: huge volume but fewer entries than Eminis. Bonds/notes have protracted intraday trends (enter and swing for hours). Avoid forex during the Emini day session.
+- DIA and Dow futures are thin; slippage problem for scalpers.
+- QQQ is identical to NASDAQ futures (NQ), popular with day traders, accommodates large orders.
+- Stocks: trade only those with average daily range of several dollars and average volume >= 5 million shares; scalp 50 cents to $1.00 with minimal slippage; swing portion can run several dollars.
+
+## Ch 13 Time frames and chart types
+
+- Scalper on ES: 5-min candle chart (easy to see who owns each bar, especially the setup bar; high/low 2 variants are hard to see on bar charts).
+- Swing trader: simple 5-min bar chart; 6 charts fit on one screen, each with a full day of bars; candles show only ~half a day.
+- Stated entry counts: 5-min ES ~12 good entries/day, 3-min ~20, 1-min ~30.
+- Stated stop sizes: 8 ticks on 5-min, 6 ticks on 3-min, 4 ticks on 1-min.
+- Rule: smaller time frame -> more missed trades and lower winning percentage for most traders. Focus on the 5-min and increase size.
+- Almost every higher time frame swing starts with a reversal on the 1- and 3-min charts; the best 1/3-min trades lead to strong 5/15-min entries.
+- Size limit: at some point volume affects fills on the 1-min; 5,000 contracts can be traded with price action but not with scalping entries/exits (1-2 ticks slippage ruins scalp math).
+- 1-min use case 1: 5-min in a runaway trend without pullbacks and you are flat -> look for high/low 2 pullbacks on the 1-min to enter with trend. Then manage on the 5-min. Never trade countertrend on the 1-min.
+- 1-min use case 2: trending stocks respect the MA; enter on the 1-min on the first reversal after a 5-min MA touch or penetration, risking the height of the 1-min signal bar.
+- MA surrogate: 90-bar EMA on the 1-min chart = 5-min 20-bar EMA. Not 100: the 1-min MA recalculates every bar and the first 4 closes are not in the 5-min MA, so 100 is slightly too flat.
+- Fig 13.2: 5-min ES went 11.75 points up off the open with no pullback; the 1-min showed three high 1 entries (A, B, C). Aggressive bulls place limit buys at the low of the prior 1-min bar expecting each reversal attempt to fail.
+- Fig 13.3: AAPL strong bear day; three shorts at the 90-bar EMA on the 1-min; risk = bar height.
+- Multiple time frames can disagree (5-min bear, 1-min bull, 60-min bull flag, daily bear, monthly bull). Rule: pick one time frame; do not wait for alignment.
+- Volume/tick charts: patterns are identical (human behavior). Trend lines are more precise on time-based charts.
+- Fig 13.4: 5-min vs 1,500-tick vs 20,000-contract bars from the same day; tick/volume charts have many more bars in the first hour and the final hour because volume is highest then.
+- Fig 13.5: 4,181-tick (Fibonacci) chart and 8-min chart both gave reliable setups; any random bar size works; pick one chart.
+- Brooks prefers 5-min: precise trend lines and trend channel lines, plenty of setups, and he can see when a bar is about to close (anticipation). Tick/volume bars can close unexpectedly fast on a flurry of trades.
+- Tick/volume-chart users tend to go to smaller bars to shrink stops, ignore the lower win rate, and lose.
+- Fig 13.6 (FOMC): computers have the speed edge; trade after the first 1-3 bars. Price action setups remain reliable after that.
+- Fig 13.6: always swing part with a breakeven stop; emotional days trend further than expected (ran ~30 points, ~$1,500/contract).
+- Fig 13.6: a large reversal bar with lots of overlap with the prior bar may be a trading range forming; never buy at the top of a range; look for trapped traders, small bars, second entries.
+- Fig 13.6: "Second entries are always worth taking." A bull trend inside bar is the best signal bar available on an emotional day.
+- Fig 13.6 stop ladder: initial stop at the middle of the signal bar; 1 tick below the entry bar once it closes; trail below the prior bar low; then breakeven.
+- Fig 13.7 (1-min first-hour scalps): "the market usually tries to test gaps, so traders should look for opportunities to trade in that direction."
+- Fig 13.7: bear channel breaks down and reverses up -> usually at least a two-legged rally through the top of the channel.
+- Fig 13.7: a five-tick failure (move reaches 5 ticks beyond the signal bar then reverses) is a reversal pattern.
+- Fig 13.7: a steep channel reversal is a wedge reversal, not a wedge flag; wait to buy a higher low after a trend line break or a move above the MA.
+
+## Ch 14 Globex, premarket, postmarket, overnight
+
+- Premarket (Globex) extremes are often targets tested during the day session.
+- Not necessary to watch Globex when trading the day session; day-session trend lines and trend channel lines spanning 2+ days are very reliable. Either chart is acceptable; pick one.
+- Postmarket earnings moves: too fast, big slippage on stop entries, large pullbacks, reversals, and the market suddenly stops moving once you understand it. Most should not trade them.
+- Fig 14.1 rule: fade a strong trend only after a trend line break.
+- Fig 14.1 rule: a countertrend trade in a strong trend needs a 5-min (not 3- or 1-min) reversal bar.
+- Premarket is tradable but usually has few entries in the hour or two before the NYSE 6:30 a.m. PST open. 5:30 a.m. PST reports produce quick trends and reversals.
+- Fig 14.2: wedge bottom (three pushes down) usually leads to two legs up. A report caused a false upside breakout then an outside down bar; short below the prior signal bar where longs had stops.
+- Fig 14.3: 100-tick chart on the 5:30 a.m. unemployment report: 30 bars formed in one minute; only market orders feasible; standard patterns still present; do not trade it.
+- Fig 14.4: Globex expanding triangle top; the day-session trader did not need it: the bar took out yesterday's high and pulled back to the MA, then a lower-high double top bear flag (first top 6 bars earlier) gave the short.
+
+## Ch 15 Always In
+
+- Definition: if you had to be in the market at every moment, long or short, the always-in position is whatever that position would be. The market is always-in long or always-in short at all times.
+- Always-in differs from "is the trend up or down": trend traders go flat when unclear; always-in never does.
+- Decision rule when unsure, step 1: most recent closes below the MA -> probably always-in short; mostly above -> long.
+- Step 2: the move leading into the current range was a rally -> long; a sell-off -> short.
+- Step 3: hoping for a pullback to buy -> long; hoping for a rally to short -> short.
+- Step 4: still cannot decide -> trading range: buy low, sell high, scalp.
+- Minimum criterion for an always-in signal: new direction more likely than old (51%). Most clear always-in signals are >= 60% to reach a target at least as large as the risk.
+- ES example: 2-point stop -> target at least 2 points -> >= 60% if read correctly.
+- "Whenever the market is clearly always in... assume that the probability is at least 60 percent."
+- Higher time frame variant: take 5-min longs only when the 60-min is in a bull trend and above its MA (or a 60-min stochastic is rising).
+- Fig 15.2: 5-min has 81 bars and 20+ reversals most days; 15-min and 10,000-tick charts give 3-5 decisions/day with fewer reversals; bigger bars need bigger stops and smaller size.
+- Carry-over: before the open, bias = yesterday's final always-in direction.
+- Flip rule: two consecutive reasonably strong trend bars in the same direction probably create a new always-in direction. Uncertain until breakout + follow-through, but a starting point; with context, enter on the first pullback.
+- First-hour variant: before a clear trend, two consecutive bull trend bars -> look for buy scalps; two consecutive bear trend bars -> sell scalps.
+- Almost all always-in trades require a spike. Usually at least two consecutive strong trend bars before most traders believe the direction.
+- Single-bar flip: with the right context, one average-range trend bar can flip always-in (Fig 15.4: strong bear outside down bar reversing a breakout above a bull channel = possible high of day and trend-from-open bear).
+- Follow-through bar rule: after a breakout bar, the close of the next bar decides.
+- Minimum for a flip to short: follow-through bar does NOT have a bull close. Small bear body or doji = confirmation for most, but the new bear trend is weak -> sell rallies / low 1 / low 2 rather than closes.
+- Minimum for a flip to long: follow-through bar does NOT have a bear close. Unimpressive follow-through -> buy pullbacks, not the close.
+- Follow-through bar with a strong opposite body or opposite reversal bar = failed breakout signal (bull trap / bear trap short, or bear trap long).
+- Follow-through bar extends only a few ticks beyond the breakout bar -> odds favor a failed breakout. Extends many ticks -> odds favor a strong trend bar on close and a clear always-in direction.
+- Strong follow-through bar -> enter on its close or a 1-2 tick pullback. Doji follow-through -> buy pullbacks.
+- Bought near the high and no immediate follow-through -> exit and wait to buy a pullback.
+- Weak drift against the always-in direction (opposite channel, no opposite spike) does not flip always-in. Keep a protective stop: breakeven with a large open profit; below the signal bar if entered late. Switch to trading-range mode (scalp, never let a winner become a loser).
+- "Most attempts to flip the always-in position fail, especially in a strong trend." 80% of reversal attempts fail.
+- Near-flip = with-trend entry: in a bull trend, buy the close of a strong bear bar; buy if the next bar's close is not bearish; buy above its high and above the bear bar high (where bear stops sit).
+- Beginners short within a tick or two of the low of the failed breakout and then lose on the low 1 and low 2 as well; three consecutive losses.
+- When one more bar is needed to flip, traders fade the move expecting that bar not to materialize (Fig 15.4).
+- Trading-range rule: always-in is a trend concept and is dangerous in ranges. On range days the flip is often not clear until a spike reaches the opposite end, exactly where you should fade.
+- Consensus flip requires a strong breakout of the entire range with follow-through; a sharp move inside the range toward the top or bottom is not a flip.
+- Uncertainty test: if you are wondering whether it flipped, you are uncertain -> trading range.
+- A successful breakout from a range usually reaches at least a measured move target.
+- Sell vacuum: on range days the strongest bear spikes often form near the low of the day as bulls wait for a test; look to buy the failed breakout, not short the spike.
+- Strong trend -> trading range: always-in usually unchanged; scalp only in the trend direction. Any opposite setup not strong enough to flip always-in is not worth trading.
+- Tight trading range: do not use always-in. Most should wait for the breakout or failed breakout. Experienced: hold the prior always-in trade for a swing, or scalp with limit orders fading range extremes and 1-bar breakouts.
+- Measured move after confirmed breakout: strong 3-bar spike above a range -> expect a measured move of the spike height or range height; buy at least a small position at market.
+- Growing spike math (GS): $1.00 spike -> 60% to make $1.00 before losing $1.00 to the spike bottom; spike grows to $1.50 -> still risking the spike bottom, now 60% to make $2.00 before losing $1.00.
+- Timing: the market usually enters always-in mode at some point in the first hour; many take the always-in trade there.
+- Profit variants: exit some/all at 1-2x risk; or hold until an opposite always-in flip and reverse.
+- Trade counts: look for the 3-10 most significant swings per day; most only take the strongest 2-5 reversals; many days have 20+ reversals but most are too small.
+- Most traders exit some or all once the move equals 2-3x initial risk; institutional profit-taking creates the pullback where they re-enter and the trend resumes.
+- Entry rule once always-in: enter at least a small position at market or on a tiny pullback. Waiting for a larger pullback risks missing low-momentum trends that run for many bars without one.
+- Strong 3-bar reversal spike off the open: buy at market or on a limit a few ticks below the high of the bar. If the required stop is 8 points vs normal 2 -> 1/4 size. "You must get long, even if it is a tiny position."
+- If the day is becoming a strong bull trend day, hold some of the position to the close unless a clear strong bear reversal develops.
+- Always-in long entries: at/around the close of any bear trend bar; at/below the low of the prior bar or any prior swing low; below support (bull trend lines). Always-in short: mirror at highs and resistance.
+- Breakeven rule: a pullback that would have hit a breakeven stop followed by resumption for several bars -> move the stop to breakeven; it should not return. If a second pullback hits it and direction is uncertain, stay flat.
+- Low-momentum pullback growing for hours without an opposite spike: reassess, keep a worst-case stop; breakeven if several ES points of open profit; if pulled back within minutes of entry, stop below the spike with reduced size.
+- No countertrend trades while an always-in direction exists: they are scalps with risk ~2x reward needing >= 70%. Better to enter with trend at the end of the pullback.
+- Friend's method: wait for an always-in setup in the first couple of hours; expect the trend to last >= 2 hours and cover >= 1/3 of an average daily range.
+- Friend's bracket: stop beyond the signal bar; limit target at a measured move / S-R at least 2x the stop; 2-point ES stop -> 4+ point target; >= 60% for the equidistant move, likely >= 50% for the 2x target. He leaves midday and returns for an always-in trade into the close.
+- Stocks: scalp out 1/3 to 1/2 after ~0.5-1% move or ~2x initial risk; swing the rest; take 1/4 to 1/3 more off if reversing at a test of the high of the day; always let >= 1/4 run to the breakeven stop, a clear opposite signal, or the close.
+- Reversal execution: trading 2 lots and long 1 when a reversal triggers -> sell 3 (1 exits, 2 start the new position); scalp the first for 1-2x risk, swing the second.
+- Sizing: risk 4x normal -> <= 1/4 normal size; still afraid -> 10% normal size. "Run-away trends have the strongest trader's equations."
+- General rule: the trend will likely continue about the same number of ticks as the required stop, with odds better than 50-50; if confident of always-in, >= 60%. Trailing the stop then improves the equation.
+- Scale-in template (ES ADR 12-15 points, largest pullback in past 2 hours = 2 points): buy small on a 1-point pullback, add at 1 and 2 points lower (10-20% of ADR), stop on the whole position another couple of points down.
+- Scale-in template when earlier pullbacks were 3 points: limit buy 3 points down, add 2-3 points lower, 2-point stop on the whole position. Exit on an always-in flip.
+- Fig 15.1: always-in netted 52 ticks (~$600/contract) on a trading range day and 79 ticks (~$950) on a trend-from-open bear day that became a range; a 2-lot scalp/swing trader could add ~10 successful scalps/day (~$450/contract/day).
+- Fig 15.3: large gap up + strong bear reversal bar on bar 2 = reliable always-in short, but large gap-up days often go sideways-to-down for an hour before a bull breakout; stay willing to reverse.
+- Fig 15.3: bear entry bar with a big tail and no follow-through for a couple of bars, and the second bar of the day a strong bull bar -> not behaving like a bear trend; exit above the inside bar and wait for a second signal.
+- Fig 15.3: tiny range for > 30 minutes on a large gap day -> breakout mode: buy stop 1 tick above the range high, sell stop 1 tick below the range low.
+- Fig 15.3: breakout of the opening range on a strong gap-up day -> bull trend; range expected to reach at least the recent average daily range; buy at market.
+- Fig 15.3: breakout entry stop options: below the most recent higher low (if 3x comfortable, buy 1/3 size) or just below the breakout bar low (strong breakouts have immediate follow-through).
+- Fig 15.3: consecutive buy-climax bars -> expect a larger sideways-to-down correction. Bulls placing limit buys several ticks above an untouched MA = very strong bull market.
+- Fig 15.3: a long sideways correction in a strong bull breaks the trend line and may become a final flag.
+- Fig 15.3: small consecutive bear bars breaking below a range with no prior bear strength do not flip always-in; bulls buy the 20-gap-bar pullback to the MA.
+- Fig 15.3 timing: the market often pulls back around 10:30-11:00 a.m. PST (13:30-14:00 ET) with the pullback ending ~11:30 a.m. PST (14:30 ET). Later pullbacks are often deeper, especially after ~11:00 a.m. PST.
+- Fig 15.3: large trend bar after 20+ bars of trend, especially out of a possible final flag = climactic; both sides sell its close; expect >= 2 legs and >= 10 bars of correction, possibly to the bottom of the final flag.
+- Fig 15.3: shorting below a bear bar that is an MA test below the MA is a reliable trade.
+- Fig 15.3: always-in flipped short for most once price traded below the low of the two-bar reversal at the MA double bottom.
+- Fig 15.5: it takes less to make traders exit a long than to take a short. Opening reversals can have protracted follow-through.
+- Fig 15.5: always-in short confirmed on the close of the bear bar breaking a second-entry breakout-pullback low, 1 tick below it, or the close of the next bar.
+- Fig 15.5: in a free fall, renewed confidence at the close of each big bear bar, 1 tick below the inside bar after it, and 1 tick below its low; short an "I don't care" size with a stop above the most recent big bear bar.
+- Fig 15.6: with 2-point risk, bracket with 2-point stop and 2-point target; strongest setups ~70% to reach 2 points before a 2-point stop; try 3-4 point targets on the strongest signals.
+- Fig 15.6: once always-in long, buy the closes of strong bear trend bars and MA tests.
+
+## Ch 16 Extreme scalping
+
+- HFT firms scalp 1 cent on 4,000 stocks. A friend takes ~25 ES trades/day for 2 ticks each, ~100 contracts per trade, and nets "only a couple of points a day."
+- Scalping rule: when risk > reward, the win rate must be >= 70%; unrealistic for most. Reward >= risk needs >= 60% (achievable). Reward >= 2x risk is profitable at ~50%.
+- A 5-min chart has 30-40 scalp setups on an average day; ~1/3 stop entries, ~2/3 limit entries. About half of all bars have a reasonable scalp setup (all markets, all time frames).
+- Most should look for 2-4 point swings instead. Some can extreme-scalp for an hour or two at a time.
+- Fig 16.1: 81 bars per day; at least 40 chances to scalp 1 point with a 2-point stop.
+- "A trader entering on a stop usually needs a six-tick move beyond the signal bar to be able to scalp four ticks with a profit-taking limit order."
+- Both sides can profit at the same price: buy the close of a big bull bar in a bull trend risking ~3 points and wait through a 5-10 bar pullback; bears short the same close expecting exhaustion, add at +4 and +8 ticks, risk the bar height (12 ticks) on the whole position, exit all at target or at original entry.
+- Scalp room rule: a signal bar whose high is only 4 ticks below yesterday's close and the MA may not leave room for a buy scalp.
+- Weak close on the entry bar -> many longs exit around breakeven.
+- Entry-bar rule: short 1 tick below the long entry bar, where longs have stops; this creates a breakout pullback.
+- Gap down out of a bear flag from yesterday with price below the MA = strong bears; expect a measured move down.
+- High or low of the day forms in the first 90 minutes or so in ~90% of days -> treat every early reversal as a possible extreme.
+- Five-tick rule: follow-through bar low only 5 ticks below the breakout close -> bears 1 tick short of a 1-point scalp, nervous, may exit or reverse. A five-tick failure after a stop entry is a reversal pattern.
+- Low 1 short requires a strong bear spike AND a clear bear trend; never short a low 1 after a possible sell climax.
+- Countertrend trades usually have pullbacks; after buying a reversal, hold through the expected pullback hoping for a higher low.
+- Limit-entry mechanics: aggressive bulls place limit buys at the low of the prior bar (expecting a 1-tick dip = 1-tick bear trap), others 1, 2, or 3 ticks below. Limit buys 7 and 11 ticks below a swing high catch 2- and 3-point pullbacks (fills land 1 tick above the exact low because bids outnumber offers).
+- Market-if-touched below the bar or a market buy as soon as price dips below the bar are alternatives.
+- Magnet rule: traders do not treat a pullback as complete until the magnet (e.g. MA) is actually touched; within 1 tick is not enough.
+- Breakout-test rule: a high 2 ticks below prior shorts' breakeven stops is a "perfect breakout test"; 1 tick higher runs those stops and fuels the move; longs place buy stops exactly there.
+- Day range at ~half of recent ADR -> expect a measured move up or down; right after bears have covered, up is more likely for the next few bars.
+- After a strong breakout bar, expect at least two more attempts in its direction; a low 2 short right after it is likely to fail and become a breakout pullback long.
+- Large bull bar after a bull trend has gone on for a while = probable exhaustion; strong bulls and bears both sell its close; expect a 2-legged sideways-to-down correction lasting an hour or more. Scaled-in bears risk the bar height (2 points to make 1).
+- Yesterday's high is always resistance; a bar high 5 ticks below it leaves no room for a 1-point scalp above. An exact test is more likely than a breakout; a lower high is more likely still after a trend channel line overshoot.
+- A reversal 3 ticks above a climax bar = late bulls exit, bears short its close and 1 tick below its low.
+- Bull trap rule: a second leg up extending 1 tick above the first leg (iii pattern) traps bulls; bears short 1, 2, 3 ticks above the iii with a stop above the reversal bar high; most wait to short below the reversal bar as confirmation.
+- A bear breakout bar closing only 1 tick below the MA is not strong (strong breakouts close several ticks beyond). Shorts who cannot get a scalper's profit within a bar or two cover.
+- Minimum correction before bulls re-buy: 2 legs and ~10 bars.
+- Stop cascade: shorts' buy stops above the breakout bar high, triple top, lower high, climax high, and yesterday's high within 1-2 ticks of each other -> rapid cascade when hit.
+- Do not buy above three large overlapping bars (a trading range); most breakouts fail; better to short there. Buying the high of the day is right only in strong bull trends.
+- Reversal 5 ticks above a long signal bar and 1 tick above yesterday's high: profit-taking limits and bear shorts sit there; longs who moved stops to breakeven after +5 ticks were run.
+- Barbwire (overlapping small bars with tails): breakout entries more likely to fail; buy breakouts near the bottom of barbwire and short breakouts near the top.
+- A small sideways head and shoulders top often becomes a triangle or wedge bull flag (high 3 long).
+- Signal bars often look bad in trading ranges; a good signal bar is needed only when trading countertrend in a strong trend.
+- Middle third often lacks momentum though pattern shapes stay reliable; 1-tick triggers are common.
+- Swing longs trail stops below the most recent swing low.
+
+## Ch 17 (Part III intro + Ch 17) Patterns related to the premarket
+
+- "First hour" is rarely an hour: it is the time before the first good swing begins, 15 minutes to 2 hours; a.k.a. the opening range. It ends once the first trend begins.
+- Bond trader anecdote: 85% of profits came in the first hour; he stopped trading by 7:30-8:00 a.m. PST and did very well.
+- Easiest time to make money: scalpers bet breakout attempts fail, buy low, sell high; avoid doji signal bars; short below a bull or bear trend bar after a move up; buy above a bull or bear trend bar after a move down.
+- Two consecutive strong bull trend bars -> scalpers look to buy; consecutive bear trend bars -> shorts. Consecutive trend bars indicate the direction of the next scalp.
+- Easiest time to lose money: beginners buy late at the top of bull spikes and short late at the bottom of bear spikes; they confuse swing and scalp setups. They should never scalp in the first hour.
+- Big bars -> wider stops and smaller size (half to a quarter normal size; stop beyond the signal bar is often 2x+ normal).
+- Yesterday's always-in direction into the close often carries into today's open; assume continuation until evidence otherwise.
+- Reversals in the first hour are common, abrupt, often large. If you cannot read fast enough, wait until the always-in direction is clear.
+- First bar of the day is the high or low of the day only ~20% of the time. Do not feel a need to enter on the second bar.
+- First bar is often large, ~20% of the day's ultimate range. Example: ADR 10 points, first bar 2 points -> buying the break of bar 1 is ~20% to make 8 points risking a bit over 2 = losing equation.
+- High-probability first-bar trades occur only ~once a month; a swing entry on the second bar of the day is rarely worthwhile.
+- First bar on a large gap day that is a strong trend bar: probability of being the extreme can be 50%+.
+- Either the high or low of the day usually forms within the first hour; swing traders wait for a setup that could be an extreme.
+- Setup for the high/low of the day often has only ~40% probability (30-50% range), still excellent for a swing because reward can be many times risk.
+- Expect to take more than one reversal before catching the swing; the ones that fail usually give a small profit or small loss.
+- The trade often looks bad for 5 or more bars, then breaks out and the always-in direction becomes clear.
+- After a reversal with good follow-through and a clear always-in move, the probability that it was the high/low rises to 50-60%+.
+- Never be more than 30% certain that a reversal is NOT the high/low of the day; nothing is 70% certain in the opening range.
+- Some first-hour reversals are 70% to reach a scalp target but only 40% to reach a swing target; decide swing vs scalp before entry and never change the premise after.
+- High of the day usually begins with an imperfect double top; low of the day with an imperfect double bottom.
+- Bull trend day setup: series of strong bull bars off the open, partial pullback, tested 5-10 bars later = double bottom flag -> new high of the day and a measured move.
+- Once always-in is clear, enter at market or on any small pullback for a swing; scalpers scalp pullbacks with trend.
+- The trend often starts slowly and looks like a flag, then within ~5 bars breaks out into a clear always-in market. Reversals often show 2-3 weak doji bars before breaking out: do not scratch.
+- Post-report rule: wait a bar or two; most should wait 1 to ~10 minutes for price action to normalize. The bar before the report is often a great setup triggered by the report. Slippage can turn an 8-tick risk into 16+ ticks.
+- ~70% of trading is automated; statistical algorithms (e.g. "rallied 10 ticks without a 1-tick pullback -> buy, exit +2 ticks") drive post-report moves.
+- A sharp rally on a 7:00 a.m. PST report usually means institutions already planned to buy; if their buying continues, bull trend day; if overwhelmed by bears waiting to short a rally, the breakout fails and the market trends down.
+- Gap openings are present on most days.
+- Day-type tell: first bar a doji, or first several bars overlapping with prominent tails -> more two-sided trading likely.
+- Day-type tell: first bar a doji in the middle of yesterday's final-hour tight range with a flat MA -> odds favor a trading range day.
+- Day-type tell: first bar a trend bar with prominent tails = one-bar trading range; the market probably will not move beyond it for more than a bar or two before reversing. Some fade its breakouts (short above, buy below) and scale in once or twice, scalp mode.
+- Day-type tell: dojis continue and 5 reversals in the first hour -> trading range day odds up.
+- Day-type tell: large gap and the market trends for the first 4 bars -> trend day odds good; those bars may be the spike of a spike-and-channel day.
+- Be ready for the first pullback to become a small final flag -> spike in the opposite direction, breakout of the opposite end of the opening range, opposite trend.
+- Barbwire in the first hour (first 90 minutes) -> day usually becomes a trading range day with bulls and bears alternating; tradable swings in both directions later; if a trend follows, a countertrend setup will appear.
+- Strong trend off the open that gets reversed (breakout to a new extreme in the opposite direction) -> day may trend the other way or become a range; early strength may return later if the reversal falters.
+- 15-min bar rule: the first 15-min bar closes with the 3rd 5-min bar. If bars 1-2 move one way and bar 3 is a smaller pause bar, the breakout of bar 3 decides a 15-min breakout vs failure; breakout of the 3rd bar often leads to a big move. Do not trade it alone; use as added significance.
+- Same logic for the last 5-min bar of 30- and 60-min bars (60-min = 12 five-min bars), but not worth focusing on.
+- Opens relate to yesterday's final hour: breakout, failed breakout, breakout pullback, or trend from the open; all can move very fast.
+- A channel in yesterday's final couple of hours is a flag (bull channel = bear flag; bear channel = bull flag); today often gaps beyond or breaks out of it; watch for reversals and continuations.
+- Holiday weeks (Christmas, July 4): the first hour is often the only normal behavior; tight trading range all day after.
+- 3-min chart trades well in the first hour but has more losers; 5-min is most reliable.
+- Scalper adjustments: bars 4 points instead of 2 -> risk 4 points and cut size by half or two-thirds; if the move then looks weak, exit at a smaller target (1-2 points).
+- First-hour scalp template: two consecutive strong bull trend bars then a doji -> limit buy at/below the doji low. ES ADR ~15 points and bull bars ~2 points -> risk 2 to make 2 at ~60%. Others scale in lower risking to below the spike bottom.
+- Only very experienced traders should fade breakouts of bars in the first hour.
+- Experienced traders find 4+ scalps in the first hour; 2 winning 2-point scalps/day on 25 contracts = ~$1M/year.
+- Variable reduction: look only for high-probability scalps, or only likely swing setups, or wait for a clear always-in trade and swing it or scalp pullbacks in its direction.
+- Scalp setups rarely have 60%; the high/low of the day often follows a setup under 50% (bad scalp, great swing).
+- Confluence rule: more factors present -> higher probability. Example: 18-bar bear flag into yesterday's close, open below it and below the MA, 2-bar rally to the MA, bear reversal bar = opening reversal + breakout pullback short.
+- Second example: yesterday ended with a bull breakout from a 25-bar range in a 3-day wedge rally near the top of a 2-week range; today opens a few ticks below the close, trades up, reverses down into a strong bear reversal bar = second-entry short on the failed breakout above yesterday's high.
+- Fig PIII.1: opening reversal long on bar 3 (small bull reversal bar at the MA and a yesterday swing low); after the second of four consecutive bull bars, bulls placed limit buys at the prior bar low and were filled on the first small bear bar.
+- Fig PIII.1: next day, a bear trend bar (not a reversal bar) was not a good countertrend long; break below it = break below the first 15-min bar on a large gap-down day -> tradable downswing. Gap below yesterday's low on bar 1 triggered daily-chart sell stops.
+- Fig PIII.2: several large bull bars and only two small bear bars off the open = aggressive bulls; swing more of later longs. Bar 8 double bottom with yesterday's closing low = low of the day.
+- Fig PIII.2: opening-reversal swings may be only 40% but small wins/losses balance; the 40% that reach 4+ points are the profit.
+- Fig PIII.3: do not scalp stocks with ADR < $1. Two large bear bars in the first 15 minutes then a double top bear flag = reliable bear trend day pattern. With a steep up MA, any strong sell-off below it is almost always followed by a tradable rally.
+- Fig PIII.4: barbwire for the first 90 minutes -> trading range day. By bar 3 barbwire was likely: half its range overlapped the prior bar and it closed mid-bar. Range only slightly more than half of recent days -> likely to expand in a channel after a spike.
+- Ch 17 proper: Globex highs and lows tend to get tested in the day session; Globex patterns complete in the first many bars of the day session. Pick either the Globex or the day-session 5-min chart, not both.
+- On a large gap that closes in the first 30 minutes or so, the day-session MA and the Globex MA often point in opposite directions; use momentum, not the MA.
+- The day-session MA is often unreliable for the first hour or so; the two MAs can take 1-2 hours to converge.
+- Fig 17.1: first bar of the day (6:35 a.m. PST bar) is a trend bar -> usually a scalp setup; if it fails, especially with an opposite trend bar, it is a setup in the opposite direction.
+- Fig 17.2: day session gapped down and could not get above the falling MA for 90+ minutes while Globex was above a rising MA from 6:30 a.m. PST; momentum was up in both -> look for buys.
+
+## Ch 18 Patterns related to yesterday
+
+- Before the open, inspect yesterday's final hour or two: strong trend (always-in carry-over), trading range, channel, or any pattern that could break out on today's open.
+- On most days there is some breakout on the open; the gap between yesterday's final bar close and today's first bar open is itself a breakout.
+- MA proxy rule: first bar entirely above the MA -> treat the open as a gap up; entirely below -> gap down.
+- Look for breakouts of any swing high/low, especially yesterday's high and low, and of any channel/flag into yesterday's close (a one-bar final flag or a 3-hour channel).
+- Evaluation sequence for every open: (1) breakout: will it follow through? (2) reversal: failed breakout? (3) failed breakout failing: breakout pullback and resumption.
+- Large gap down + first bar a strong bear bar (open near high, close near low) -> possible trend from the open bear.
+- Large gap down + first bar a strong bull reversal bar -> breakout may fail -> possible trend from the open bull.
+- Bear follow-through for a few bars then a strong bull reversal -> failed breakout, possible low of the day.
+- Rally lasts only 1-2 bars then another strong bear bar -> short below it (breakout pullback); the failed breakout became a pullback.
+- Bull breakout on the open: reversal continuing with 2-3+ large bear bars -> bear trend day likely; bull reversal bar within a bar or two -> breakout pullback buy.
+- Opening reversals that reverse yesterday's high or low often form the high or low of the day -> swing some or most contracts.
+- Fig 18.1: gap down, strong bear bar, strong 2-bar bull reversal just below yesterday's low = failed breakout of a two-day bear flag, final flag reversal, lower low major trend reversal; entry 1 tick above the reversal high; breakeven stop allowed up to $5.00.
+- After a failed breakout, enter the opposite way only if the failed breakout itself fails (breakout pullback). A strong 3-bar rally after the reversal makes a second leg up likely: do not short the first pullback; buy above the breakout pullback bar or below the low of either of the prior two bars.
+- A sharp sell-off into yesterday's close can be followed by a gap up today, turning it into a failed breakout.
+- Fig 18.2: first bar a strong bull reversal bar then a strong bear bar = two-bar reversal, failed breakout short, higher high major trend reversal, trend from the open bear.
+- Fig 18.2: after a strong reversal setup (second entry for a wedge or expanding triangle) the market usually corrects >= 10 bars and 2 legs, about a measured move.
+- Fig 18.2: two bull bodies at the low = buying pressure; an outside up bar flipped always-in to long; a failed low 2 outside up trap at the start of a trend is a sign the trend will go far.
+- Fig 18.2: a 3-bar bull spike with small tails and large bodies -> second leg up likely; pullback should hold above the low of the flip bar.
+- Fig 18.2: after a leg that broke the trend line and the MA with many bull bars, a higher low is likely; short only a great setup and only for a scalp.
+- Fig 18.2: a high 1 is not good when the move up is no longer a strong spike, after a small spike-and-climax that overshot a trend channel line, and when the signal bar is a strong bear bar.
+- Fig 18.3 (first-hour double top): any area of large overlapping bars with multiple reversals = strong two-sided trading; breakouts get pulled back into the range (bulls short above, bears short above, neither buys above).
+- Fig 18.3: second failed attempt to break above yesterday's high -> "when the market tries to do something twice and fails, it usually tries to go in the opposite direction." That double top (third push up) was the high of the day.
+- Fig 18.3: range at ~half a typical day -> a breakout in either direction will likely double the range with at least two legs.
+- Fig 18.3: many saw always-in short on the two strong bear bars breaking a 4-bar bull flag; a large breakout bar closing on its low satisfied those wanting more evidence.
+- Fig 18.3: low of the day as a magnet when in close proximity; a straight-down break to a new low is not likely the end; a failed breakout of a bear trend channel line usually gives two legs up first.
+- Fig 18.3: a small double bottom pullback without a prior trend line break or strong reversal bar is only a scalp; focus on re-shorting when always-in is still short.
+- Fig 18.3: a rally to the MA that breaks a good bear trend line signals that the next reversal up from a new low has a good chance of two legs.
+- Fig 18.3: strong move up ending in three pushes then a lower-momentum sell-off -> the three-push high will likely be exceeded (higher time frame higher low); it was exceeded on the next day's open.
+- Fig 18.4: the first bar often breaks a channel from yesterday; bar 1 breakout pullback short can start a trend-from-open bear.
+- Fig 18.4: a tight channel down makes an early failed-breakout buy risky: wait for a breakout then a pullback.
+- Fig 18.4: a double top bear flag after an initial down move off the open is common (especially stocks) and often leads to a protracted bear trend (trending trading range bear). Signal bar was an MA gap bar.
+- Fig 18.5: a bear channel is a bull flag; a breakout above it on the open is often followed by a breakout pullback buy (two-legged pullback at the MA = higher low major trend reversal -> trend-from-open bull).
+- Fig 18.5: "When the first 5 to 10 bars form a sideways range, many institutions enter on the breakout of the range, and this breakout often leads to a trend day." Less risk entering earlier at the MA test.
+- Fig 18.5: third push up (three trending trading ranges) -> expect a two-legged pullback; a tight channel means the sell-off below it is likely followed by a test of the high.
+- Fig 18.5: 11:45 a.m. PST (14:45 ET) sharp move down trapped bulls out (MA gap bar + high 2 long) and led to a measured move into the close (2x the pullback height).
+- Fig 18.6: sharp pullback testing yesterday's strong close then reversal up -> buy 1 tick above the pullback bar high and again above the first bar high.
+- Fig 18.6: opening reversal after a lower low test of yesterday's bear low = high 2 (yesterday's close was the first leg) and a double bottom with yesterday's final bar.
+- Fig 18.6: wedge long = failed breakout below a bear trend channel line and below yesterday's low after a major bear trend line break.
+
+## Ch 19 Opening patterns and reversals
+
+- Vacuum mechanics: institutions with net buy orders and a gap up wait for a pullback to support (MA, trend line, measured move, swing high/low), creating a sell vacuum, then buy relentlessly -> sharp opening reversal up. Mirror for net sell orders and a gap down (buy vacuum, opening reversal down).
+- Opening reversals often become the high or low of the day; do not assume every sharp move is a spike that will be followed by a channel.
+- Most days have an opening reversal or trend from the open with a 50-60% chance of making >= 2x risk.
+- On most days there are several reasonable reversals in the opening range; each has only ~30% chance of a 2:1 swing, though many have ~60% chance of a 1:1 reward. The earliest is sometimes the best.
+- Beginner options: take one strong setup and rely on the stop through pullbacks until the breakout, or scalp 1:1 and reverse on the next good reversal. Preferred: rely on the stop, allow pullbacks, exit only on a strong opposite signal.
+- First bar of the day: ~20% chance of being the high or low (all markets); 30% if a strong trend bar without big tails.
+- Either the high or low forms within the first 5 bars or so in 50% of days, and within the first hour or two in 90% of days.
+- Held for a swing, most reversals end as scalps; winners' profits at least equal losers' losses, and the occasional big winner makes it worthwhile.
+- High of the day usually from a double top (highs often unequal); low from a double bottom.
+- Rule: if the day is reversing, wait for a double top/bottom before looking for a swing; once formed, ~40-50% chance of a swing and an extreme of the day.
+- Opening reversal equation (ES ADR 10-15 points): 4-point swing probability ~40% (50-60% when very strong); chance the 2-point stop is hit before target or exit signal ~30%.
+- 10 such trades: 4 wins x 4 points = 16; 3 losses <= 2 points and 3 small wins of 1-3 points roughly cancel -> ~1.6 points/trade.
+- No reversal -> the spike is followed by a channel (spike and channel trend day).
+- Reversal lasting only a few bars then resuming = failed reversal = breakout pullback, usually followed by a channel.
+- Strong spike + weak reversal bar -> most assume the reversal fails; buy stops above the prior bar high in any pullback (including the reversal bar high if no pullback); confident bulls use limit buys at/below the reversal bar.
+- The open always leads to a breakout or a reversal, sometimes both.
+- Common opening patterns: trend from the open; breakouts and failed breakouts at S/R (MA, trend lines, trend channel lines, swing highs/lows especially yesterday's high/low, breakout areas, range tops/bottoms, measured move targets); breakout pullbacks.
+- Once one extreme forms in the first hour, the market reverses toward the other extreme; on a trend-from-open day the other extreme is usually near the close.
+- The turn is usually at a key point: test of yesterday's high/low, a swing high/low of yesterday or today, a breakout of a range of yesterday or today, a trend line, trend channel line, the MA, or any of these on another time frame or the Globex chart. There is almost always a 5-min day-session reason for the trade.
+- Day-character tells: first bar a doji in the middle of yesterday's closing range = one-bar trading range -> trading range day odds up.
+- First hour with many overlapping bars, big tails, multiple reversals -> trading range day odds up.
+- Gap up or down then a 3-4 bar spike within the first hour with large bars, little overlap, small tails -> trend day odds up.
+- Two consecutive bull trend bars in the first hour or so -> always-in long at least for a scalp (early bull trend). Most scalp until follow-through suggests a measured move; this causes the many first-hour reversals.
+- Consecutive strong bear bars then a bar trading above the prior bar high -> short below the pullback bar low for a scalp; swing if context says a large trend.
+- Opening range definition: the height of the trading range if there is one, or the largest leg of the first 30-90 minutes; may contain 2-3 smaller legs. A later brief new extreme may enlarge the range or be treated as an overshoot.
+- Opening range gives clues to the day, S/R for the rest of the day, and measured move projections.
+- OR category 1: ~25% of recent daily ranges -> enter on a breakout in either direction; a couple of times a month this becomes a trend-from-open day with small pullbacks and relentless progression.
+- OR category 2: ~1/3 to 1/2 of recent daily ranges -> expect the range to grow to about an average day. Usually some range activity then a breakout.
+- Category 2, ~2/3 of the time: trend day, usually a trending trading range day; the breakout typically reaches ~a measured move of the OR height; usually tests the breakout point later and often re-enters the range.
+- Category 2 reversal day: strong re-entry into the OR closing at the opposite side = reversal day; "the most common way that reversal days form."
+- Category 2, other ~1/3: trades a little beyond the OR, reverses, breaks the opposite side, trades back in -> small trading range day (occasionally a trending trading range the other way).
+- OR category 3: large opening move (strong spike) -> usually spike and channel trend day; sometimes a climactic reversal after a small final flag.
+- Strong opening move then reversal: the initial strength may return later; a strong correction in the new trend could be another trend change.
+- First-hour patterns are the same as later, but reversals are more violent and trends last longer.
+- Swing management for a possible extreme: swing part; if very strong, swing all and take 1/3 to 1/2 off after 1-2x initial risk.
+- Example: stop ~3 points below entry -> take 1/4 to 1/2 off at 2-4 points, another 1/4 to 1/2 at 4-6 points; or exit some at the first pause after +2 and more at the first pause after +4; hold the rest to a clear strong opposite signal or the breakeven stop.
+- Add at every with-trend setup (e.g. 2-legged pullback to the MA in a strong trend); scalp most of the add, keep swinging some.
+- Some reversals start quietly and look like a flag in the old trend, then break out forcefully; others have momentum from the entry bar. Try to take every strong signal.
+- Strong trend bar as signal bar -> good odds, must take the trade; if unsure, take 1/4 to 1/2 size and add on the first pullback.
+- Double bottom bull flag / double top bear flag = continuation patterns after the trend has begun (functionally the same entries as double bottom/top pullbacks). Second pullback is usually slightly beyond the first. Entry on a stop 1 tick beyond the setup bar.
+- Early range rule: trading range in the first 3-10 bars with 2+ reversals and small vs ADR -> breakout likely. After one reversal up and one reversal down, enter the breakout for a measured move, or fade small bars at the range extremes (less risk), or wait for a failed breakout / breakout pullback.
+- Fig 19.1: OR ~half ADR -> breakout and attempt to roughly double it. Several candidate ORs are all valid. Most measured move levels do not reverse (inertia), but reversals always occur at a support level.
+- Fig 19.1: by bar 5 range still ~half -> expect a significant range increase; a strong sell-off made the downside measured move likely. The day broke back into the upper range late (common) and closed there = reversal day.
+- Fig 19.1: "Only about 25 percent of reversals in the first hour or so result in swings" -> scalp until a double bottom/top or a clear always-in setup. A first-hour double top/bottom had ~50% chance of being the day's extreme; the high came from a later double top + small wedge + MA gap bar.
+- Retail mechanics: pre-open orders above a daily reversal bar cause gap ups that fade to value then reverse to new highs (small lower tail on the daily bull bar); mirror for gap downs.
+- Fig 19.2 (FCX, OR ~1/4 ADR): ignore bar 1; after a spike up (reversal down) and a spike down (reversal up), breakout mode: buy stop 1 tick above the top spike, sell stop 1 tick below the bottom spike; the unfilled order becomes the initial stop. If reversed after entry, often double the stop and plan to reverse.
+- Fig 19.2: large gap up (steep MA) + bull first bar -> good chance of bull trend day; low of the day from a double bottom bull flag after a 1-tick break below an ii.
+- Fig 19.2: small OR -> small pullbacks within it and small pullbacks during the trend; the final couple of hours usually have one pullback ~2x the earlier pullbacks.
+- Fig 19.2: consecutive bull bars with small bodies and large tails need more verification; always-in long accepted on the next two bull bars, swing stop below the 2-bar spike. Three bear bars each followed by a bull body = weak bears.
+- Fig 19.3 (GOOG): low 2 short at a steep MA that closed the gap below yesterday's low by 6 cents = high of the day; a double top with the first bar of the day = high of the day; high 2 double bottom bull flag as the first pullback after breaking yesterday's high can become a trend-from-open day.
+- Fig 19.4 (AAPL): reversal down from a higher high on a day not yet a bull trend day = good short; after a gap-up bull spike and a bear spike (climactic reversal) a trading range usually follows; two failed attempts to reverse a lower high -> opposite direction.
+- Fig 19.5: gap up to the MA in a strong bear trend = breakout pullback short; gap up breaking yesterday's steep bear trend line = breakout pullback long argument; both present -> uncertainty -> start of a trading range.
+- Fig 19.5: a sharp move down followed by a sharp move up is a sell climax (2-bar reversal on a higher time frame); after a climactic close with virtually no pullbacks expect a two-legged countertrend move.
+- Fig 19.5: a strong outside up bar in the first 30 minutes -> always-in may be long; want pullbacks to hold above its low; a higher low then confirms the low of the day may be in.
+- Fig 19.5: a failed low 2 in a bear flag after a big gap down traps gap-pullback shorts; a second attempt to reverse a break below yesterday's low is a buy.
+- Fig 19.6: a large gap down often has a two-legged pullback to the MA (double top bear flag, gap = flagpole, triangle with 3 tops) then a breakout into a bear trend.
+- Fig 19.6: shorting below a bear bar at the top of a range is more reliable than shorting below a bull trend bar.
+- Fig 19.6: a trend often begins or reverses around 8:30 a.m. PST (11:30 ET), after the conventional opening range.
+- Fig 19.8 (GOOG): sideways small range into a 7:00 a.m. PST report = breakout mode; three tops in a convergent range = triangle; range below the MA = bear flag -> expect downside breakout; two upside failures -> downside; low 2 short below the second top is less risky than a stop below the range.
+- Fig 19.8: second consecutive bear trend bar with large bodies and small tails -> always-in down; any pullback = short good for at least a scalp. Reversal ~8:30 a.m. PST noted again.
+- Fig 19.9: flat MA, big overlapping bars, no safe fades = barbwire: wait for one side to be trapped by a trend-bar breakout, then fade; barbwire breakouts usually fail, so barbwire is often a final flag.
+- Fig 19.9: the market often reverses a breakout of yesterday's high or low. After four bear trend bars, wait for a second buy signal.
+- Fig 19.9: reversal bar minimum = close above its midpoint; in two-sided action a second-entry long at a new low needs no reversal bar; always-in long formed on the strong bull bar after the second entry and was reconfirmed on later bull breakout bars.
+
+## Ch 20 Gap openings: reversals and continuations
+
+- Gap definition (any time frame): once the bar closes it does not overlap the bar before it. Most days have a 5-min gap open. Treat it as a breakout of yesterday's final bar.
+- Larger gap -> more likely a trend day, and more likely the gap acts as a spike followed by a channel in the gap direction.
+- Large gap up guideline: ~50% followed by a bull channel, ~20% trading range, ~30% bear trend.
+- Large gap definition: the largest gap of the past ~5 days, or larger than ~half the average daily range.
+- Large 5-min gap from yesterday's close = extreme behavior; often a trend day in either direction. Whether the daily chart also gaps does not matter. Only the response (accept or reject) matters.
+- Size, direction and number of trend bars in the first few bars often reveal the trend-day direction.
+- Sometimes trends from bar 1-2; more commonly tests the wrong direction first, then reverses into an all-day trend.
+- Rule: on a large gap, assume a strong trend will come, but it may take an hour. It often begins with a 2-legged countertrend move (2-legged pullback to the MA, double bottom/top), sometimes a third push (wedge flag).
+- Swing part of every trade on gap days even if the swing portion gets stopped a few times; one swing = 10 scalps; do not give up until it is clear the day will not trend.
+- The gap is one huge invisible trend bar: large gap up + minor pullback + channel rally = gap spike and channel bull trend. The S&P cash index first bar is the large trend bar matching the ES gap (Fig 20.1: YM gap = INDU large bull bar).
+- Trade the open normally (trend from open, failed breakout, breakout pullback) but swing more aggressively and add on pullbacks; take partial profits along the way as long as the trend is strong.
+- Most big gap days have trading range behavior for the first 5-10 bars; some stay ranges all day. Do not get locked into a belief; if wrong, get out.
+- Unclear price action after a big gap -> assume trading range, buy low sell high; expect several scalps before a swing setup.
+- Fig 20.2: large gap up + bull first bar -> trend-from-open gap spike and channel bull day.
+- Fig 20.2: large gap up + doji first bar (bull body) -> trended down for a couple of hours with tails, overlap and bull bars (two-sided); bulls controlled the second half.
+- Fig 20.2: large gap down + bull first bar -> trend-from-open bull day.
+- Fig 20.2: large gap down + doji first bar -> sideways for several hours, then a bear spike -> bear trend day; shorts won the MA tests after the spike but not before.
+- Fig 20.2 equation: large gap up then sideways -> bull trend day odds ~60%+; expected range ~recent average (20 points); 60%+ odds of 20 points higher before the gap closes; buyers in the first several bars risk ~10 points (gap close) or ~6 points (below the gap midpoint) to make 15-20.
+
+## Numeric candidates for the engine
+
+Times converted to ET for MNQ/MES (PST + 3h).
+
+- Session windows: first third = 9:30 to ~11:30-12:30 ET; middle third = ~11:30 to ~14:00-14:30 ET (sometimes 15:30); final third = to 16:00 ET. Concentrate entries in the first third; suppress stop entries in the middle third unless signal strength is high.
+- Report blackout: no entries for 1-3 bars (1-10 min) after 8:30 ET, 10:00 ET and 14:00/14:15 ET releases; inside the window assume 50% probability and extra slippage.
+- Midday reversal window: 11:00-12:30 ET, modal 11:30 ET; flag trend start/reversal there; look for original-trend resumption or a breakout around 14:30 ET; pullback window 13:30-14:00 ET ending ~14:30 ET; later pullbacks deeper after ~14:00 ET.
+- Close window 15:00-16:00 ET: daily bull trend -> bias long into the close (21/32 days closed above the open in the example); with-trend entry on bar close, stop beyond the opposite end of that bar; once dojis appear, stop under the last big trend bar of the spike.
+- High or low of day: formed in the first 5 bars in 50% of days; first ~90-120 min in 90% of days. First bar is the extreme 20% (30% if a strong trend bar with small tails; 50%+ on a large gap day with a strong trend bar).
+- First bar ~20% of the day's eventual range; quick ADR projection: range_est = bar1_range x 5.
+- Always-in flip: >= 2 consecutive strong trend bars in the new direction; the bar after the breakout bar must not close against it; extension of only a few ticks beyond the breakout bar -> failed-breakout bias; many ticks -> trend bias.
+- Always-in tie-breaker: majority of recent closes above the 20 EMA -> long, below -> short; else direction of the move leading into the range.
+- Carry-over: pre-open bias = yesterday's final always-in direction (closes vs 20 EMA in the final hour), held until the 2-bar flip rule fires.
+- Probability defaults: clear always-in = 60% for an equidistant move (70% for the strongest); opening reversal 4-point ES swing (ADR 10-15) = 40% (50-60% if very strong) with ~30% chance of a 2-point stop hit first; first-hour double top/bottom = 40-50% to be the day's extreme; any single first-hour reversal = 25-30% to become a 2:1 swing, ~60% to reach 1:1.
+- Scalp math: a stop entry needs 6 ticks beyond the signal bar to pay a 4-tick scalp; risk > reward needs >= 70% win rate; 1:1 needs 60%; 2:1 works at 50%. A five-tick failure (reaches +5 ticks then reverses) = reversal pattern.
+- First-hour scalp filter: 2 consecutive strong bull bars then a doji -> limit buy at/below the doji low; stop and target ~bar height (2 ES points when ADR ~15); assume 60%. Mirror for bears.
+- Opening range (OR) = largest leg or range of the first 30-90 min (6-18 bars). OR/ADR <= 0.25 -> breakout mode, enter either direction 1 tick beyond the OR, opposite side = initial stop. OR/ADR in 0.33-0.5 -> expect expansion to ~ADR; 2/3 trend day (trending trading range), target = OR height measured move from the breakout; expect a retest of the breakout point later; a close back inside past the opposite side = reversal day. OR large (strong spike) -> spike and channel; trail rather than target.
+- Breakout mode trigger: tiny range for > 30 min (6+ bars) on a large gap day -> stop orders 1 tick above/below the range; on a reversal after entry, double the stop and reverse.
+- Gap classification: large gap = largest of the past 5 days OR > 0.5 x ADR. Gap up outcomes: 50% bull channel, 20% range, 30% bear. Expect 5-10 bars of range first; the trend often starts after a 2-legged pullback to the 20 EMA or a double top/bottom; sideways after a large gap up -> 60%+ bull trend day, target = ADR extension, risk to the gap midpoint or gap close.
+- Gap proxy when ambiguous: first bar entirely above the 20 EMA = gap up; entirely below = gap down.
+- MA reliability: ignore the day-session 20 EMA for the first ~60 min on large-gap days; use momentum (count of trend bars, body/range ratio, overlap, tail size).
+- Day-type classifier by bar 12: doji first bar inside yesterday's final-hour range with a flat EMA -> range day; >= 5 reversals or overlapping tailed bars in the first hour -> range day (barbwire in the first 90 min -> range day); gap + 3-4 bar spike with large bodies, small tails, little overlap -> trend day; large gap + trend for the first 4 bars -> trend day.
+- First-bar fade: first bar a trend bar with prominent tails -> one-bar range; fade its breakouts for a scalp with up to 2 scale-ins; expect reversal within 1-2 bars.
+- Extreme-of-day patterns: high of day usually an imperfect double top, low an imperfect double bottom; second failed test of yesterday's high/low -> expect the opposite direction; an opening reversal that reverses yesterday's high/low -> swing with a breakeven stop.
+- 15-min check: breakout of the 3rd 5-min bar (close of the first 15-min bar) is significant when bars 1-2 trended and bar 3 is a smaller pause bar; use as a confirmation flag, not a standalone entry.
+- Institutional OR breakout: first 5-10 bars sideways -> breakout of that range often leads to a trend day; prefer entering at the EMA test before the breakout.
+- Minimum correction before re-entering with trend after a climax bar or a strong second-entry reversal: 2 legs and ~10 bars.
+- Swing exit template (stop ~3 ES points): 25-50% off at +2 to +4, 25-50% off at +4 to +6, rest to an opposite always-in signal or breakeven; move the stop to breakeven once the move reaches ~2x the stop.
+- Scale-in template in a strong trend: pullback 10-20% of ADR (1-2 ES points at ADR 12-15), add 1-2 points lower, whole-position stop another ~2 points down; exit on an always-in flip.
+- Sizing: required stop = k x normal -> size = 1/k of normal (floor 10% of normal); first hour: 1/2 to 1/4 size with stops beyond the signal bar; scalpers with 2x bars cut size by 1/2 to 2/3.
+- Yesterday's high/low: always resistance/support; targets and reversals cluster there; require >= 4-5 ticks of room between the signal bar extreme and these levels (or the EMA) for a 1-point scalp.
+- Late-day pullback on small-OR trend days: expect one pullback in the final 2 hours ~2x the size of earlier pullbacks.
+- Countertrend filter: no countertrend entries while always-in is defined; in a strong trend a countertrend entry needs a prior trend line break and a 5-min reversal bar closing above/below its midpoint.

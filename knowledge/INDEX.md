@@ -6,6 +6,7 @@
 - src/INSTITUTIONAL_PROBABILITY.md day types, measured base rates (IB/ORB/gaps/extremes/last-hour), gamma, cost math, 13 tests
 - src/QUANT_AUTHORS_CORE.md      15 authors; "The links"; ranked principles; ~30 tests
 - book/rayner_price_action_secrets.md  Teo; sec 10 = relevance
+- book/brooks_reversals.md       Brooks Reversals 2012 synthesized (core model, day structure, reversal catalogue, best trades, 78 guidelines, Brooks vs Wade, rule candidates D9-R10); raw per-part notes brooks_reversals_notes_A-D.md
 - ../docs/research/GREENDAY_LAB_2026-10-21.md  our own measurements (D2/D3/E5 results)
 - ../data/transcripts/*.txt      raw Wade transcripts (17)
 Pending: 37 Wade videos (ids in project doc WADE_FIRST_PRINCIPLES list; need user's Chrome), Brooks books if provided.

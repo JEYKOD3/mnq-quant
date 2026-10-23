@@ -1,0 +1,151 @@
+//@version=5
+indicator("Inside Bar Box V1 (mother-bar box, body breakout, S/R stop & target)", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=200)
+
+// ===== Inputs =====
+emaLen    = input.int(21, "Trend EMA")
+slopeBars = input.int(6, "EMA slope lookback (bars)")
+trendMode = input.string("EMA", "Trend source", options=["EMA", "Any (no filter)"])
+maxWait   = input.int(6, "Box valid for N bars after the inside bar")
+bufPts    = input.float(3, "Stop buffer beyond level (points)")
+maxStop   = input.float(80, "Max stop (points)")
+minStop   = input.float(10, "Min stop (points)")
+stopMode  = input.string("Structure", "Stop at", options=["Structure", "Box"])
+tgtMode   = input.string("S/R zone", "Target", options=["S/R zone", "1R", "2R"])
+minRoomR  = input.float(0.8, "S/R target: minimum room (x risk)")
+maxRoomR  = input.float(3.0, "S/R target: maximum room (x risk)")
+pivL      = input.int(3, "Swing pivot strength (bars each side)")
+sessOnly  = input.bool(true, "RTH only (09:30-16:00 ET)")
+showAll   = input.bool(true, "Show every inside bar / box")
+
+tz   = "America/New_York"
+m    = hour(time, tz) * 60 + minute(time, tz)
+inRTH = not sessOnly or (m >= 570 and m < 960)
+tick = syminfo.mintick
+
+// ===== Trend =====
+ema = ta.ema(close, emaLen)
+up  = trendMode == "Any (no filter)" ? true  : (ema > ema[slopeBars] and close > ema)
+dn  = trendMode == "Any (no filter)" ? true  : (ema < ema[slopeBars] and close < ema)
+plot(ema, "EMA", color=color.new(color.white, 40))
+
+// ===== Levels: prior day H/L/C, opening range (first 15 min), swing pivots =====
+var float dHi = na, dLo = na, dCl = na, pdH = na, pdL = na, pdC = na
+newDay = ta.change(dayofmonth(time, tz)) != 0
+if newDay and not na(dHi)
+    pdH := dHi, pdL := dLo, pdC := dCl
+    dHi := na, dLo := na, dCl := na
+if m >= 570 and m < 960
+    dHi := na(dHi) ? high : math.max(dHi, high)
+    dLo := na(dLo) ? low : math.min(dLo, low)
+    dCl := close
+var float orH = na, orL = na
+if newDay
+    orH := na, orL := na
+if m >= 570 and m < 585
+    orH := na(orH) ? high : math.max(orH, high)
+    orL := na(orL) ? low : math.min(orL, low)
+var float[] swH = array.new_float()
+var float[] swL = array.new_float()
+if newDay
+    array.clear(swH), array.clear(swL)
+ph = ta.pivothigh(high, pivL, pivL)
+pl = ta.pivotlow(low, pivL, pivL)
+if not na(ph)
+    array.push(swH, ph)
+if not na(pl)
+    array.push(swL, pl)
+
+// ===== Inside bar + box =====
+isInside = high <= high[1] and low >= low[1] and (high[1] - low[1]) > 0
+var float bxHi = na, bxLo = na
+var int   bxDir = 0, bxBar = na
+var box   bxObj = na
+if inRTH and isInside and (up or dn)
+    bxHi := high[1], bxLo := low[1], bxDir := up ? 1 : -1, bxBar := bar_index
+    if showAll
+        bxObj := box.new(bar_index - 1, bxHi, bar_index + maxWait, bxLo, border_color=bxDir > 0 ? color.teal : color.maroon, bgcolor=color.new(bxDir > 0 ? color.teal : color.maroon, 88))
+plotshape(inRTH and isInside and (up or dn), "Inside bar", shape.diamond, location.abovebar, color.yellow, size=size.tiny)
+
+// ===== Breakout with full body outside the box =====
+goLong  = bxDir == 1  and not na(bxHi) and bar_index - bxBar <= maxWait and math.min(open, close) > bxHi
+goShort = bxDir == -1 and not na(bxLo) and bar_index - bxBar <= maxWait and math.max(open, close) < bxLo
+badL    = bxDir == 1  and math.max(open, close) < bxLo
+badS    = bxDir == -1 and math.min(open, close) > bxHi
+
+// nearest structure level beyond the box, within maxStop
+nearestBelow(px, cap) =>
+    float best = na
+    if array.size(swL) > 0
+        for k = 0 to array.size(swL) - 1
+            v = array.get(swL, k)
+            if v < px and px - v <= cap
+                best := na(best) ? v : math.max(best, v)
+    if not na(pdL) and pdL < px and px - pdL <= cap
+        best := na(best) ? pdL : math.max(best, pdL)
+    if not na(orL) and orL < px and px - orL <= cap
+        best := na(best) ? orL : math.max(best, orL)
+    best
+nearestAbove(px, cap) =>
+    float best = na
+    if array.size(swH) > 0
+        for k = 0 to array.size(swH) - 1
+            v = array.get(swH, k)
+            if v > px and v - px <= cap
+                best := na(best) ? v : math.min(best, v)
+    if not na(pdH) and pdH > px and pdH - px <= cap
+        best := na(best) ? pdH : math.min(best, pdH)
+    if not na(orH) and orH > px and orH - px <= cap
+        best := na(best) ? orH : math.min(best, orH)
+    best
+// first S/R zone in trade direction with room in [minRoomR, maxRoomR] x R
+zoneAbove(px, r) =>
+    float best = na
+    if array.size(swH) > 0
+        for k = 0 to array.size(swH) - 1
+            v = array.get(swH, k)
+            if v - px >= minRoomR * r and v - px <= maxRoomR * r
+                best := na(best) ? v : math.min(best, v)
+    for v in array.from(pdH, pdC, orH)
+        if not na(v) and v - px >= minRoomR * r and v - px <= maxRoomR * r
+            best := na(best) ? v : math.min(best, v)
+    best
+zoneBelow(px, r) =>
+    float best = na
+    if array.size(swL) > 0
+        for k = 0 to array.size(swL) - 1
+            v = array.get(swL, k)
+            if px - v >= minRoomR * r and px - v <= maxRoomR * r
+                best := na(best) ? v : math.max(best, v)
+    for v in array.from(pdL, pdC, orL)
+        if not na(v) and px - v >= minRoomR * r and px - v <= maxRoomR * r
+            best := na(best) ? v : math.max(best, v)
+    best
+
+var float eP = na, sP = na, tP = na
+var string sWhy = "", tWhy = ""
+sig = false
+if goLong or goShort
+    side = goLong ? 1 : -1
+    eP := close
+    lv = stopMode == "Box" ? na : (side > 0 ? nearestBelow(bxLo, maxStop) : nearestAbove(bxHi, maxStop))
+    sP := na(lv) ? (side > 0 ? bxLo - bufPts : bxHi + bufPts) : (side > 0 ? lv - bufPts : lv + bufPts)
+    sWhy := na(lv) ? "box" : "structure"
+    r = math.abs(eP - sP)
+    if r < minStop
+        sP := eP - side * minStop, r := minStop
+    if r <= maxStop
+        z = tgtMode == "S/R zone" ? (side > 0 ? zoneAbove(eP, r) : zoneBelow(eP, r)) : na
+        tP := tgtMode == "2R" ? eP + side * 2 * r : (na(z) ? eP + side * r : z - side * tick)
+        tWhy := tgtMode == "S/R zone" ? (na(z) ? "1R (no zone)" : "zone") : tgtMode
+        sig := true
+        line.new(bar_index, eP, bar_index + 12, eP, color=color.white, width=1)
+        line.new(bar_index, sP, bar_index + 12, sP, color=color.red, width=2)
+        line.new(bar_index, tP, bar_index + 12, tP, color=color.green, width=2)
+        label.new(bar_index, side > 0 ? sP : tP, (side > 0 ? "LONG " : "SHORT ") + str.tostring(eP, "#.##") + "\nstop " + str.tostring(sP, "#.##") + " (" + sWhy + ", " + str.tostring(r, "#") + "pt)\ntgt " + str.tostring(tP, "#.##") + " (" + tWhy + ")", style=label.style_label_up, color=color.new(side > 0 ? color.teal : color.maroon, 20), textcolor=color.white, size=size.small)
+    bxDir := 0, bxHi := na, bxLo := na
+if badL or badS or (bxDir != 0 and bar_index - bxBar > maxWait)
+    bxDir := 0, bxHi := na, bxLo := na
+plotshape(sig and goLong, "Long breakout", shape.triangleup, location.belowbar, color.teal, size=size.small)
+plotshape(sig and goShort, "Short breakout", shape.triangledown, location.abovebar, color.maroon, size=size.small)
+alertcondition(sig and goLong, "Inside bar box: LONG breakout", "Body closed above the mother-bar box, trend up")
+alertcondition(sig and goShort, "Inside bar box: SHORT breakout", "Body closed below the mother-bar box, trend down")

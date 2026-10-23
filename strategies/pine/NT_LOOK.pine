@@ -1,0 +1,114 @@
+//@version=5
+indicator("NT Look: EMA + Prior Day OHLC + Prop Rules", shorttitle="NT Look", overlay=true, max_lines_count=50, max_labels_count=50)
+
+// ===== EMA (NinjaTrader: EMA 20, magenta) =====
+emaLen = input.int(20, "EMA length")
+emaCol = input.color(color.rgb(255, 0, 255), "EMA color")
+plot(ta.ema(close, emaLen), "EMA", color=emaCol, linewidth=1)
+
+// ===== Prior day OHLC (RTH session by default, like NT Prior Day OHLC) =====
+useRTH  = input.bool(false, "Prior day = RTH session only (09:30-16:00 ET)")
+showO   = input.bool(false, "Show prior day open")
+showH   = input.bool(true,  "Show prior day high")
+showL   = input.bool(true,  "Show prior day low")
+showC   = input.bool(true,  "Show prior day close")
+colH    = input.color(color.rgb(0, 200, 0),   "High color")
+colL    = input.color(color.rgb(220, 20, 60), "Low color")
+colC    = input.color(color.rgb(255, 165, 0), "Close color")
+colO    = input.color(color.gray,             "Open color")
+lw      = input.int(1, "Line width", minval=1, maxval=4)
+showLbl = input.bool(true, "Labels on the right")
+
+tz = "America/New_York"
+m  = hour(time, tz) * 60 + minute(time, tz)
+inRTH = m >= 570 and m < 960
+// trading day changes at 18:00 ET (CME) unless RTH mode
+tday = useRTH ? dayofmonth(time, tz) : dayofmonth(time + 6 * 3600000, tz)
+newDay = ta.change(tday) != 0
+
+var float cO = na
+var float cH = na
+var float cL = na
+var float cC = na
+var float pO = na
+var float pH = na
+var float pL = na
+var float pC = na
+if newDay
+    pO := cO, pH := cH, pL := cL, pC := cC
+    cO := na, cH := na, cL := na, cC := na
+take = useRTH ? inRTH : true
+if take
+    cO := na(cO) ? open : cO
+    cH := na(cH) ? high : math.max(cH, high)
+    cL := na(cL) ? low : math.min(cL, low)
+    cC := close
+
+var line lH = na
+var line lL = na
+var line lC = na
+var line lO = na
+var label bH = na
+var label bL = na
+var label bC = na
+var label bO = na
+var int dayStart = na
+if newDay
+    dayStart := bar_index
+drawLvl(line ln, label lb, float v, color col, string txt, bool on) =>
+    line l2 = ln
+    label b2 = lb
+    if on and not na(v)
+        if na(l2)
+            l2 := line.new(dayStart, v, bar_index + 5, v, color=col, width=lw)
+        else
+            line.set_xy1(l2, dayStart, v), line.set_xy2(l2, bar_index + 5, v)
+        if showLbl
+            if na(b2)
+                b2 := label.new(bar_index + 5, v, txt, style=label.style_none, textcolor=col, size=size.small)
+            else
+                label.set_xy(b2, bar_index + 5, v), label.set_text(b2, txt)
+    [l2, b2]
+if barstate.islast
+    [a1, a2] = drawLvl(lH, bH, pH, colH, "PDH " + str.tostring(pH, "#.00"), showH)
+    lH := a1, bH := a2
+    [c1, c2] = drawLvl(lL, bL, pL, colL, "PDL " + str.tostring(pL, "#.00"), showL)
+    lL := c1, bL := c2
+    [d1, d2] = drawLvl(lC, bC, pC, colC, "PDC " + str.tostring(pC, "#.00"), showC)
+    lC := d1, bC := d2
+    [e1, e2] = drawLvl(lO, bO, pO, colO, "PDO " + str.tostring(pO, "#.00"), showO)
+    lO := e1, bO := e2
+
+// ===== Prop rules panel (plan only: Pine cannot read broker P&L) =====
+showPanel = input.bool(false, "Show prop rules panel")
+acct      = input.string("50K", "Account", options=["25K", "50K"])
+isMNQ     = str.contains(syminfo.root, "MNQ") or str.contains(syminfo.root, "NQ")
+dll       = acct == "25K" ? 600 : 1200
+mll       = acct == "25K" ? 1000 : 2000
+tgt       = acct == "25K" ? 1250 : 3000
+maxMicro  = acct == "25K" ? 20 : 40
+scalpQ    = isMNQ ? (acct == "25K" ? 3 : 6) : (acct == "25K" ? 4 : 8)
+trendQ    = isMNQ ? (acct == "25K" ? 2 : 3) : (acct == "25K" ? 2 : 4)
+scalpTxt  = isMNQ ? "SL 80t / TP 80t + 160t" : "SL 24t / TP 24t + 48t"
+trendTxt  = isMNQ ? "SL 160t / TP 160t + 320t" : "SL 48t / TP 48t + 96t"
+var table tb = table.new(position.top_right, 2, 9, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
+if showPanel and barstate.islast
+    tc = color.new(color.white, 10)
+    table.cell(tb, 0, 0, "Lucid " + acct + "  " + syminfo.root, text_color=color.yellow, text_size=size.small)
+    table.cell(tb, 1, 0, "", text_size=size.small)
+    table.cell(tb, 0, 1, "Daily loss limit", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 1, "$" + str.tostring(dll), text_color=color.rgb(220, 20, 60), text_size=size.small)
+    table.cell(tb, 0, 2, "Max loss (trailing EOD)", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 2, "$" + str.tostring(mll), text_color=color.rgb(220, 20, 60), text_size=size.small)
+    table.cell(tb, 0, 3, "Profit target", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 3, "$" + str.tostring(tgt), text_color=color.rgb(0, 200, 0), text_size=size.small)
+    table.cell(tb, 0, 4, "Max micros", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 4, str.tostring(maxMicro), text_color=tc, text_size=size.small)
+    table.cell(tb, 0, 5, "Scalp: " + str.tostring(scalpQ) + " ct", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 5, scalpTxt, text_color=tc, text_size=size.small)
+    table.cell(tb, 0, 6, "Trend: " + str.tostring(trendQ) + " ct", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 6, trendTxt, text_color=tc, text_size=size.small)
+    table.cell(tb, 0, 7, "Stop for the day", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 7, "2 losses in a row or 3 trades", text_color=color.orange, text_size=size.small)
+    table.cell(tb, 0, 8, "No new trades", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 8, "after 15:30 ET", text_color=color.orange, text_size=size.small)

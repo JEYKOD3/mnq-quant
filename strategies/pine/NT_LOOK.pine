@@ -54,20 +54,21 @@ var label bC = na
 var label bO = na
 var int dayStart = na
 if newDay
-    dayStart := bar_index
+    dayStart := time
+barMs = time - time[1]
 drawLvl(line ln, label lb, float v, color col, string txt, bool on) =>
     line l2 = ln
     label b2 = lb
     if on and not na(v)
         if na(l2)
-            l2 := line.new(dayStart, v, bar_index + 5, v, color=col, width=lw)
+            l2 := line.new(dayStart, v, time + 5 * barMs, v, xloc=xloc.bar_time, color=col, width=lw)
         else
-            line.set_xy1(l2, dayStart, v), line.set_xy2(l2, bar_index + 5, v)
+            line.set_xy1(l2, dayStart, v), line.set_xy2(l2, time + 5 * barMs, v)
         if showLbl
             if na(b2)
-                b2 := label.new(bar_index + 5, v, txt, style=label.style_none, textcolor=col, size=size.small)
+                b2 := label.new(time + 5 * barMs, v, txt, xloc=xloc.bar_time, style=label.style_label_left, color=color.new(color.black, 100), textcolor=col, size=size.small)
             else
-                label.set_xy(b2, bar_index + 5, v), label.set_text(b2, txt)
+                label.set_xy(b2, time + 5 * barMs, v), label.set_text(b2, txt)
     [l2, b2]
 if barstate.islast
     [a1, a2] = drawLvl(lH, bH, pH, colH, "PDH " + str.tostring(pH, "#.00"), showH)

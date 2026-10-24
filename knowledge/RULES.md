@@ -147,5 +147,7 @@ X12| sessions: Asia/London/overnight direction do NOT predict RTH direction (49-
 X13| news days (data/macro_dates.csv): D2 on CPI days PF .59 (n11) -> skip; V4+ CPI ~1.0, NFP/PPI/FOMC strong (small n). FOMC 14:00 range breakout PF .46-.76 -> never | ours | T | scripts/lab/news.py
 X14| EVAL FRONTIER (Lucid Flex 50K, +8pt stop slippage, cushion sizing, every combo/filter tried): pass <=10 trading days ~5%, <=20d 13-19%, <=40d 25-37%, <=60d 33-51%, fail 0-5% at f .5-.8; f=1 -> fail 15-37% without faster passes. Hard ceiling = expectancy x frequency | ours | T | scripts/lab/portfolio.py evalsess.py
 
+X15| community NQ strategies, mechanical: liquidity sweep/turtle soup of PDH/PDL and overnight H/L (9:35-12, 12-15; 2R / opposite level / EOD; +-trend): PF .54-.95 ALL rejected; ICT silver bullet 10-11 FVG 1m/5m: PF .79-1.10, test <=1.02 rejected; gap fill .1-.8 ADR: PF .85-1.02 rejected; IB30/IB60 break with trend stop opp: PF 1.29/1.31 overall but on V4-off days test .80-.96 -> V4+ already captures it | community | X | scripts/lab/community.py
+
 ### Q. new open questions
 Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = range + double break on MNQ. Q7 count anchor: Brooks H2 (from pullback start) vs Wade (from extreme, reset at DT) hit-rate on same bars. Q8 climax bar frequency (r>=2*ATR20 after 10 bars) and post-climax drift on MNQ. Q9 1-2tk failed-breakout fade (E19) vs E6 deep pokes. Q10 11:30 ET reversal window frequency on MNQ (D14 vs F11).

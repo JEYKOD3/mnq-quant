@@ -132,5 +132,8 @@ X3 | Lucid Flex 50K eval sim (target 3k, EOD trail 2k, 50% consistency, DLL 1.2k
 
 E28| D2 as a trade: at 10:30 if |price-open|>=th*ADR enter with move, stop at open (or half-way), hold to close / 1R / 1.5R / 60m | ours | T | scripts/d2_trade.py 2022-26: th.4 stop=open hold-to-close PF1.28 n361 (75/yr) DD 9.8R but 2026 .82; th.5 tgt1R PF1.31 n230; V4-off days th.4 PF1.38 n200 (24 .80, 26 .91). ANY 60m cap -> PF .83-1.10 (edge needs the afternoon). Stops 160-190pt. Candidate 2nd edge only as hold-to-close; weak 2026
 
+X4 | V4 entry TF + exits (dev 2022-24 / test 2025-26): 1m retest entry 2R hold-close PF 1.47/1.41, all yrs>=1.14 (best); 5m 2R close 1.34/1.08; 1m 2R 60min 1.20/1.40 DD lower; 3m .45-.97 dev (signal-bar rule is TF-sensitive, caution); 10/15m <1.2 and fail test | ours | T | scripts/v4_tf_grid.js
+X5 | eval sizing: risk = 50% of (balance - trailing max-loss line) ('cushion 0.5') dominates fixed risk: 1m 2R close dev pass 74%/fail 0% (30% within 60 trading days, median 85d), test 14% within 60d / 0% fail (rest still running); fixed $1000-1200: ~31-35% within 60d but fail 48-57% dev, 53-68% test. Fast pass (<1 month) not achievable without ~50%+ fail | ours | T | scripts/v4_eval_sizing.js
+
 ### Q. new open questions
 Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = range + double break on MNQ. Q7 count anchor: Brooks H2 (from pullback start) vs Wade (from extreme, reset at DT) hit-rate on same bars. Q8 climax bar frequency (r>=2*ATR20 after 10 bars) and post-climax drift on MNQ. Q9 1-2tk failed-breakout fade (E19) vs E6 deep pokes. Q10 11:30 ET reversal window frequency on MNQ (D14 vs F11).

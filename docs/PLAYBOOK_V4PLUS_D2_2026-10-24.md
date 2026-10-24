@@ -39,6 +39,20 @@ An independent backtest, written from scratch by a separate agent, confirmed the
 - **Stats:** 225 trades (about 47 a year), PF 1.39, every year between 1.20 and 1.60. 79% of D2 days are days without a V4 trade.
 - **Optional filter:** trade only in London's direction (3:00-9:30 move). That gives PF 1.66 / 2.26 with London, versus 1.28 / 0.69 against.
 
+## 3b. Third setup: Raschke Momentum Pinball (verified source: Linda Raschke, Street Smarts)
+
+- **Daily check:** compute the 3-period RSI of the daily close-to-close changes. Buy setup if it is under 30 AND the daily trend is up. Sell setup if it is over 70 AND the trend is down.
+- **Entry:** a buy stop 1 tick above the 9:30-10:30 high (sell stop below the low), active 10:30-15:00.
+- **Stop and exit:** stop at the other side of the first hour. Exit at the close.
+- **Stats 2022-26:** 83 trades (about 17 a year), PF 2.85 (3.10 in 2022-24, 1.98 in 2025-26), max drawdown 2.3R.
+- **Logic:** buying a short-term oversold dip inside an uptrend.
+
+## 3c. Verified-source strategies tested and rejected
+
+These come from Crabel, Williams, Raschke and Fisher, plus the community rebrands of them.
+- **Williams volatility breakout and Fisher ACD:** positive overall (PF 1.3), but break-even on V4's off days in 2025-26, and they add eval failures.
+- **Others:** Crabel stretch with an NR7 filter, Raschke 80-20, the ICT Silver Bullet, liquidity sweeps or turtle soup, and gap fills all fail.
+
 ## 4. Sizing for the eval
 
 - **Risk per trade:** 65% of (balance - trailing max-loss line), capped so total daily risk stays under $1,100.
@@ -49,8 +63,10 @@ An independent backtest, written from scratch by a separate agent, confirmed the
 
 | | Passed within 10 trading days | 20 | 40 | 60 | Failed |
 |---|---|---|---|---|---|
-| 2022-24 | ~5% | ~14% | ~29% | ~37% | ~5% |
-| 2025-26 (unseen) | ~5% | ~19% | ~37% | ~46% | ~0% |
+| 2022-24 | ~6% | ~14% | ~29% | ~36% | ~1% |
+| 2025-26 (unseen) | ~6% | ~18% | ~33% | ~41% | ~0% |
+
+(With V4+, D2 and Pinball together, risking 65% of the room per trade.)
 
 - **The ceiling:** every combination and filter tried lands on this same frontier.
 - **Why it can't go higher:** speed = edge per trade x number of trades, and the $2,000 max loss caps the size.

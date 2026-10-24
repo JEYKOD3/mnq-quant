@@ -2,7 +2,7 @@
 // MNQ Playbook (2026-10-24): V4+ / D2 / Momentum Pinball, plus NT Look (EMA 20, prior-day H/L/C).
 // Use on MNQ1! 1-minute chart. Signals are computed from regular-hours (RTH) daily data via request.security.
 // Not an auto-trader: draws entries/stops/targets, shows suggested size, fires alerts.
-indicator("MNQ Playbook: V4+ / D2 / Pinball", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
+indicator("MNQ Playbook: V4+ / D2 / Pinball / H2", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
 
 // ---------- Look ----------
 emaLen = input.int(20, "EMA length", group="Look")
@@ -13,6 +13,10 @@ showPD = input.bool(true, "Prior-day high / low / close lines", group="Look")
 useV4  = input.bool(true, "V4+ (opening-range retest, with daily trend)", group="Strategies")
 useD2  = input.bool(true, "D2 (10:30 continuation)", group="Strategies")
 usePin = input.bool(true, "Momentum Pinball (Raschke)", group="Strategies")
+useH2  = input.bool(true, "H2 trend-day pullbacks (short-term, half size)", group="Strategies")
+h2Th   = input.float(0.4, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
+h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
+h2Max  = input.int(3, "H2 max trades per day", group="H2")
 gapTh  = input.float(0.4, "V4+ gap threshold (x ADR)", group="V4+")
 dirTh  = input.float(0.4, "V4+ first-15m threshold (x OR range)", group="V4+")
 tgtR   = input.float(2.0, "V4+ target (R)", group="V4+")
@@ -308,12 +312,134 @@ if usePin and inRTH
                 pnN += 1
                 pnPos := 0
 
+
+// ===================== H2: second-entry pullback on trend days (5m signals built from 1m bars) =====================
+// Trend day: at 10:29 close, |price - open| >= h2Th x ADR, direction = that move; must match daily trend.
+// 5m bar k (session bars only): intraday trend = close > session TWAP and EMA20(5m, reset daily) rising over 3 bars (mirror short);
+// a new session high was made within bars k-8..k-3; bar k-1 pulled back (close below k-2 close); bar k closes above bar k-1 high and is bullish.
+// Entry: next 1m bar open. Stop: lowest low of bars k-3..k minus 1 tick (6 pts min, 0.25 ADR max). Target 2R. Exit 15:55. One position at a time, max 3/day.
+var float[] bH = array.new_float()
+var float[] bL = array.new_float()
+var float[] bC = array.new_float()
+var float[] bE = array.new_float()
+var float bO_ = na
+var float bH_ = na
+var float bL_ = na
+var float twSum = 0.0
+var int twN = 0
+var float e5 = na
+var int tdDir = 0
+var int h2Pos = 0
+var int h2N_ = 0
+var bool h2Pend = false
+var int h2PSide = 0
+var float h2PStp = na
+var float h2E = na
+var float h2S = na
+var float h2T = na
+var float h2Pts = 0.0
+var int h2N = 0
+var int h2W = 0
+if newDay
+    array.clear(bH)
+    array.clear(bL)
+    array.clear(bC)
+    array.clear(bE)
+    bO_ := na
+    twSum := 0.0
+    twN := 0
+    e5 := na
+    tdDir := 0
+    h2Pos := 0
+    h2N_ := 0
+    h2Pend := false
+if useH2 and inRTH
+    // trend-day flag at 10:29
+    if mnt == 629 and not na(adr10) and not na(rOpen)
+        mv2 = (close - rOpen) / adr10
+        tdDir := math.abs(mv2) >= h2Th ? (mv2 > 0 ? 1 : -1) : 0
+    // fill pending entry at this bar's open
+    if h2Pend and h2Pos == 0
+        h2E := open
+        h2S := h2PStp
+        r2 = math.abs(h2E - h2S)
+        if (h2PSide > 0 and h2S < h2E) or (h2PSide < 0 and h2S > h2E)
+            h2T := h2E + h2PSide * h2Tgt * r2
+            h2Pos := h2PSide
+            h2N_ += 1
+            q2 = sizeFor(r2, 0.5)
+            label.new(bar_index, h2E, "H2 " + (h2PSide > 0 ? "LONG " : "SHORT ") + fmt(h2E) + "\nstop " + fmt(h2S) + " (" + fmt(r2) + " pts)\ntarget " + fmt(h2T) + "\nsize " + str.tostring(q2) + " MNQ (half)", color=color.new(color.aqua, 0), textcolor=color.black, style=h2PSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
+            line.new(bar_index, h2S, bar_index + 40, h2S, color=color.red)
+            line.new(bar_index, h2T, bar_index + 40, h2T, color=color.lime)
+            alert("H2 " + (h2PSide > 0 ? "LONG " : "SHORT ") + fmt(h2E) + " stop " + fmt(h2S) + " target " + fmt(h2T) + " size " + str.tostring(q2) + " MNQ", alert.freq_once_per_bar)
+        h2Pend := false
+    // manage
+    if h2Pos != 0
+        hS2 = h2Pos > 0 ? low <= h2S : high >= h2S
+        hT2 = h2Pos > 0 ? high >= h2T : low <= h2T
+        x2 = hS2 ? h2S : hT2 ? h2T : mnt >= 955 ? close : na
+        if not na(x2)
+            p2 = (x2 - h2E) * h2Pos
+            h2Pts += p2
+            h2N += 1
+            h2W += p2 > 0 ? 1 : 0
+            label.new(bar_index, x2, "H2 exit " + (hS2 ? "stop " : hT2 ? "target " : "15:55 ") + fmt(p2) + " pts", color=p2 > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=h2Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
+            alert("H2 exit " + fmt(p2) + " pts", alert.freq_once_per_bar)
+            h2Pos := 0
+    // build the 5m bar
+    if na(bO_)
+        bO_ := open
+        bH_ := high
+        bL_ := low
+    else
+        bH_ := math.max(bH_, high)
+        bL_ := math.min(bL_, low)
+    if (mi + 1) % 5 == 0
+        c5 = close
+        o5 = bO_
+        array.push(bH, bH_)
+        array.push(bL, bL_)
+        array.push(bC, c5)
+        twSum += (bH_ + bL_ + c5) / 3
+        twN += 1
+        e5 := na(e5) ? c5 : e5 + 2.0 / 21.0 * (c5 - e5)
+        array.push(bE, e5)
+        bO_ := na
+        k = array.size(bC) - 1
+        mclose = mnt + 1
+        if k >= 8 and mclose >= 630 and mclose <= 900 and tdDir != 0 and tdDir == trendDir and h2Pos == 0 and not h2Pend and h2N_ < h2Max
+            tw = twSum / twN
+            upT = c5 > tw and e5 > array.get(bE, k - 3)
+            dnT = c5 < tw and e5 < array.get(bE, k - 3)
+            hh = array.max(array.slice(bH, 0, k - 2))
+            ll = array.min(array.slice(bL, 0, k - 2))
+            rh = array.max(array.slice(bH, k - 8, k - 2))
+            rl = array.min(array.slice(bL, k - 8, k - 2))
+            c1 = array.get(bC, k - 1)
+            c2 = array.get(bC, k - 2)
+            h1 = array.get(bH, k - 1)
+            l1 = array.get(bL, k - 1)
+            sg = 0
+            float st2 = na
+            if tdDir > 0 and upT and rh >= hh and c1 < c2 and c5 > h1 and c5 > o5
+                sg := 1
+                st2 := array.min(array.slice(bL, k - 3, k + 1)) - tick
+            else if tdDir < 0 and dnT and rl <= ll and c1 > c2 and c5 < l1 and c5 < o5
+                sg := -1
+                st2 := array.max(array.slice(bH, k - 3, k + 1)) + tick
+            if sg != 0
+                rr = math.abs(c5 - st2)
+                if rr >= 6 and rr <= 0.25 * adr10
+                    h2Pend := true
+                    h2PSide := sg
+                    h2PStp := st2
+
 // ---------- opening range / first hour boxes ----------
 plot(inRTH and mnt >= 585 ? orH : na, "OR high", color=color.new(color.yellow, 40), style=plot.style_linebr)
 plot(inRTH and mnt >= 585 ? orL : na, "OR low", color=color.new(color.yellow, 40), style=plot.style_linebr)
 
 // ---------- table ----------
-var table tb = table.new(position.bottom_right, 3, 7, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table tb = table.new(position.bottom_right, 3, 8, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showTbl and barstate.islast
     tc = color.white
     table.cell(tb, 0, 0, "Daily trend", text_color=tc, text_size=size.small)
@@ -337,3 +463,6 @@ if showTbl and barstate.islast
     table.cell(tb, 0, 6, "Pinball", text_color=tc, text_size=size.small)
     table.cell(tb, 1, 6, str.tostring(pnN) + " / " + str.tostring(pnW), text_color=tc, text_size=size.small)
     table.cell(tb, 2, 6, fmt(pnPts) + " ($" + fmt(pnPts * 2) + ")", text_color=pnPts >= 0 ? color.lime : color.red, text_size=size.small)
+    table.cell(tb, 0, 7, "H2 (half size)", text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 7, str.tostring(h2N) + " / " + str.tostring(h2W), text_color=tc, text_size=size.small)
+    table.cell(tb, 2, 7, fmt(h2Pts) + " ($" + fmt(h2Pts * 2) + ")", text_color=h2Pts >= 0 ? color.lime : color.red, text_size=size.small)

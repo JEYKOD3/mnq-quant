@@ -122,6 +122,78 @@ A reversion trade is taken only when there are enough points left to the fair pr
   - A 6-NQ short for 50 pts on a $6,000-target account.
   - 4 of 5 trades won, about +$9K, then he stopped before a 10:00 AM speech.
 
+## 10b. Chart walkthrough, trade by trade (54:00 to the end)
+
+This is my own summary of the chart segments. Frame files are in frames/.
+
+### Tue Jul 14: CPI day, reviewed on the chart (54:00-68:30)
+
+| # | Time on chart (ET) | What he saw | Trade | Result | Frame |
+|---|---|---|---|---|---|
+| 1 | 8:30-8:33 | CPI spike up. Pre-news price (the 8:29 level) marked as fair. First red candle is not a displacement: body larger but no close below the wick. | No trade | n/a | 54m30_cpi_jul14_spike_prenews_line |
+| 2 | ~8:34 | Small intra-candle swing low (wick below both neighbours) broken by a close | **Short, break of structure**. About 167 pts to fair price, so a 175-pt target on a funded account. Stop is whatever the account's optimisation says (~25 pts). | Won | 55m30_cpi_jul14_bos_short, 57m20_cpi_jul14_175pt_target_25pt_stop |
+| 3 | ~8:50 | Four wicks holding one level, then a strong close below it | **Short, break of structure** on a second account. About 94 pts available, so a 100-pt target. | Won | 59m30_cpi_jul14_layered_100pt_short |
+| 4 | ~9:00 | Another break of structure lower, but most of the move is already done | **Eval short**, 38 target / 25 stop. Uses evals here to avoid too much funded exposure at the bottom. | Won | |
+| 5 | 9:30 open | Open drops straight back to the pre-news price, so the **open is ignored** and the pre-news price stays fair | n/a | n/a | |
+| 6 | 9:30-10:00 | Displacement and break of structure back toward pre-news price, ~38 pts available | 2-3 **eval shorts** at 38 / 25 | Mostly won | 64m40_cpi_jul14_after_open_reversions |
+| 7 | ~9:55 | Price now below fair price. A green candle closes above three wicks with a bigger body (displacement long), ~65 pts available. | **Long**, 50-pt target if funded, 38 if eval | Won | |
+| 8 | Open candle | Red opening candle of 43 pts (bigger than 25), toward fair price | **Continuation plus reversion** short, 76 / 50 at half size | Won | 68m10_cpi_jul14_open_candle_continuation |
+| 9 | 10:00-11:00 | No more displacements. He stops at 11:00. | n/a | n/a | |
+
+**Variant he showed (66:00):** with 76 pts available, double the stop and target to 50 / 76 and use 5 MNQ instead of 1 NQ. The dollars stay the same, and a wider stop catches more of the bias.
+
+### Wed Jul 15: PPI day, reviewed on the chart (68:30-72:30)
+
+| # | What he saw | Trade | Result | Frame |
+|---|---|---|---|---|
+| 1 | PPI spike down. Several red candles are not displacements because they don't close beyond the prior wick. First valid break of structure. | **Long**, 50 target / 25 stop | Won | 69m30_ppi_jul15_first_bos_short |
+| 2 | First displacement candle back toward pre-news price, ~104 pts available | **Long**, ~100-pt target. He would rather have waited for the stronger break-of-structure entry a bit later. | Won | 70m35_ppi_jul15_displacement_to_prenews |
+| 3 | After the 9:30 open, choppy wicks, then the first displacement down | **Eval short**, 38 / 25 | Lost: stopped by a few points, then price hit the target in one candle | |
+| 4 | Price falls below pre-news price. Displacement long, then a stronger break of structure, ~76 pts available | **Long**: the displacement entry lost; the break-of-structure entry won (76 pts, 5 MNQ with a 50-pt stop) | 1 lost, 1 won | 71m50_ppi_jul15_bos_long_76pt |
+| 5 | Late dump. A displacement long and a break-of-structure long near 11:00 | **Two longs** | Both lost; done at 11:00 | 72m45_ppi_jul15_late_losses |
+
+**Rule he stated here (70:00):** never a stop under 25 pts in the New York session.
+
+### Live, Tue Aug 25 (77:00-85:00), funded accounts only
+
+- **Fair price:** the overnight consolidation just before the open, not the open itself. The open ran straight up into it and beyond (77:30).
+- **Trades:**
+
+| # | Trade | Target logic | Result | Frame |
+|---|---|---|---|---|
+| 0 | Continuation long off the second candle after the open (not recorded) | | +$1,200 | |
+| 1 | Short after a wick rejected longs; early entry because the target needed room | Account needed $3,210; he wanted at least 80% of that distance to fair price | +$3,210 | 78m20_live_aug25_first_funded_short |
+| 2 | Short on a second account (another rejecting wick, half a displacement) | Account target $1,500 | +$1,505 | 80m00_live_aug25_second_account_short |
+| 3-4 | Two long attempts back up to the open after wicks rejected shorts | | Both lost (about −$2K); then structure broke down and he stopped | 83m20_live_aug25_long_attempts |
+
+- **Day:** about +$5.7K won, −$2K lost.
+- **His point:** a funded loss only "costs" the evals that bought it. At a 33% pass rate that's about $300-400.
+
+### Live, Fri Aug 28 (85:00-97:00), 3 small (Blue Sky 50K) + 2 large (150K) accounts
+
+| # | Trade | Detail | Result | Frame |
+|---|---|---|---|---|
+| 1 | **Opening continuation short** | Opening 1-second and 1-minute candle red, the big-picture bias agreed, it broke structure. 25-pt target, 2 contracts. | Won | 86m15_live_aug28_open_continuation_short |
+| 2 | Second continuation short with a limit order (he limits continuations to the first 5 minutes) | | Lost (~25 pts) | |
+| 3 | **Long back to the open** after a huge red candle got rejected; entered mid-candle (aggressive) | 25 pts on one account, 50 pts on the account that had just lost | Both won | 89m05_live_aug28_long_back_to_open, 90m30_live_aug28_50pt_long_held |
+| 4 | **6-contract short** on a 150K account, limit order 50 pts above fair price | Account target $6,000. 50 pts × 6 NQ = $6,000, a 1:1 trade. With 100 pts available he would have used 3 contracts. | Won | 93m45_live_aug28_6contract_short, 96m10_live_aug28_short_done |
+
+- **Day:** 4 accounts at target, about +$9K.
+- **Stop:** he quit before a 10:00 AM speech (unscheduled-style risk).
+- **Breakeven:** moved the stop to breakeven once price wicked his fair-price level, because past it he treats price as random.
+
+### Wed Aug 26 / Thu Aug 27, quick review (97:00-100:00)
+- **Wed (8:30 news day):**
+  - The 9:30 open was a straight continuation long (opening 1-second candle green, no wick).
+  - Then reversions back to the pre-news price.
+  - Frame: 98m05_review_aug26_wed_news_day.
+- **Thu:**
+  - The continuation lost.
+  - Several reversions back to the open won, after 3 losses mid-session.
+  - He kept going past the 3-loss mark because his accounts weren't at target yet, and ended net positive.
+  - Frame: 99m10_review_aug27_thu.
+- **His personal rule:** keep trading an account until it is "at profit target or gone" for the day. This contradicts the 3-loss rule he gave earlier, which he applies to the reversion idea rather than to each account.
+
 ## 11. Board screenshots (frames/)
 
 | File | What it shows |

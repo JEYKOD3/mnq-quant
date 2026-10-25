@@ -20,7 +20,7 @@ def run(sig='either', S=38, Tg=57, md='f', end=930, flat=990, room=.8, maxtr=4, 
             if md=='f' and dist<room*Tg: continue
             if tg<=2: continue
             r=walk(b,i+1,s,e,S,tg,None,flat)
-            r.update(d=d,R=r['pts']/S,net=r['pts']*PV-2*COMM,em=b[i+1][0],dist=dist,ev='/'.join(sorted(EV[d]))); out.append(r); n+=1
+            r.update(d=d,R=r['pts']/S,net=r['pts']*PV-2*COMM,em=b[i+1][0],dist=dist,ev='/'.join(sorted(EV[d])),s=s,eP=e,stp=e-s*S,F=F); out.append(r); n+=1
             losses=losses+1 if r['net']<0 else 0; busy=r['xm']
             if first_only: break
     return out

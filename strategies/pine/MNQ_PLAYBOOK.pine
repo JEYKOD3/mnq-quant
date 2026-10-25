@@ -1,9 +1,10 @@
 //@version=5
-// MNQ Playbook (2026-10-25): V4+ / D2 / Momentum Pinball / H2, plus NT Look (EMA 20, prior-day H/L/C).
+// MNQ Playbook (2026-10-25): V4+ / D2 / Momentum Pinball / H2 / TDP, plus NT Look (EMA 20, prior-day H/L/C).
+// TDP added 2026-10-25: trend-day pullback (first hour >= 60% efficient and outside prior-day range at 10:30; limit at day extreme - 1/3 first-hour range; stop 0.4 ADR; 1.5R).
 // 2026-10-25 defaults: V4+ target 1.25R with stop to breakeven at +1R; Pinball holds to 15:55 (cap optional); H2 threshold 0.40; one shared daily risk budget.
 // Use on MNQ1! 1-minute chart. Signals are computed from regular-hours (RTH) daily data via request.security.
 // Not an auto-trader: draws entries/stops/targets, shows suggested size, fires alerts.
-indicator("MNQ Playbook: V4+ / D2 / Pinball / H2", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
+indicator("MNQ Playbook: V4+ / D2 / Pinball / H2 / TDP", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
 
 // ---------- Look ----------
 emaLen = input.int(20, "EMA length", group="Look")
@@ -15,6 +16,11 @@ useV4  = input.bool(true, "V4+ (opening-range retest, with daily trend)", group=
 useD2  = input.bool(true, "D2 (10:30 continuation)", group="Strategies")
 usePin = input.bool(true, "Momentum Pinball (Raschke)", group="Strategies")
 useH2  = input.bool(true, "H2 trend-day pullbacks (short-term, half size)", group="Strategies")
+useTD  = input.bool(true, "TDP trend-day pullback (10:30-12:00)", group="Strategies")
+tdEff  = input.float(0.6, "TDP first-hour efficiency min", group="TDP")
+tdK    = input.float(0.33, "TDP pullback depth (x first-hour range)", group="TDP")
+tdStop = input.float(0.4, "TDP stop (x ADR)", group="TDP")
+tdTgt  = input.float(1.5, "TDP target (R)", group="TDP")
 h2Th   = input.float(0.4, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
 h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
 h2Max  = input.int(3, "H2 max trades per day", group="H2")
@@ -143,17 +149,19 @@ var float rkV4 = 0.0
 var float rkD2 = 0.0
 var float rkPn = 0.0
 var float rkH2 = 0.0
+var float rkTD = 0.0
 var float dayLoss = 0.0
 if newDay
     rkV4 := 0.0
     rkD2 := 0.0
     rkPn := 0.0
     rkH2 := 0.0
+    rkTD := 0.0
     dayLoss := 0.0
 perC(riskPts) => riskPts * 2 + 4.74
 sizeFor(riskPts, w) =>
     room = acct - mllLine
-    used = rkV4 + rkD2 + rkPn + rkH2 + dayLoss
+    used = rkV4 + rkD2 + rkPn + rkH2 + rkTD + dayLoss
     pc = perC(riskPts)
     budget = math.min(w * frac * room, frac * room - used, dayCap - used)
     q = budget > 0 ? math.floor(budget / pc) : 0
@@ -523,12 +531,92 @@ if useH2 and inRTH
                     h2PSide := sg
                     h2PStp := st2
 
+// ===================== TDP: trend-day pullback (added 2026-10-25) =====================
+// At 10:29 close: first-hour efficiency |close - open| / (first-hour range) >= tdEff, and close outside the prior-day range on that side.
+// From 10:30 to 12:00: limit order at dayExtreme - tdK x firstHourRange (long; mirror short). The day extreme keeps updating until filled.
+// Stop: entry - tdStop x ADR (10 pts min). Target tdTgt x R. Otherwise flat 15:55. One trade per day, full size, shared daily budget.
+var int tdS = 0
+var float tdExt = na
+var float tdFhr = na
+var int tdPos = 0
+var bool tdDone = false
+var float tdE = na
+var float tdSt = na
+var float tdT = na
+var int tdQ = 0
+var string tdET = ""
+var float tdPts = 0.0
+var int tdN = 0
+var int tdW = 0
+var line tdLn = na
+if newDay
+    tdS := 0
+    tdPos := 0
+    tdDone := false
+if useTD and inRTH
+    if tdPos != 0
+        hS3 = tdPos > 0 ? low <= tdSt : high >= tdSt
+        hT3 = tdPos > 0 ? high >= tdT : low <= tdT
+        x3 = hS3 ? tdSt : hT3 ? tdT : mnt >= 955 ? close : na
+        if not na(x3)
+            p3 = (x3 - tdE) * tdPos
+            tdPts += p3
+            tdN += 1
+            tdW += p3 > 0 ? 1 : 0
+            rkTD := 0.0
+            dayLoss += lossOf(tdQ, p3)
+            logTrade("TDP", tdPos, tdET, hS3 ? "stop" : hT3 ? "target" : "15:55", p3)
+            label.new(bar_index, x3, "TDP exit " + (hS3 ? "stop " : hT3 ? "target " : "15:55 ") + fmt(p3) + " pts", color=p3 > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=tdPos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
+            alert("TDP exit " + fmt(p3) + " pts", alert.freq_once_per_bar)
+            tdPos := 0
+    if mnt == 629 and not na(adr10) and not na(rOpen)
+        fhr = ibH - ibL
+        eff = fhr > 0 ? math.abs(close - rOpen) / fhr : 0.0
+        sd = close > rOpen ? 1 : -1
+        outside = sd > 0 ? close > pdh : close < pdl
+        if eff >= tdEff and outside
+            tdS := sd
+            tdFhr := fhr
+            tdExt := sd > 0 ? ibH : ibL
+            alert("TDP armed: trend day " + (sd > 0 ? "UP" : "DOWN") + ", buy/sell limit " + fmt(tdExt - sd * tdK * fhr) + " until 12:00", alert.freq_once_per_bar)
+    if tdS != 0 and tdPos == 0 and not tdDone and mnt >= 630 and mnt < 720
+        lvl3 = tdExt - tdS * tdK * tdFhr
+        if tdS > 0 ? low <= lvl3 - tick : high >= lvl3 + tick
+            tdE := tdS > 0 ? math.min(open, lvl3) : math.max(open, lvl3)
+            tdSt := tdE - tdS * math.max(10.0, tdStop * adr10)
+            r3 = math.abs(tdE - tdSt)
+            tdT := tdE + tdS * tdTgt * r3
+            tdPos := tdS
+            tdDone := true
+            q3 = sizeFor(r3, 1.0)
+            tdQ := q3
+            tdET := hhmm()
+            rkTD := q3 * perC(r3)
+            label.new(bar_index, tdE, "TDP " + (tdS > 0 ? "LONG " : "SHORT ") + fmt(tdE) + "\nstop " + fmt(tdSt) + " (" + fmt(r3) + " pts)\ntarget " + fmt(tdT) + "\nsize " + str.tostring(q3) + " MNQ", color=color.new(color.fuchsia, 0), textcolor=color.white, style=tdS > 0 ? label.style_label_up : label.style_label_down, size=size.small)
+            line.new(bar_index, tdSt, bar_index + 90, tdSt, color=color.red, width=2)
+            line.new(bar_index, tdT, bar_index + 90, tdT, color=color.lime, width=2)
+            alert("TDP " + (tdS > 0 ? "LONG " : "SHORT ") + fmt(tdE) + " stop " + fmt(tdSt) + " target " + fmt(tdT) + " size " + str.tostring(q3) + " MNQ", alert.freq_once_per_bar)
+            if tdS > 0 ? low <= tdSt : high >= tdSt
+                p3 = (tdSt - tdE) * tdS
+                tdPts += p3
+                tdN += 1
+                tdPos := 0
+                rkTD := 0.0
+                dayLoss += lossOf(tdQ, p3)
+                logTrade("TDP", tdS, tdET, "stop", p3)
+        else
+            tdExt := tdS > 0 ? math.max(tdExt, high) : math.min(tdExt, low)
+            line.delete(tdLn)
+            tdLn := line.new(bar_index, tdExt - tdS * tdK * tdFhr, bar_index + 5, tdExt - tdS * tdK * tdFhr, color=color.fuchsia, style=line.style_dashed)
+    if tdS != 0 and mnt == 720 and not tdDone
+        line.delete(tdLn)
+
 // ---------- opening range / first hour boxes ----------
 plot(inRTH and mnt >= 585 ? orH : na, "OR high", color=color.new(color.yellow, 40), style=plot.style_linebr)
 plot(inRTH and mnt >= 585 ? orL : na, "OR low", color=color.new(color.yellow, 40), style=plot.style_linebr)
 
 // ---------- table ----------
-var table tb = table.new(position.bottom_right, 3, 8, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table tb = table.new(position.bottom_right, 3, 9, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showTbl and barstate.islast
     tc = color.white
     table.cell(tb, 0, 0, "Daily trend", text_color=tc, text_size=size.small)
@@ -555,6 +643,9 @@ if showTbl and barstate.islast
     table.cell(tb, 0, 7, "H2 (half size)", text_color=tc, text_size=size.small)
     table.cell(tb, 1, 7, str.tostring(h2N) + " / " + str.tostring(h2W), text_color=tc, text_size=size.small)
     table.cell(tb, 2, 7, fmt(h2Pts) + " ($" + fmt(h2Pts * 2) + ")", text_color=h2Pts >= 0 ? color.lime : color.red, text_size=size.small)
+    table.cell(tb, 0, 8, "TDP" + (tdS != 0 and not tdDone ? (tdS > 0 ? " (armed LONG)" : " (armed SHORT)") : ""), text_color=tc, text_size=size.small)
+    table.cell(tb, 1, 8, str.tostring(tdN) + " / " + str.tostring(tdW), text_color=tc, text_size=size.small)
+    table.cell(tb, 2, 8, fmt(tdPts) + " ($" + fmt(tdPts * 2) + ")", text_color=tdPts >= 0 ? color.lime : color.red, text_size=size.small)
 
 // ---------- last trades table ----------
 showLog = input.bool(true, "Show last trades table", group="Sizing")

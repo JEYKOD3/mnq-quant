@@ -39,3 +39,12 @@
 ## Alerts (one set per chart)
 - **How:** on each chart, Alerts > Create > Condition: MNQ Playbook v6 > "Any alert() function call" > Once per bar.
 - **What fires:** Chart 1 alerts only for NEWS, V4+ and D2. Chart 2 alerts only for TDP, H2 and Pinball.
+
+## Status Oct 25 2026, 19:50 (set up through the Claude browser)
+- **Script:** MNQ Playbook v6 is saved (version 10), compiled with no errors, and on the MNQ1! 1m chart (extended hours on). Layout "MNQ 1m".
+- **Check against Python:** Oct 20 D2 -148 (Python -148.2), Oct 22 V4+ +136.9 (+137.2), Oct 22 Pinball +194.8 (+194.5). TDP Oct 22 +259 has no Python match only because our 1m data ends Oct 20.
+- **TradingView Basic plan limits:** 1 saved layout and 0 indicator alerts. So:
+  - Show on this chart = "All strategies" on the one layout.
+  - The Chart 1 / Chart 2 split works only with more layouts (Essential plan: 5 layouts, 20 alerts).
+  - No alerts on Basic.
+- **Chart settings changed:** inputs and labels removed from the status line and price scale, last trades table on, results table off.

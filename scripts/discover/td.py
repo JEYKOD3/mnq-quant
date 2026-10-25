@@ -67,15 +67,15 @@ def run(E=.6, need_out=True, mode='retrace', k=.33, stop='pb', a=.25, buf=.05, R
                 if (s > 0 and l <= st_) or (s < 0 and h >= st_): res = q * ((st_ - s * T - e) * s); break
                 continue
             if (s > 0 and l <= st_) or (s < 0 and h >= st_):
-                res = pts + q * ((st_ - (0 if be else s * T) - e) * s); break
+                res = pts + q * ((st_ - (0 if be else s * T) - e) * s); why = 'breakeven' if be else 'stop'; break
             if half and not be and ((s > 0 and h >= e + s * r) or (s < 0 and l <= e - r)) and not ((s > 0 and h >= e + s * r) and False):
                 pts += .5 * r; q = .5; be = True; st_ = e
             if tgt is not None and ((s > 0 and h >= tgt) or (s < 0 and l <= tgt)):
-                res = pts + q * R * r; break
+                res = pts + q * R * r; why = 'target'; break
             if m >= min(955, b[ei][0] + hold):
-                res = pts + q * (c - e) * s; break
-        if res is None: res = pts + q * (b[-1][4] - e) * s
-        tr.append(dict(d=d, net=res * PV - 2 * COMM, R=res / r, risk=r, em=b[ei][0], s=s))
+                res = pts + q * (c - e) * s; why = 'time exit'; break
+        if res is None: res = pts + q * (b[-1][4] - e) * s; why = 'time exit'; j = len(b) - 1
+        tr.append(dict(d=d, net=res * PV - 2 * COMM, R=res / r, risk=r, em=b[ei][0], s=s, eP=e, stp=stp, xT=b[j][0], pts=res, why=why))
     return tr
 def pf(v):
     g = sum(x for x in v if x > 0); l = -sum(x for x in v if x <= 0); return round(g / l, 2) if l else 9.9

@@ -44,3 +44,16 @@ MNQ, RTH 1m bars and ETH 5m bars, Jan 2022 to Oct 2026. Each result is checked i
   - In the neighbourhood (limit retrace k 0.33-0.5, stop 0.25-0.4 ADR, no time stop), 181 of 192 versions are PF > 1 in both periods. The median worse-period PF is 1.25.
   - Entries at 10:30 or with a 60-min time stop fail.
 - **Caveat:** about 3-4 trades a month at +0.2R is too slow to pass an eval alone. It needs to be combined with the Playbook.
+
+## Playbook + TDP, Lucid Flex 50K eval sim (Oct 25 2026)
+- **Overlap:** TDP traded 196 days, and 134 of those were Playbook days too (same-day results correlation 0.7). TDP mostly adds size on trend days the Playbook already catches.
+- **Sizing:** shared daily budget, 65% of the room, $1,100 daily cap, +8 pt extra stop slippage.
+
+| Period | Version | Pass by 20d | 40d | 60d | Fail |
+|---|---|---|---|---|---|
+| 2022-24 | Playbook only | 21% | 33% | 43% | 1% |
+| 2022-24 | + TDP full size | 27% | 37% | 46% | 6% |
+| 2022-24 | + TDP half size | 22% | 34% | 43% | 3% |
+| 2025-26 | Playbook only | 14% | 32% | 39% | 0% |
+| 2025-26 | + TDP full size | 19% | 46% | 55% | 0% |
+| 2025-26 | + TDP half size | 18% | 42% | 51% | 0% |

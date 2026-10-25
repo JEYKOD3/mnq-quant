@@ -1,6 +1,6 @@
 //@version=5
 // MNQ Playbook (2026-10-25): V4+ / D2 / Momentum Pinball / H2, plus NT Look (EMA 20, prior-day H/L/C).
-// 2026-10-25 changes: V4+ stop to breakeven at +1R, Pinball 2h time cap, H2 trend-day threshold 0.30, one shared daily risk budget.
+// 2026-10-25 defaults: V4+ target 1.25R with stop to breakeven at +1R; Pinball holds to 15:55 (cap optional); H2 threshold 0.40; one shared daily risk budget.
 // Use on MNQ1! 1-minute chart. Signals are computed from regular-hours (RTH) daily data via request.security.
 // Not an auto-trader: draws entries/stops/targets, shows suggested size, fires alerts.
 indicator("MNQ Playbook: V4+ / D2 / Pinball / H2", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
@@ -15,14 +15,14 @@ useV4  = input.bool(true, "V4+ (opening-range retest, with daily trend)", group=
 useD2  = input.bool(true, "D2 (10:30 continuation)", group="Strategies")
 usePin = input.bool(true, "Momentum Pinball (Raschke)", group="Strategies")
 useH2  = input.bool(true, "H2 trend-day pullbacks (short-term, half size)", group="Strategies")
-h2Th   = input.float(0.3, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
+h2Th   = input.float(0.4, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
 h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
 h2Max  = input.int(3, "H2 max trades per day", group="H2")
 gapTh  = input.float(0.4, "V4+ gap threshold (x ADR)", group="V4+")
 dirTh  = input.float(0.4, "V4+ first-15m threshold (x OR range)", group="V4+")
-tgtR   = input.float(2.0, "V4+ target (R)", group="V4+")
+tgtR   = input.float(1.25, "V4+ target (R)", group="V4+")
 v4BE   = input.bool(true, "V4+ move stop to breakeven once +1R", group="V4+")
-pinCap = input.int(120, "Pinball time cap (minutes after entry, 0 = hold to 15:55)", group="Pinball")
+pinCap = input.int(0, "Pinball time cap (minutes after entry, 0 = hold to 15:55)", group="Pinball")
 d2Th   = input.float(0.5, "D2 move threshold at 10:30 (x ADR)", group="D2")
 newsDays = input.string("2026-09-11,2026-09-16,2026-10-14,2026-10-28,2026-11-10,2026-12-09,2026-12-10", "D2 skip days (CPI / FOMC), yyyy-mm-dd", group="D2", display=display.none)
 acct   = input.float(50000, "Account balance ($)", group="Sizing")

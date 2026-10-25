@@ -171,3 +171,9 @@ Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = ran
 - 1 MNQ, 2022-26: lower targets cut profit (all at 1.25R: PF 1.63 -> 1.47, +$30.2k -> +$24.8k).
 - Eval sim: V4+ at 1.25R only: pass in 40d 34 -> 37% (22-24), 26 -> 32% (25-26); 20d 18 -> 22 / 13 -> 15; failure 4 -> 1%. H2 1.25R no help; D2/Pinball targets ~neutral.
 - Sep-Oct 2026 eval: V4+ 1.25R +$1,851 vs current +$2,660 (recent sample favors 2R).
+
+## X21 (2026-10-25) Defaults set: V4+ 1.25R + BE at +1R, Pinball hold to 15:55, H2 0.40 2R, D2 as is, shared daily budget
+- 1 MNQ 2022-26: PF 1.61, +$26,951 (vs 1.63, +$30,232 before).
+- Eval sim pass 20d / 40d / 60d, fail: 22-24 21/33/43%, 1% (before 18/34/40, 4%); 25-26 14/32/39%, 0% (before 13/26/37, 0%).
+- Sep-Oct 2026 eval +$3,537 (before +$2,660); Sep 21 +$3,023 breaks 50% consistency. TradingView Playbook = script version 5.
+- Funded payout cadence (5 days >= $150, positive cycle), fresh $2,000 room: median 26 trading days per cycle (p25 20, p75 35).

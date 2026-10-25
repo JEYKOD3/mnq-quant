@@ -1,0 +1,29 @@
+=== 1 MNQ per signal, 2022 - Oct 2026 ===
+Before (Oct 24 rules)            V4+      n 220 win  55% PF 1.67 (1.48|2.27) totR  +55.7 $1MNQ  +13016 hold  224m
+Before (Oct 24 rules)            D2       n 214 win  57% PF 1.48 (1.64|1.34) totR  +26.9 $1MNQ   +7849 hold  243m
+Before (Oct 24 rules)            Pinball  n  84 win  63% PF 2.90 (3.10|2.21) totR  +29.3 $1MNQ   +7004 hold  257m
+Before (Oct 24 rules)            H2       n 143 win  47% PF 1.44 (1.30|1.82) totR  +34.9 $1MNQ   +2363 hold   74m
+Before (Oct 24 rules)            ALL      n 661 win  55% PF 1.63 (1.56|1.78) totR +146.8 $1MNQ  +30232 hold  202m
+New defaults                     V4+      n 220 win  55% PF 1.62 (1.48|2.08) totR  +44.9 $1MNQ   +9734 hold  179m
+New defaults                     D2       n 214 win  57% PF 1.48 (1.64|1.34) totR  +26.9 $1MNQ   +7849 hold  243m
+New defaults                     Pinball  n  84 win  63% PF 2.90 (3.10|2.21) totR  +29.3 $1MNQ   +7004 hold  257m
+New defaults                     H2       n 143 win  47% PF 1.44 (1.30|1.82) totR  +34.9 $1MNQ   +2363 hold   74m
+New defaults                     ALL      n 661 win  55% PF 1.61 (1.57|1.71) totR +136.0 $1MNQ  +26951 hold  187m
+New defaults, no breakeven       V4+      n 220 win  58% PF 1.59 (1.43|2.08) totR  +45.0 $1MNQ  +10435 hold  186m
+New defaults, no breakeven       D2       n 214 win  57% PF 1.48 (1.64|1.34) totR  +26.9 $1MNQ   +7849 hold  243m
+New defaults, no breakeven       Pinball  n  84 win  63% PF 2.90 (3.10|2.21) totR  +29.3 $1MNQ   +7004 hold  257m
+New defaults, no breakeven       H2       n 143 win  47% PF 1.44 (1.30|1.82) totR  +34.9 $1MNQ   +2363 hold   74m
+New defaults, no breakeven       ALL      n 661 win  56% PF 1.60 (1.55|1.72) totR +136.1 $1MNQ  +27651 hold  189m
+
+=== eval sim, +8pt stop slip ===
+2022-24 Before (Oct 24 rules)            10d   7% 20d  18% 40d  34% 60d  40% fail   4%
+2022-24 New defaults                     10d  10% 20d  21% 40d  33% 60d  43% fail   1%
+2022-24 New defaults, no breakeven       10d  10% 20d  20% 40d  34% 60d  42% fail   1%
+2025-26 Before (Oct 24 rules)            10d   6% 20d  13% 40d  26% 60d  37% fail   0%
+2025-26 New defaults                     10d   3% 20d  14% 40d  32% 60d  39% fail   0%
+2025-26 New defaults, no breakeven       10d   5% 20d  15% 40d  30% 60d  32% fail   0%
+
+=== Sep 1 - Oct 23 eval sizing ===
+Before (Oct 24 rules)            1MNQ  +2838  eval  +2660  best day +1426
+New defaults                     1MNQ  +2358  eval  +3537  best day +3023
+New defaults, no breakeven       1MNQ  +2358  eval  +3537  best day +3023

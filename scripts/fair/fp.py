@@ -96,8 +96,8 @@ def run(fair='open', tf=1, sig='either', t0=570, t1=660, stop=25, tgt=38, tgt_mo
         if F is None: continue
         f = FEAT.get(d)
         adr = f['adr'] if f else 300
-        S = stop if stop_mode == 'fixed' else max(25, round(adrk * adr / 4) * 4 / 4)
-        TG = tgt if stop_mode == 'fixed' else S * tgt / stop
+        S = stop if stop_mode != 'adr' else max(25, round(adrk * adr * 4) / 4)
+        TG = tgt if stop_mode != 'adr' else S * tgt / stop
         if gapmax and f and abs(f['gap']) > gapmax: continue
         if wd is not None and wd != __import__('datetime').date(d // 10000, d // 100 % 100, d % 100).weekday(): continue
         bb = AGG.get((d, tf))

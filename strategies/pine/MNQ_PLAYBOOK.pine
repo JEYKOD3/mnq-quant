@@ -45,8 +45,14 @@ h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
 h2Max  = input.int(3, "H2 max trades per day", group="H2")
 nwStop = input.float(50, "NEWS stop (pts)", group="NEWS")
 nwTgt  = input.float(50, "NEWS target (pts)", group="NEWS")
-acct   = input.float(50000, "Account balance ($)", group="Sizing")
-mllLine= input.float(48000, "Max-loss line ($)", group="Sizing")
+evStart= input.float(50000, "Eval starting balance ($)", group="Prop firm (update each morning)")
+acct   = input.float(50000, "Balance at last close ($)", group="Prop firm (update each morning)")
+peakEOD= input.float(50000, "Highest end-of-day balance so far ($)", group="Prop firm (update each morning)")
+bestDay= input.float(0, "Best day profit so far ($)", group="Prop firm (update each morning)")
+pfTgt  = input.float(3000, "Profit target ($)", group="Prop firm (update each morning)")
+pfDD   = input.float(2000, "Trailing max loss, end of day ($)", group="Prop firm (update each morning)")
+pfCons = input.float(0.5, "Consistency: best day max share of profit", group="Prop firm (update each morning)")
+mllLine= math.min(peakEOD - pfDD, evStart)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
 dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
 
@@ -858,7 +864,7 @@ openList() =>
     s := s + (pnPos != 0 ? "PIN " + str.tostring(pnQ) + " " : "")
     s := s + (h2Pos != 0 ? "H2 " + str.tostring(h2Q) + " " : "")
     s == "" ? "flat" : s + "MNQ"
-var table pn = table.new(position.top_right, 2, 8, bgcolor=color.new(#131722, 10), border_color=color.new(color.gray, 80), border_width=1, frame_color=color.new(color.gray, 60), frame_width=1)
+var table pn = table.new(position.top_right, 2, 10, bgcolor=color.new(#131722, 10), border_color=color.new(color.gray, 80), border_width=1, frame_color=color.new(color.gray, 60), frame_width=1)
 if showPanel and barstate.islast
     tc = color.new(color.white, 10)
     dim = color.new(color.gray, 0)
@@ -881,6 +887,14 @@ if showPanel and barstate.islast
     table.cell(pn, 1, 6, (tev == "" ? "none today" : "today " + tev) + " · next " + nextEv, text_color=tev == "" ? tc : color.orange, text_size=size.small, text_halign=text.align_left)
     table.cell(pn, 0, 7, "Spike", text_color=dim, text_size=size.small, text_halign=text.align_left)
     table.cell(pn, 1, 7, lastSpike, text_color=tc, text_size=size.small, text_halign=text.align_left)
+    prof = acct - evStart + dayPnl
+    best = math.max(bestDay, dayPnl)
+    need = math.max(pfTgt, best / pfCons)
+    table.cell(pn, 0, 8, "Eval", text_color=dim, text_size=size.small, text_halign=text.align_left)
+    table.cell(pn, 1, 8, usd(prof) + " of " + usd(need) + " needed" + (need > pfTgt ? " (best day " + usd(best) + ", 50% rule)" : "") + (prof >= need ? " · TARGET MET" : " · " + usd(need - prof) + " to go"), text_color=prof >= need ? color.lime : tc, text_size=size.small, text_halign=text.align_left)
+    room = acct + dayPnl - mllLine
+    table.cell(pn, 0, 9, "Max-loss line", text_color=dim, text_size=size.small, text_halign=text.align_left)
+    table.cell(pn, 1, 9, usd(mllLine) + " · room " + usd(room) + " · sizing uses 65% of " + usd(acct - mllLine), text_color=room < 800 ? color.red : tc, text_size=size.small, text_halign=text.align_left)
 
 // ---------- results table (optional) ----------
 var table tb = table.new(position.bottom_right, 3, 7, bgcolor=color.new(#131722, 10), border_color=color.new(color.gray, 80), border_width=1)

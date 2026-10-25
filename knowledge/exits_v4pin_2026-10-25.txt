@@ -1,0 +1,41 @@
+=== V4+ (with-trend only), 2022 - Oct 2026 ===
+2R target, else 15:55 (current)        n 224 win  54%  PF 1.61 (22-24 1.44 | 25-26 2.17)  avg +0.24R  total  +52.7R  maxDD  7.8R  hold  224m
+1R target                              n 224 win  61%  PF 1.53 (22-24 1.30 | 25-26 2.26)  avg +0.17R  total  +38.9R  maxDD  5.7R  hold  159m
+1.5R target                            n 224 win  55%  PF 1.52 (22-24 1.37 | 25-26 1.98)  avg +0.19R  total  +43.2R  maxDD  6.3R  hold  204m
+3R target                              n 224 win  53%  PF 1.58 (22-24 1.39 | 25-26 2.23)  avg +0.23R  total  +51.3R  maxDD  8.8R  hold  243m
+2R + 60 min cap                        n 224 win  59%  PF 1.37 (22-24 1.21 | 25-26 1.90)  avg +0.09R  total  +19.9R  maxDD  5.6R  hold   56m
+2R + 90 min cap                        n 224 win  58%  PF 1.43 (22-24 1.31 | 25-26 1.80)  avg +0.12R  total  +25.8R  maxDD  4.5R  hold   80m
+2R + breakeven after 1R                n 224 win  49%  PF 1.74 (22-24 1.57 | 25-26 2.33)  avg +0.25R  total  +55.3R  maxDD  5.7R  hold  213m
+2R + trail 5m swing after 1R           n 224 win  61%  PF 1.53 (22-24 1.36 | 25-26 2.07)  avg +0.17R  total  +38.9R  maxDD  5.9R  hold  167m
+no tgt, trail 5m swing after 1R        n 224 win  61%  PF 1.55 (22-24 1.38 | 25-26 2.11)  avg +0.18R  total  +40.8R  maxDD  5.9R  hold  168m
+half at 1R, half at 2R (BE)            n 224 win  61%  PF 1.64 (22-24 1.44 | 25-26 2.30)  avg +0.21R  total  +47.3R  maxDD  5.2R  hold  213m
+YOUR RULE: exit at prior low after     n 224 win  61%  PF 1.51 (22-24 1.33 | 25-26 2.13)  avg +0.17R  total  +37.9R  maxDD  5.9R  hold  166m
+  ...same, armed after 0.5R            n 224 win  68%  PF 1.23 (22-24 1.03 | 25-26 1.90)  avg +0.06R  total  +13.4R  maxDD  5.8R  hold   93m
+  ...same, armed after 1.5R            n 224 win  55%  PF 1.50 (22-24 1.35 | 25-26 1.95)  avg +0.19R  total  +41.5R  maxDD  5.8R  hold  207m
+
+=== PINBALL, 2022 - Oct 2026 ===
+no target, exit 15:55 (current)        n  83 win  63%  PF 2.85 (22-24 3.10 | 25-26 1.98)  avg +0.34R  total  +28.5R  maxDD  2.3R  hold  256m
+2R target, else 15:55 (current)        n  83 win  63%  PF 2.53 (22-24 2.44 | 25-26 2.82)  avg +0.28R  total  +23.6R  maxDD  2.3R  hold  247m
+1R target                              n  83 win  64%  PF 2.15 (22-24 2.06 | 25-26 2.49)  avg +0.21R  total  +17.6R  maxDD  2.3R  hold  214m
+1.5R target                            n  83 win  63%  PF 2.39 (22-24 2.35 | 25-26 2.52)  avg +0.26R  total  +21.4R  maxDD  2.3R  hold  241m
+3R target                              n  83 win  63%  PF 2.56 (22-24 2.73 | 25-26 1.98)  avg +0.29R  total  +24.1R  maxDD  2.3R  hold  254m
+2R + 60 min cap                        n  83 win  54%  PF 1.83 (22-24 1.91 | 25-26 1.65)  avg +0.11R  total   +9.0R  maxDD  2.7R  hold   59m
+2R + 90 min cap                        n  83 win  59%  PF 2.23 (22-24 2.10 | 25-26 2.64)  avg +0.17R  total  +13.7R  maxDD  2.4R  hold   87m
+2R + breakeven after 1R                n  83 win  60%  PF 2.45 (22-24 2.32 | 25-26 2.95)  avg +0.27R  total  +22.3R  maxDD  2.3R  hold  243m
+2R + trail 5m swing after 1R           n  83 win  64%  PF 2.24 (22-24 2.12 | 25-26 2.65)  avg +0.23R  total  +18.9R  maxDD  2.3R  hold  219m
+no tgt, trail 5m swing after 1R        n  83 win  64%  PF 2.39 (22-24 2.36 | 25-26 2.49)  avg +0.26R  total  +21.2R  maxDD  2.3R  hold  220m
+half at 1R, half at 2R (BE)            n  83 win  64%  PF 2.30 (22-24 2.19 | 25-26 2.72)  avg +0.24R  total  +19.9R  maxDD  2.3R  hold  243m
+YOUR RULE: exit at prior low after     n  83 win  64%  PF 2.13 (22-24 2.02 | 25-26 2.53)  avg +0.21R  total  +17.2R  maxDD  2.3R  hold  217m
+  ...same, armed after 0.5R            n  83 win  71%  PF 2.43 (22-24 2.55 | 25-26 2.12)  avg +0.20R  total  +17.0R  maxDD  2.3R  hold  149m
+  ...same, armed after 1.5R            n  83 win  63%  PF 2.43 (22-24 2.33 | 25-26 2.78)  avg +0.27R  total  +22.1R  maxDD  2.3R  hold  242m
+1R + 60 min cap                        n  83 win  54%  PF 1.68 (22-24 1.70 | 25-26 1.63)  avg +0.09R  total   +7.4R  maxDD  2.7R  hold   58m
+1.5R + 90 min cap                      n  83 win  59%  PF 2.12 (22-24 2.03 | 25-26 2.40)  avg +0.15R  total  +12.5R  maxDD  2.4R  hold   86m
+120 min cap only                       n  83 win  59%  PF 2.77 (22-24 2.76 | 25-26 2.80)  avg +0.24R  total  +19.9R  maxDD  2.8R  hold  115m
+
+=== PINBALL entry filter: how stretched is price at entry (move from open in trade dir, x ADR) ===
+stretch -9..0.2                        n  27 win  56%  PF 2.09 (22-24 2.45 | 25-26 1.06)  avg +0.25R  total   +6.8R  maxDD  2.0R  hold  223m
+stretch 0.2..0.35                      n  22 win  59%  PF 2.90 (22-24 2.43 | 25-26 9.90)  avg +0.49R  total  +10.8R  maxDD  2.0R  hold  258m
+stretch 0.35..0.5                      n  13 win  77%  PF 39.74 (22-24 51.07 | 25-26 24.12)  avg +0.52R  total   +6.7R  maxDD  0.1R  hold  267m
+stretch 0.5..9                         n  21 win  67%  PF 2.26 (22-24 4.38 | 25-26 0.45)  avg +0.20R  total   +4.2R  maxDD  2.1R  hold  291m
+skip if stretch>=0.5, 2R target        n  62 win  61%  PF 2.60 (22-24 2.15 | 25-26 5.33)  avg +0.31R  total  +19.4R  maxDD  2.1R  hold  232m
+skip if stretch>=0.5, 1.5R target      n  62 win  61%  PF 2.42 (22-24 2.05 | 25-26 4.71)  avg +0.28R  total  +17.3R  maxDD  2.1R  hold  224m

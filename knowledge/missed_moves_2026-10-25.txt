@@ -1,0 +1,49 @@
+Oct 22: ADR 425, open 29515.25, 10:29 close 29359.25, move -0.37 ADR (H2 needs 0.40)
+h2 trendday>=0.25 tgt2R capNone                            n  250 (  52/yr) wr 44% PF 1.29 DEV 1.24 TEST 1.38 avgR+0.17 DD  8.2R hold  73m risk  40pt | 22:1.08 23:1.30 24:1.45 25:1.13 26:1.73
+h2 trendday>=0.25 tgt2R cap60                              n  280 (  58/yr) wr 48% PF 1.19 DEV 1.09 TEST 1.39 avgR+0.09 DD  6.7R hold  38m risk  39pt | 22:0.98 23:1.23 24:1.07 25:0.99 26:2.03
+h2 trendday>=0.25 tgt1.5R cap60                            n  290 (  60/yr) wr 49% PF 1.14 DEV 1.04 TEST 1.33 avgR+0.06 DD 10.2R hold  34m risk  38pt | 22:1.07 23:1.07 24:0.96 25:0.94 26:1.96
+     Oct22: S 10:50 risk87 stop -87pt | S 13:05 risk70 tgt +140pt
+h2 trendday>=0.3 tgt2R capNone                             n  219 (  46/yr) wr 43% PF 1.24 DEV 1.16 TEST 1.41 avgR+0.15 DD  8.3R hold  74m risk  40pt | 22:1.01 23:1.10 24:1.49 25:1.15 26:1.79
+h2 trendday>=0.3 tgt2R cap60                               n  243 (  51/yr) wr 47% PF 1.14 DEV 1.04 TEST 1.34 avgR+0.07 DD 10.0R hold  38m risk  39pt | 22:0.96 23:1.10 24:1.10 25:0.97 26:1.96
+h2 trendday>=0.3 tgt1.5R cap60                             n  249 (  52/yr) wr 49% PF 1.11 DEV 1.02 TEST 1.29 avgR+0.05 DD 10.5R hold  34m risk  39pt | 22:1.07 23:0.96 24:1.00 25:0.94 26:1.86
+     Oct22: S 10:50 risk87 stop -87pt | S 13:05 risk70 tgt +140pt
+h2 trendday>=0.4 tgt2R capNone                             n  143 (  30/yr) wr 47% PF 1.44 DEV 1.30 TEST 1.82 avgR+0.24 DD  5.6R hold  74m risk  39pt | 22:1.34 23:1.20 24:1.37 25:1.18 26:2.53
+h2 trendday>=0.4 tgt2R cap60                               n  160 (  33/yr) wr 45% PF 1.13 DEV 1.00 TEST 1.45 avgR+0.06 DD  8.6R hold  39m risk  38pt | 22:0.82 23:1.27 24:1.01 25:0.67 26:2.48
+h2 trendday>=0.4 tgt1.5R cap60                             n  164 (  34/yr) wr 48% PF 1.08 DEV 0.98 TEST 1.31 avgR+0.04 DD 10.4R hold  34m risk  38pt | 22:0.95 23:1.14 24:0.86 25:0.56 26:2.31
+     Oct22: none
+vwapx trendday>=0.25 tgt2R capNone                         n  296 (  62/yr) wr 43% PF 1.13 DEV 1.15 TEST 1.11 avgR+0.08 DD 23.5R hold  67m risk  41pt | 22:1.56 23:0.97 24:0.97 25:1.13 26:1.08
+vwapx trendday>=0.25 tgt2R cap60                           n  335 (  70/yr) wr 45% PF 1.08 DEV 1.05 TEST 1.13 avgR+0.04 DD 19.3R hold  37m risk  39pt | 22:1.20 23:0.95 24:1.00 25:1.25 26:1.02
+vwapx trendday>=0.25 tgt1.5R cap60                         n  337 (  70/yr) wr 47% PF 1.04 DEV 1.03 TEST 1.06 avgR+0.02 DD 15.1R hold  34m risk  39pt | 22:1.20 23:0.95 24:0.94 25:1.12 26:1.01
+     Oct22: none
+vwapx trendday>=0.3 tgt2R capNone                          n  249 (  52/yr) wr 44% PF 1.22 DEV 1.32 TEST 1.06 avgR+0.13 DD 20.1R hold  68m risk  41pt | 22:1.91 23:1.06 24:1.09 25:1.12 26:0.99
+vwapx trendday>=0.3 tgt2R cap60                            n  282 (  59/yr) wr 47% PF 1.16 DEV 1.23 TEST 1.05 avgR+0.08 DD 14.0R hold  38m risk  39pt | 22:1.45 23:1.10 24:1.14 25:1.25 26:0.85
+vwapx trendday>=0.3 tgt1.5R cap60                          n  284 (  59/yr) wr 49% PF 1.15 DEV 1.24 TEST 1.00 avgR+0.07 DD 10.1R hold  34m risk  39pt | 22:1.45 23:1.15 24:1.11 25:1.12 26:0.89
+     Oct22: none
+vwapx trendday>=0.4 tgt2R capNone                          n  157 (  33/yr) wr 48% PF 1.46 DEV 1.61 TEST 1.17 avgR+0.24 DD 18.3R hold  68m risk  42pt | 22:3.11 23:1.32 24:0.94 25:1.42 26:1.04
+vwapx trendday>=0.4 tgt2R cap60                            n  177 (  37/yr) wr 49% PF 1.33 DEV 1.41 TEST 1.16 avgR+0.15 DD 15.0R hold  39m risk  40pt | 22:1.95 23:1.24 24:1.09 25:1.97 26:0.84
+vwapx trendday>=0.4 tgt1.5R cap60                          n  177 (  37/yr) wr 52% PF 1.28 DEV 1.41 TEST 1.03 avgR+0.12 DD  9.2R hold  35m risk  40pt | 22:1.80 23:1.39 24:1.08 25:1.70 26:0.77
+     Oct22: none
+vwap trendday>=0.25 tgt2R capNone                          n  419 (  87/yr) wr 42% PF 1.14 DEV 1.19 TEST 1.05 avgR+0.09 DD 16.5R hold  55m risk  37pt | 22:1.60 23:0.96 24:1.11 25:1.08 26:1.00
+vwap trendday>=0.25 tgt2R cap60                            n  476 (  99/yr) wr 43% PF 1.04 DEV 1.04 TEST 1.04 avgR+0.02 DD 23.1R hold  32m risk  36pt | 22:1.24 23:0.88 24:1.03 25:1.15 26:0.93
+vwap trendday>=0.25 tgt1.5R cap60                          n  480 ( 100/yr) wr 47% PF 1.01 DEV 0.97 TEST 1.07 avgR+0.01 DD 23.5R hold  28m risk  36pt | 22:1.13 23:0.87 24:0.94 25:1.14 26:1.01
+     Oct22: S 12:05 risk36 stop -36pt | S 12:25 risk20 tgt +40pt
+vwap trendday>=0.3 tgt2R capNone                           n  359 (  75/yr) wr 43% PF 1.22 DEV 1.35 TEST 1.00 avgR+0.13 DD 16.5R hold  56m risk  37pt | 22:1.81 23:1.07 24:1.24 25:1.04 26:0.96
+vwap trendday>=0.3 tgt2R cap60                             n  410 (  85/yr) wr 44% PF 1.09 DEV 1.15 TEST 0.99 avgR+0.05 DD 17.7R hold  33m risk  36pt | 22:1.38 23:0.97 24:1.10 25:1.13 26:0.85
+vwap trendday>=0.3 tgt1.5R cap60                           n  414 (  86/yr) wr 48% PF 1.08 DEV 1.10 TEST 1.06 avgR+0.04 DD 16.7R hold  28m risk  35pt | 22:1.26 23:0.99 24:1.03 25:1.15 26:0.97
+     Oct22: S 12:05 risk36 stop -36pt | S 12:25 risk20 tgt +40pt
+vwap trendday>=0.4 tgt2R capNone                           n  228 (  48/yr) wr 45% PF 1.33 DEV 1.49 TEST 1.02 avgR+0.19 DD 14.6R hold  56m risk  38pt | 22:2.68 23:1.10 24:1.09 25:1.35 26:0.82
+vwap trendday>=0.4 tgt2R cap60                             n  259 (  54/yr) wr 46% PF 1.19 DEV 1.26 TEST 1.06 avgR+0.10 DD 15.8R hold  33m risk  36pt | 22:1.82 23:0.98 24:1.08 25:1.79 26:0.71
+vwap trendday>=0.4 tgt1.5R cap60                           n  262 (  55/yr) wr 50% PF 1.17 DEV 1.20 TEST 1.11 avgR+0.08 DD 13.3R hold  28m risk  36pt | 22:1.60 23:1.06 24:0.99 25:1.69 26:0.82
+     Oct22: none
+ema_pb trendday>=0.25 tgt2R capNone                        n  486 ( 101/yr) wr 38% PF 0.94 DEV 1.06 TEST 0.74 avgR-0.04 DD 50.5R hold  46m risk  32pt | 22:1.27 23:0.98 24:0.92 25:0.74 26:0.75
+ema_pb trendday>=0.25 tgt2R cap60                          n  535 ( 111/yr) wr 40% PF 0.88 DEV 1.00 TEST 0.69 avgR-0.07 DD 60.0R hold  30m risk  32pt | 22:1.16 23:0.90 24:0.94 25:0.74 26:0.63
+ema_pb trendday>=0.25 tgt1.5R cap60                        n  542 ( 113/yr) wr 44% PF 0.89 DEV 1.01 TEST 0.70 avgR-0.06 DD 56.2R hold  25m risk  32pt | 22:1.19 23:0.88 24:0.95 25:0.76 26:0.65
+     Oct22: S 11:30 risk75 stop -76pt | S 12:35 risk104 tgt +208pt
+ema_pb trendday>=0.3 tgt2R capNone                         n  412 (  86/yr) wr 39% PF 0.98 DEV 1.10 TEST 0.78 avgR-0.02 DD 39.1R hold  47m risk  33pt | 22:1.36 23:1.00 24:0.90 25:0.77 26:0.80
+ema_pb trendday>=0.3 tgt2R cap60                           n  457 (  95/yr) wr 40% PF 0.90 DEV 1.03 TEST 0.70 avgR-0.06 DD 51.7R hold  30m risk  32pt | 22:1.22 23:0.94 24:0.91 25:0.78 26:0.61
+ema_pb trendday>=0.3 tgt1.5R cap60                         n  463 (  96/yr) wr 45% PF 0.93 DEV 1.05 TEST 0.75 avgR-0.04 DD 41.2R hold  25m risk  32pt | 22:1.25 23:0.94 24:0.95 25:0.83 26:0.65
+     Oct22: S 11:30 risk75 stop -76pt | S 12:35 risk104 tgt +208pt
+ema_pb trendday>=0.4 tgt2R capNone                         n  264 (  55/yr) wr 43% PF 1.14 DEV 1.25 TEST 0.93 avgR+0.09 DD 20.1R hold  46m risk  33pt | 22:1.55 23:1.41 24:0.75 25:0.95 26:0.91
+ema_pb trendday>=0.4 tgt2R cap60                           n  290 (  60/yr) wr 42% PF 1.04 DEV 1.18 TEST 0.79 avgR+0.02 DD 21.8R hold  30m risk  32pt | 22:1.39 23:1.30 24:0.80 25:0.97 26:0.65
+ema_pb trendday>=0.4 tgt1.5R cap60                         n  293 (  61/yr) wr 48% PF 1.15 DEV 1.30 TEST 0.88 avgR+0.08 DD 15.1R hold  24m risk  32pt | 22:1.51 23:1.32 24:1.05 25:1.02 26:0.76
+     Oct22: none

@@ -155,3 +155,8 @@ X17| SHORT-TERM after 9:45 (5m signals, 1m mgmt): EMA20 pullback, EMA9/21 cross,
 
 ### Q. new open questions
 Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = range + double break on MNQ. Q7 count anchor: Brooks H2 (from pullback start) vs Wade (from extreme, reset at DT) hit-rate on same bars. Q8 climax bar frequency (r>=2*ATR20 after 10 bars) and post-climax drift on MNQ. Q9 1-2tk failed-breakout fade (E19) vs E6 deep pokes. Q10 11:30 ET reversal window frequency on MNQ (D14 vs F11).
+
+## X18 (2026-10-25) Exit review after Oct 22 walkthrough
+- V4+: 2R + move stop to breakeven after +1R beats current (PF 1.61 -> 1.74, maxDD 7.8R -> 5.7R, total R +5%). "Exit at prior low after first pullback" cuts total R 28% (PF 1.51). Time caps 60/90m cut total R 50%+.
+- Pinball: no-target hold to 15:55 is best (PF 2.85). 120-min cap keeps PF 2.77, halves hold (256 -> 115m), costs 30% of total R. Stretch-at-entry filter not supported (0.35-0.5 ADR bucket was best).
+- Missed Oct 22 afternoon moves: day was -0.37 ADR at 10:29 (H2 needs 0.40). H2 at 0.25-0.30: PF 1.24-1.29 (test 1.38-1.41), 46-52/yr vs 30. TWAP rejection PF 1.1-1.3 but ~1.0 in 2025-26 (reject). EMA20 pullback PF < 1 (reject).

@@ -174,6 +174,24 @@ var int pnN = 0
 var int pnW = 0
 
 fmt(x) => str.tostring(x, "#.##")
+hhmm() => str.format_time(time, "HH:mm", "America/New_York")
+
+// trade log (last 8 closed trades, shown in the "Last trades" table)
+var string[] lgD = array.new_string()
+var string[] lgS = array.new_string()
+var string[] lgX = array.new_string()
+var float[] lgP = array.new_float()
+logTrade(nm, side, eT, why, pts) =>
+    array.push(lgD, str.format_time(time, "MMM dd", "America/New_York"))
+    array.push(lgS, nm + (side > 0 ? " LONG " : " SHORT ") + eT)
+    array.push(lgX, why + " " + str.format_time(time, "HH:mm", "America/New_York"))
+    array.push(lgP, pts)
+    if array.size(lgP) > 8
+        array.shift(lgD)
+        array.shift(lgS)
+        array.shift(lgX)
+        array.shift(lgP)
+    true
 
 // ===================== V4+ =====================
 var int dr = 0
@@ -190,6 +208,7 @@ var float v4T = na
 var float v4R = na
 var int v4Q = 0
 var bool v4AtBE = false
+var string v4ET = ""
 if newDay
     dr := 0
     saw := false
@@ -215,6 +234,7 @@ if useV4 and inRTH
             v4W += pts > 0 ? 1 : 0
             rkV4 := 0.0
             dayLoss += lossOf(v4Q, pts)
+            logTrade("V4+", v4Pos, v4ET, hitS ? (v4AtBE ? "breakeven" : "stop") : hitT ? "target" : "15:55", pts)
             label.new(bar_index, xP, "V4+ exit " + (hitS ? (v4AtBE ? "breakeven " : "stop ") : hitT ? "target " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=v4Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("V4+ exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             v4Pos := 0
@@ -231,6 +251,7 @@ if useV4 and inRTH
             v4AtBE := false
             q = sizeFor(r, 1.0)
             v4Q := q
+            v4ET := hhmm()
             rkV4 := q * perC(r)
             label.new(bar_index, v4E, "V4+ " + (pSide > 0 ? "LONG " : "SHORT ") + fmt(v4E) + "\nstop " + fmt(v4S) + " (" + fmt(r) + " pts)\ntarget " + fmt(v4T) + "\nsize " + str.tostring(q) + " MNQ", color=pSide > 0 ? color.new(color.teal, 0) : color.new(color.maroon, 0), textcolor=color.white, style=pSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, v4S, bar_index + 60, v4S, color=color.red, width=2)
@@ -244,6 +265,7 @@ if useV4 and inRTH
                 v4Pos := 0
                 rkV4 := 0.0
                 dayLoss += lossOf(v4Q, pts)
+                logTrade("V4+", pSide, v4ET, "stop", pts)
         pSide := 0
     // signal search
     if not v4Done and v4Pos == 0 and biasSet and bias != 0 and bias == trendDir and mnt >= 585 and mnt <= 780
@@ -298,6 +320,7 @@ if useD2 and inRTH
             d2W += pts > 0 ? 1 : 0
             rkD2 := 0.0
             dayLoss += lossOf(d2Q, pts)
+            logTrade("D2", d2Pos, "10:30", hit ? "stop" : "15:00", pts)
             label.new(bar_index, xP, "D2 exit " + (hit ? "stop " : "15:00 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=d2Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("D2 exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             d2Pos := 0
@@ -325,6 +348,7 @@ var float pnS = na
 var bool pnDone = false
 var int pnQ = 0
 var int pnT0 = 0
+var string pnET = ""
 if newDay
     pnPos := 0
     pnDone := false
@@ -341,6 +365,7 @@ if usePin and inRTH
             pnW += pts > 0 ? 1 : 0
             rkPn := 0.0
             dayLoss += lossOf(pnQ, pts)
+            logTrade("PIN", pnPos, pnET, hit ? "stop" : capHit ? "time cap" : "15:55", pts)
             alert("PINBALL exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             label.new(bar_index, xP, "PIN exit " + (hit ? "stop " : capHit ? "2h cap " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=pnPos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             pnPos := 0
@@ -355,6 +380,7 @@ if usePin and inRTH
             r = math.abs(pnE - pnS)
             q = sizeFor(r, 1.0)
             pnQ := q
+            pnET := hhmm()
             rkPn := q * perC(r)
             label.new(bar_index, pnE, "PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + "\nstop " + fmt(pnS) + " (" + fmt(r) + " pts)\nexit " + (pinCap > 0 ? str.tostring(pinCap) + " min after entry" : "15:55") + "\nsize " + str.tostring(q) + " MNQ", color=color.new(color.orange, 0), textcolor=color.black, style=pinSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, pnS, bar_index + 200, pnS, color=color.new(color.red, 30), style=line.style_dotted)
@@ -365,6 +391,7 @@ if usePin and inRTH
                 pnPos := 0
                 rkPn := 0.0
                 dayLoss += lossOf(pnQ, (pnS - pnE) * pinSide)
+                logTrade("PIN", pinSide, pnET, "stop", (pnS - pnE) * pinSide)
 
 
 // ===================== H2: second-entry pullback on trend days (5m signals built from 1m bars) =====================
@@ -395,6 +422,7 @@ var float h2Pts = 0.0
 var int h2N = 0
 var int h2W = 0
 var int h2Q = 0
+var string h2ET = ""
 if newDay
     array.clear(bH)
     array.clear(bL)
@@ -424,6 +452,7 @@ if useH2 and inRTH
             h2N_ += 1
             q2 = sizeFor(r2, 0.5)
             h2Q := q2
+            h2ET := hhmm()
             rkH2 := q2 * perC(r2)
             label.new(bar_index, h2E, "H2 " + (h2PSide > 0 ? "LONG " : "SHORT ") + fmt(h2E) + "\nstop " + fmt(h2S) + " (" + fmt(r2) + " pts)\ntarget " + fmt(h2T) + "\nsize " + str.tostring(q2) + " MNQ (half)", color=color.new(color.aqua, 0), textcolor=color.black, style=h2PSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, h2S, bar_index + 40, h2S, color=color.red)
@@ -442,6 +471,7 @@ if useH2 and inRTH
             h2W += p2 > 0 ? 1 : 0
             rkH2 := 0.0
             dayLoss += lossOf(h2Q, p2)
+            logTrade("H2", h2Pos, h2ET, hS2 ? "stop" : hT2 ? "target" : "15:55", p2)
             label.new(bar_index, x2, "H2 exit " + (hS2 ? "stop " : hT2 ? "target " : "15:55 ") + fmt(p2) + " pts", color=p2 > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=h2Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("H2 exit " + fmt(p2) + " pts", alert.freq_once_per_bar)
             h2Pos := 0
@@ -525,3 +555,23 @@ if showTbl and barstate.islast
     table.cell(tb, 0, 7, "H2 (half size)", text_color=tc, text_size=size.small)
     table.cell(tb, 1, 7, str.tostring(h2N) + " / " + str.tostring(h2W), text_color=tc, text_size=size.small)
     table.cell(tb, 2, 7, fmt(h2Pts) + " ($" + fmt(h2Pts * 2) + ")", text_color=h2Pts >= 0 ? color.lime : color.red, text_size=size.small)
+
+// ---------- last trades table ----------
+showLog = input.bool(true, "Show last trades table", group="Sizing")
+var table lt = table.new(position.bottom_left, 4, 9, bgcolor=color.new(color.black, 0), border_color=color.new(color.gray, 70), border_width=1)
+if showLog and barstate.islast
+    table.cell(lt, 0, 0, "Last trades", text_color=color.yellow, text_size=size.small)
+    table.cell(lt, 1, 0, "strategy / entry", text_color=color.yellow, text_size=size.small)
+    table.cell(lt, 2, 0, "exit", text_color=color.yellow, text_size=size.small)
+    table.cell(lt, 3, 0, "pts (1 MNQ $)", text_color=color.yellow, text_size=size.small)
+    nL = array.size(lgP)
+    if nL == 0
+        table.cell(lt, 0, 1, "none on loaded bars", text_color=color.white, text_size=size.small)
+    for i = 0 to 7
+        if i < nL
+            j = nL - 1 - i
+            pv = array.get(lgP, j)
+            table.cell(lt, 0, i + 1, array.get(lgD, j), text_color=color.white, text_size=size.small)
+            table.cell(lt, 1, i + 1, array.get(lgS, j), text_color=color.white, text_size=size.small)
+            table.cell(lt, 2, i + 1, array.get(lgX, j), text_color=color.white, text_size=size.small)
+            table.cell(lt, 3, i + 1, fmt(pv) + " ($" + fmt(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.small)

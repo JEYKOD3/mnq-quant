@@ -162,7 +162,12 @@ Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = ran
 - Missed Oct 22 afternoon moves: day was -0.37 ADR at 10:29 (H2 needs 0.40). H2 at 0.25-0.30: PF 1.24-1.29 (test 1.38-1.41), 46-52/yr vs 30. TWAP rejection PF 1.1-1.3 but ~1.0 in 2025-26 (reject). EMA20 pullback PF < 1 (reject).
 
 ## X19 (2026-10-25) Four approved changes tested (rules2.py)
-- Sep 1 - Oct 23 2026 eval sizing: current +$2,660, updated +$3,375 (still not a pass: Sep 21 = 59% of profit, breaks the 50% consistency rule).
+- Sep 1 - Oct 23 2026 eval sizing: current +$2,660, updated +$3,887 (still not a pass: Sep 21 = +$3,023, 78% of profit, breaks the 50% consistency rule). (Earlier +$3,375 figure came from a stale file with H2 at quarter size.)
 - 2022 - Oct 2026 eval sim (+8pt stop slip), pass within 40 days: current 34% / 26% (22-24 / 25-26), updated 22% / 20%. Failure 4-5% / 0% both.
 - Each change alone: shared budget neutral; V4+ BE 34->30 / 26->25; Pinball 2h 34->32 / 26->24; H2 0.30 34->32 / 26->21. None speeds the eval; the gain is shorter holds and smaller give-backs.
 - Pine v4 (TradingView, script version 4) carries all four as inputs: v4BE, pinCap, h2Th, shared dayCap budget. Pine on Oct 19-23 bars matches Python (Pinball +22, H2 +53.25).
+
+## X20 (2026-10-25) 1:1.25 targets (rr125.py)
+- 1 MNQ, 2022-26: lower targets cut profit (all at 1.25R: PF 1.63 -> 1.47, +$30.2k -> +$24.8k).
+- Eval sim: V4+ at 1.25R only: pass in 40d 34 -> 37% (22-24), 26 -> 32% (25-26); 20d 18 -> 22 / 13 -> 15; failure 4 -> 1%. H2 1.25R no help; D2/Pinball targets ~neutral.
+- Sep-Oct 2026 eval: V4+ 1.25R +$1,851 vs current +$2,660 (recent sample favors 2R).

@@ -1,0 +1,45 @@
+=== 1 MNQ per signal, 2022 - Oct 2026 ===
+A current (2R, no tgt D2/Pin)    V4+      n 220 win  55% PF 1.67 (1.48|2.27) totR  +55.7 $1MNQ  +13016 hold  224m
+A current (2R, no tgt D2/Pin)    D2       n 214 win  57% PF 1.48 (1.64|1.34) totR  +26.9 $1MNQ   +7849 hold  243m
+A current (2R, no tgt D2/Pin)    Pinball  n  84 win  63% PF 2.90 (3.10|2.21) totR  +29.3 $1MNQ   +7004 hold  257m
+A current (2R, no tgt D2/Pin)    H2       n 143 win  47% PF 1.44 (1.30|1.82) totR  +34.9 $1MNQ   +2363 hold   74m
+A current (2R, no tgt D2/Pin)    ALL      n 661 win  55% PF 1.63 (1.56|1.78) totR +146.8 $1MNQ  +30232 hold  202m
+B V4+ & H2 at 1.25R              ALL      n 677 win  57% PF 1.52 (1.45|1.67) totR +117.9 $1MNQ  +26343 hold  180m
+C all four at 1.25R              V4+      n 220 win  58% PF 1.59 (1.43|2.08) totR  +45.0 $1MNQ  +10435 hold  186m
+C all four at 1.25R              D2       n 214 win  57% PF 1.44 (1.54|1.35) totR  +24.2 $1MNQ   +7345 hold  229m
+C all four at 1.25R              Pinball  n  84 win  63% PF 2.31 (2.21|2.66) totR  +20.2 $1MNQ   +5975 hold  231m
+C all four at 1.25R              H2       n 159 win  53% PF 1.21 (1.06|1.64) totR  +16.7 $1MNQ   +1055 hold   45m
+C all four at 1.25R              ALL      n 677 win  57% PF 1.47 (1.37|1.70) totR +106.0 $1MNQ  +24810 hold  172m
+D V4+ 1.25R only                 ALL      n 661 win  56% PF 1.60 (1.55|1.72) totR +136.1 $1MNQ  +27651 hold  189m
+E H2 1.25R only                  ALL      n 677 win  56% PF 1.55 (1.47|1.73) totR +128.6 $1MNQ  +28924 hold  192m
+F 1.5R V4+ & H2                  ALL      n 672 win  56% PF 1.53 (1.49|1.62) totR +124.8 $1MNQ  +27286 hold  189m
+G updated rules                  ALL      n 737 win  51% PF 1.50 (1.44|1.62) totR +136.0 $1MNQ  +28144 hold  169m
+H updated + 1.25R all            ALL      n 760 win  55% PF 1.39 (1.32|1.53) totR +102.2 $1MNQ  +22459 hold  142m
+
+=== eval sim, +8pt stop slip ===
+2022-24 A current (2R, no tgt D2/Pin)    10d   7% 20d  18% 40d  34% 60d  40% fail   4%
+2022-24 B V4+ & H2 at 1.25R              10d  10% 20d  22% 40d  37% 60d  44% fail   2%
+2022-24 C all four at 1.25R              10d  10% 20d  23% 40d  37% 60d  44% fail   3%
+2022-24 D V4+ 1.25R only                 10d  11% 20d  22% 40d  37% 60d  45% fail   1%
+2022-24 E H2 1.25R only                  10d   7% 20d  17% 40d  33% 60d  39% fail   2%
+2022-24 F 1.5R V4+ & H2                  10d  10% 20d  20% 40d  35% 60d  41% fail   1%
+2022-24 G updated rules                  10d   5% 20d  12% 40d  22% 60d  27% fail   5%
+2022-24 H updated + 1.25R all            10d   7% 20d  18% 40d  32% 60d  36% fail  11%
+2025-26 A current (2R, no tgt D2/Pin)    10d   6% 20d  13% 40d  26% 60d  37% fail   0%
+2025-26 B V4+ & H2 at 1.25R              10d   5% 20d  15% 40d  31% 60d  34% fail   0%
+2025-26 C all four at 1.25R              10d   5% 20d  15% 40d  32% 60d  37% fail   0%
+2025-26 D V4+ 1.25R only                 10d   5% 20d  15% 40d  32% 60d  35% fail   0%
+2025-26 E H2 1.25R only                  10d   5% 20d  14% 40d  26% 60d  34% fail   0%
+2025-26 F 1.5R V4+ & H2                  10d   6% 20d  13% 40d  30% 60d  35% fail   0%
+2025-26 G updated rules                  10d   3% 20d  10% 40d  20% 60d  25% fail   0%
+2025-26 H updated + 1.25R all            10d   3% 20d  12% 40d  27% 60d  33% fail   0%
+
+=== Sep 1 - Oct 23 eval sizing ===
+A current (2R, no tgt D2/Pin)    1MNQ  +2838  eval  +2660  best day +1426
+B V4+ & H2 at 1.25R              1MNQ  +2070  eval   +378  best day +1079
+C all four at 1.25R              1MNQ  +1877  eval   +378  best day +1079
+D V4+ 1.25R only                 1MNQ  +2358  eval  +1851  best day +1426
+E H2 1.25R only                  1MNQ  +2550  eval   +543  best day +1079
+F 1.5R V4+ & H2                  1MNQ  +2196  eval   +560  best day +1195
+G updated rules                  1MNQ  +2637  eval  +3887  best day +3023
+H updated + 1.25R all            1MNQ  +1334  eval  +2218  best day +2042

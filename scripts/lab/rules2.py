@@ -31,19 +31,19 @@ def walk_be(b,i0,s,eP,stp,tgt,flat=955):
         if m>=flat: return j,c,'time exit',be
         if be is None and ((s>0 and h>=eP+r) or (s<0 and l<=eP-r)): be=m+1; st=eP+s*1.25
     return len(b)-1,b[-1][4],'time exit',be
-def build(rules, a=20220101, z=20991231, be=None, pcap=None, h2th=None):
+def build(rules, a=20220101, z=20991231, be=None, pcap=None, h2th=None, v4t=2.0, h2t=2.0, d2t=None, pint=None):
     up=rules=='updated'; out=[]
     be=up if be is None else be; pcap=(120 if up else 0) if pcap is None else pcap; h2th=(.3 if up else .4) if h2th is None else h2th
     v4=collections.defaultdict(list)
-    for t in v4_trades(days,F,tf=1,tgtR=2,bias=lambda f: v4bias(f,.4,.4,0)):
+    for t in v4_trades(days,F,tf=1,tgtR=v4t,bias=lambda f: v4bias(f,.4,.4,0)):
         if TRD.get(t['d'])==t['side']: v4[t['d']].append(t)
     h2=collections.defaultdict(list)
-    for t in ST.run('h2',2,None,trendday=True,dtrend=True,tdth=h2th,maxtr=3): h2[t['d']].append(t)
+    for t in ST.run('h2',h2t,None,trendday=True,dtrend=True,tdth=h2th,maxtr=3): h2[t['d']].append(t)
     for d in D:
         if d<a or d>z or d not in TRD: continue
         b=DB[d]; f=F[d]; k=D.index(d); tr=TRD[d]; idx={x[0]:j for j,x in enumerate(b)}
         for t in v4[d]:
-            s=t['side']; eP=t['eP']; stp=t['stp']; rr=t['r']; tgt=eP+s*2*rr; i=idx[t['eT']]
+            s=t['side']; eP=t['eP']; stp=t['stp']; rr=t['r']; tgt=eP+s*v4t*rr; i=idx[t['eT']]
             if be and not ((s>0 and b[i][3]<=stp) or (s<0 and b[i][2]>=stp)):
                 xi,xP,why,beM=walk_be(b,i+1,s,eP,stp,tgt)
                 out.append(dict(d=d,strat='V4+',side=s,eT=t['eT'],eP=eP,stp=stp,tgt=tgt,xT=b[xi][0],xP=xP,why=why,r=rr,pts=(xP-eP)*s,be=beM,w=1.0))
@@ -55,8 +55,8 @@ def build(rules, a=20220101, z=20991231, be=None, pcap=None, h2th=None):
                 px=b[j][4]; mv=(px-f['open'])/f['adr']
                 if abs(mv)>=.5:
                     s=1 if mv>0 else -1; eP=px+s*SLIP*T; stp=f['open']-s*T
-                    xi,xP,why,_,_=manage(b,j+1,s,eP,stp,None,0,900)
-                    out.append(dict(d=d,strat='D2',side=s,eT=630,eP=eP,stp=stp,tgt=None,xT=b[xi][0],xP=xP,why='stop' if why=='stop' else 'time exit',r=abs(eP-stp),pts=(xP-eP)*s,be=None,w=1.0 if tr==s else .5))
+                    xi,xP,why,_,_=manage(b,j+1,s,eP,stp,(eP+s*d2t*abs(eP-stp)) if d2t else None,0,900)
+                    out.append(dict(d=d,strat='D2',side=s,eT=630,eP=eP,stp=stp,tgt=None,xT=b[xi][0],xP=xP,why=why if why in('stop','target') else 'time exit',r=abs(eP-stp),pts=(xP-eP)*s,be=None,w=1.0 if tr==s else .5))
         ch=[C[D[q]]-C[D[q-1]] for q in range(k-3,k)]; u=sum(x for x in ch if x>0); dn=-sum(x for x in ch if x<0)
         rsi=100 if dn==0 else 100-100/(1+u/dn); s=1 if rsi<30 else (-1 if rsi>70 else 0)
         if s and tr==s:
@@ -66,11 +66,11 @@ def build(rules, a=20220101, z=20991231, be=None, pcap=None, h2th=None):
                 if (s>0 and h>=lvl) or (s<0 and l<=lvl):
                     eP=(max(o,lvl) if s>0 else min(o,lvl))+s*SLIP*T; stp=(lo-T) if s>0 else (hi+T)
                     if (s>0 and l<=stp) or (s<0 and h>=stp): xi,xP,why=i,stp-s*SLIP*T,'stop'
-                    else: xi,xP,why,_,_=manage(b,i+1,s,eP,stp,None,pcap,955)
-                    out.append(dict(d=d,strat='Pinball',side=s,eT=m,eP=eP,stp=stp,tgt=None,xT=b[xi][0],xP=xP,why='stop' if why=='stop' else ('time exit (2h)' if why=='time' else 'time exit'),r=abs(eP-stp),pts=(xP-eP)*s,be=None,w=1.0,rsi=rsi)); break
+                    else: xi,xP,why,_,_=manage(b,i+1,s,eP,stp,(eP+s*pint*abs(eP-stp)) if pint else None,pcap,955)
+                    out.append(dict(d=d,strat='Pinball',side=s,eT=m,eP=eP,stp=stp,tgt=None,xT=b[xi][0],xP=xP,why=why if why in('stop','target') else ('time exit (2h)' if why=='time' else 'time exit'),r=abs(eP-stp),pts=(xP-eP)*s,be=None,w=1.0,rsi=rsi)); break
         for t in h2[d]:
             s=t['side']; eP=b[idx[t['eT']]][1]+s*SLIP*T
-            out.append(dict(d=d,strat='H2',side=s,eT=t['eT'],eP=eP,stp=eP-s*t['r'],tgt=eP+s*2*t['r'],xT=t['eT']+t['hold'],xP=eP+s*t['pts'],why={'tgt':'target','stop':'stop'}.get(t['why'],'time exit'),r=t['r'],pts=t['pts'],be=None,w=.5))
+            out.append(dict(d=d,strat='H2',side=s,eT=t['eT'],eP=eP,stp=eP-s*t['r'],tgt=eP+s*h2t*t['r'],xT=t['eT']+t['hold'],xP=eP+s*t['pts'],why={'tgt':'target','stop':'stop'}.get(t['why'],'time exit'),r=t['r'],pts=t['pts'],be=None,w=.5))
     out.sort(key=lambda t:(t['d'],t['eT']))
     return out
 def size_day(trs, cush, mode, f=.65, dll=1100, slipx=0.0):

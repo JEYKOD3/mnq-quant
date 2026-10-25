@@ -160,3 +160,9 @@ Q6 RESOLVED: instrument/behaviour, not definition. Narrow OR at any window = ran
 - V4+: 2R + move stop to breakeven after +1R beats current (PF 1.61 -> 1.74, maxDD 7.8R -> 5.7R, total R +5%). "Exit at prior low after first pullback" cuts total R 28% (PF 1.51). Time caps 60/90m cut total R 50%+.
 - Pinball: no-target hold to 15:55 is best (PF 2.85). 120-min cap keeps PF 2.77, halves hold (256 -> 115m), costs 30% of total R. Stretch-at-entry filter not supported (0.35-0.5 ADR bucket was best).
 - Missed Oct 22 afternoon moves: day was -0.37 ADR at 10:29 (H2 needs 0.40). H2 at 0.25-0.30: PF 1.24-1.29 (test 1.38-1.41), 46-52/yr vs 30. TWAP rejection PF 1.1-1.3 but ~1.0 in 2025-26 (reject). EMA20 pullback PF < 1 (reject).
+
+## X19 (2026-10-25) Four approved changes tested (rules2.py)
+- Sep 1 - Oct 23 2026 eval sizing: current +$2,660, updated +$3,375 (still not a pass: Sep 21 = 59% of profit, breaks the 50% consistency rule).
+- 2022 - Oct 2026 eval sim (+8pt stop slip), pass within 40 days: current 34% / 26% (22-24 / 25-26), updated 22% / 20%. Failure 4-5% / 0% both.
+- Each change alone: shared budget neutral; V4+ BE 34->30 / 26->25; Pinball 2h 34->32 / 26->24; H2 0.30 34->32 / 26->21. None speeds the eval; the gain is shorter holds and smaller give-backs.
+- Pine v4 (TradingView, script version 4) carries all four as inputs: v4BE, pinCap, h2Th, shared dayCap budget. Pine on Oct 19-23 bars matches Python (Pinball +22, H2 +53.25).

@@ -1,5 +1,6 @@
 //@version=5
-// MNQ Playbook (2026-10-24): V4+ / D2 / Momentum Pinball, plus NT Look (EMA 20, prior-day H/L/C).
+// MNQ Playbook (2026-10-25): V4+ / D2 / Momentum Pinball / H2, plus NT Look (EMA 20, prior-day H/L/C).
+// 2026-10-25 changes: V4+ stop to breakeven at +1R, Pinball 2h time cap, H2 trend-day threshold 0.30, one shared daily risk budget.
 // Use on MNQ1! 1-minute chart. Signals are computed from regular-hours (RTH) daily data via request.security.
 // Not an auto-trader: draws entries/stops/targets, shows suggested size, fires alerts.
 indicator("MNQ Playbook: V4+ / D2 / Pinball / H2", shorttitle="Playbook", overlay=true, max_lines_count=300, max_labels_count=300)
@@ -14,18 +15,20 @@ useV4  = input.bool(true, "V4+ (opening-range retest, with daily trend)", group=
 useD2  = input.bool(true, "D2 (10:30 continuation)", group="Strategies")
 usePin = input.bool(true, "Momentum Pinball (Raschke)", group="Strategies")
 useH2  = input.bool(true, "H2 trend-day pullbacks (short-term, half size)", group="Strategies")
-h2Th   = input.float(0.4, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
+h2Th   = input.float(0.3, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
 h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
 h2Max  = input.int(3, "H2 max trades per day", group="H2")
 gapTh  = input.float(0.4, "V4+ gap threshold (x ADR)", group="V4+")
 dirTh  = input.float(0.4, "V4+ first-15m threshold (x OR range)", group="V4+")
 tgtR   = input.float(2.0, "V4+ target (R)", group="V4+")
+v4BE   = input.bool(true, "V4+ move stop to breakeven once +1R", group="V4+")
+pinCap = input.int(120, "Pinball time cap (minutes after entry, 0 = hold to 15:55)", group="Pinball")
 d2Th   = input.float(0.5, "D2 move threshold at 10:30 (x ADR)", group="D2")
 newsDays = input.string("2026-09-11,2026-09-16,2026-10-14,2026-10-28,2026-11-10,2026-12-09,2026-12-10", "D2 skip days (CPI / FOMC), yyyy-mm-dd", group="D2", display=display.none)
 acct   = input.float(50000, "Account balance ($)", group="Sizing")
 mllLine= input.float(48000, "Max-loss line ($)", group="Sizing")
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
-dayCap = input.float(1100, "Max risk per day ($)", group="Sizing")
+dayCap = input.float(1100, "Daily risk budget ($): realized losses + open risk, shared by all strategies", group="Sizing")
 showTbl= input.bool(true, "Show results table", group="Sizing")
 
 tz = "America/New_York"
@@ -135,11 +138,29 @@ isNewsDay() =>
     ds = str.format("{0,number,0000}-{1,number,00}-{2,number,00}", year(time, tz), month(time, tz), dayofmonth(time, tz))
     str.contains(newsDays, ds)
 
+// shared daily budget: open risk of each strategy ($, 0 when flat or at breakeven) + realized losses today
+var float rkV4 = 0.0
+var float rkD2 = 0.0
+var float rkPn = 0.0
+var float rkH2 = 0.0
+var float dayLoss = 0.0
+if newDay
+    rkV4 := 0.0
+    rkD2 := 0.0
+    rkPn := 0.0
+    rkH2 := 0.0
+    dayLoss := 0.0
+perC(riskPts) => riskPts * 2 + 4.74
 sizeFor(riskPts, w) =>
     room = acct - mllLine
-    budget = math.min(w * frac * room, dayCap)
-    perC = riskPts * 2 + 4.74
-    math.max(0, math.floor(budget / perC))
+    used = rkV4 + rkD2 + rkPn + rkH2 + dayLoss
+    pc = perC(riskPts)
+    budget = math.min(w * frac * room, frac * room - used, dayCap - used)
+    q = budget > 0 ? math.floor(budget / pc) : 0
+    if q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
+        q := 1
+    math.max(0, q)
+lossOf(q, pts) => pts < 0 ? q * (-pts * 2 + 4.74) : 0.0
 
 // results
 var float v4Pts = 0.0
@@ -166,6 +187,9 @@ var int v4Pos = 0
 var float v4E = na
 var float v4S = na
 var float v4T = na
+var float v4R = na
+var int v4Q = 0
+var bool v4AtBE = false
 if newDay
     dr := 0
     saw := false
@@ -178,12 +202,20 @@ if useV4 and inRTH
         hitS = v4Pos > 0 ? low <= v4S : high >= v4S
         hitT = v4Pos > 0 ? high >= v4T : low <= v4T
         xP = hitS ? v4S : hitT ? v4T : mnt >= 955 ? close : na
+        if na(xP) and v4BE and not v4AtBE and (v4Pos > 0 ? high >= v4E + v4R : low <= v4E - v4R)
+            v4S := v4E + v4Pos * 1.25
+            v4AtBE := true
+            rkV4 := 0.0
+            label.new(bar_index, v4S, "V4+ stop to breakeven", color=color.new(color.gray, 20), textcolor=color.white, style=label.style_label_left, size=size.tiny)
+            alert("V4+ +1R reached: move stop to breakeven " + fmt(v4S), alert.freq_once_per_bar)
         if not na(xP)
             pts = (xP - v4E) * v4Pos
             v4Pts += pts
             v4N += 1
             v4W += pts > 0 ? 1 : 0
-            label.new(bar_index, xP, "V4+ exit " + (hitS ? "stop " : hitT ? "target " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=v4Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
+            rkV4 := 0.0
+            dayLoss += lossOf(v4Q, pts)
+            label.new(bar_index, xP, "V4+ exit " + (hitS ? (v4AtBE ? "breakeven " : "stop ") : hitT ? "target " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=v4Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("V4+ exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             v4Pos := 0
     // pending stop order (valid for one bar)
@@ -195,7 +227,11 @@ if useV4 and inRTH
             v4T := v4E + pSide * tgtR * r
             v4Pos := pSide
             v4Done := true
+            v4R := r
+            v4AtBE := false
             q = sizeFor(r, 1.0)
+            v4Q := q
+            rkV4 := q * perC(r)
             label.new(bar_index, v4E, "V4+ " + (pSide > 0 ? "LONG " : "SHORT ") + fmt(v4E) + "\nstop " + fmt(v4S) + " (" + fmt(r) + " pts)\ntarget " + fmt(v4T) + "\nsize " + str.tostring(q) + " MNQ", color=pSide > 0 ? color.new(color.teal, 0) : color.new(color.maroon, 0), textcolor=color.white, style=pSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, v4S, bar_index + 60, v4S, color=color.red, width=2)
             line.new(bar_index, v4T, bar_index + 60, v4T, color=color.lime, width=2)
@@ -206,6 +242,8 @@ if useV4 and inRTH
                 v4Pts += pts
                 v4N += 1
                 v4Pos := 0
+                rkV4 := 0.0
+                dayLoss += lossOf(v4Q, pts)
         pSide := 0
     // signal search
     if not v4Done and v4Pos == 0 and biasSet and bias != 0 and bias == trendDir and mnt >= 585 and mnt <= 780
@@ -245,6 +283,7 @@ var float d2E = na
 var float d2S = na
 var float d2W8 = 1.0
 var bool d2Done = false
+var int d2Q = 0
 if newDay
     d2Pos := 0
     d2Done := false
@@ -257,6 +296,8 @@ if useD2 and inRTH
             d2Pts += pts
             d2N += 1
             d2W += pts > 0 ? 1 : 0
+            rkD2 := 0.0
+            dayLoss += lossOf(d2Q, pts)
             label.new(bar_index, xP, "D2 exit " + (hit ? "stop " : "15:00 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=d2Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("D2 exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             d2Pos := 0
@@ -271,6 +312,8 @@ if useD2 and inRTH
             d2W8 := s == trendDir ? 1.0 : 0.5
             r = math.abs(d2E - d2S)
             q = sizeFor(r, d2W8)
+            d2Q := q
+            rkD2 := q * perC(r)
             label.new(bar_index, d2E, "D2 " + (s > 0 ? "LONG " : "SHORT ") + fmt(d2E) + "\nstop " + fmt(d2S) + " (" + fmt(r) + " pts)\nexit 15:00" + (d2W8 < 1 ? "\nHALF size (vs trend)" : "") + "\nsize " + str.tostring(q) + " MNQ", color=s > 0 ? color.new(color.blue, 0) : color.new(color.purple, 0), textcolor=color.white, style=s > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, d2S, bar_index + 270, d2S, color=color.new(color.red, 30), style=line.style_dashed)
             alert("D2 " + (s > 0 ? "LONG " : "SHORT ") + fmt(d2E) + " stop " + fmt(d2S) + " exit 15:00 size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
@@ -280,6 +323,8 @@ var int pnPos = 0
 var float pnE = na
 var float pnS = na
 var bool pnDone = false
+var int pnQ = 0
+var int pnT0 = 0
 if newDay
     pnPos := 0
     pnDone := false
@@ -287,13 +332,17 @@ pinSide = rsi3 < 30 and trendDir > 0 ? 1 : rsi3 > 70 and trendDir < 0 ? -1 : 0
 if usePin and inRTH
     if pnPos != 0
         hit = pnPos > 0 ? low <= pnS : high >= pnS
-        xP = hit ? pnS : mnt >= 955 ? close : na
+        capHit = pinCap > 0 and mnt >= pnT0 + pinCap
+        xP = hit ? pnS : (mnt >= 955 or capHit) ? close : na
         if not na(xP)
             pts = (xP - pnE) * pnPos
             pnPts += pts
             pnN += 1
             pnW += pts > 0 ? 1 : 0
-            label.new(bar_index, xP, "PIN exit " + (hit ? "stop " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=pnPos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
+            rkPn := 0.0
+            dayLoss += lossOf(pnQ, pts)
+            alert("PINBALL exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
+            label.new(bar_index, xP, "PIN exit " + (hit ? "stop " : capHit ? "2h cap " : "15:55 ") + fmt(pts) + " pts", color=pts > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=pnPos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             pnPos := 0
     if not pnDone and pnPos == 0 and pinSide != 0 and mnt >= 630 and mnt <= 900
         lvl = pinSide > 0 ? ibH + tick : ibL - tick
@@ -302,15 +351,20 @@ if usePin and inRTH
             pnS := pinSide > 0 ? ibL - tick : ibH + tick
             pnPos := pinSide
             pnDone := true
+            pnT0 := mnt
             r = math.abs(pnE - pnS)
             q = sizeFor(r, 1.0)
-            label.new(bar_index, pnE, "PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + "\nstop " + fmt(pnS) + " (" + fmt(r) + " pts)\nexit 15:55\nsize " + str.tostring(q) + " MNQ", color=color.new(color.orange, 0), textcolor=color.black, style=pinSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
+            pnQ := q
+            rkPn := q * perC(r)
+            label.new(bar_index, pnE, "PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + "\nstop " + fmt(pnS) + " (" + fmt(r) + " pts)\nexit " + (pinCap > 0 ? str.tostring(pinCap) + " min after entry" : "15:55") + "\nsize " + str.tostring(q) + " MNQ", color=color.new(color.orange, 0), textcolor=color.black, style=pinSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, pnS, bar_index + 200, pnS, color=color.new(color.red, 30), style=line.style_dotted)
             alert("PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + " stop " + fmt(pnS) + " size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
             if pinSide > 0 ? low <= pnS : high >= pnS
                 pnPts += (pnS - pnE) * pinSide
                 pnN += 1
                 pnPos := 0
+                rkPn := 0.0
+                dayLoss += lossOf(pnQ, (pnS - pnE) * pinSide)
 
 
 // ===================== H2: second-entry pullback on trend days (5m signals built from 1m bars) =====================
@@ -340,6 +394,7 @@ var float h2T = na
 var float h2Pts = 0.0
 var int h2N = 0
 var int h2W = 0
+var int h2Q = 0
 if newDay
     array.clear(bH)
     array.clear(bL)
@@ -368,6 +423,8 @@ if useH2 and inRTH
             h2Pos := h2PSide
             h2N_ += 1
             q2 = sizeFor(r2, 0.5)
+            h2Q := q2
+            rkH2 := q2 * perC(r2)
             label.new(bar_index, h2E, "H2 " + (h2PSide > 0 ? "LONG " : "SHORT ") + fmt(h2E) + "\nstop " + fmt(h2S) + " (" + fmt(r2) + " pts)\ntarget " + fmt(h2T) + "\nsize " + str.tostring(q2) + " MNQ (half)", color=color.new(color.aqua, 0), textcolor=color.black, style=h2PSide > 0 ? label.style_label_up : label.style_label_down, size=size.small)
             line.new(bar_index, h2S, bar_index + 40, h2S, color=color.red)
             line.new(bar_index, h2T, bar_index + 40, h2T, color=color.lime)
@@ -383,6 +440,8 @@ if useH2 and inRTH
             h2Pts += p2
             h2N += 1
             h2W += p2 > 0 ? 1 : 0
+            rkH2 := 0.0
+            dayLoss += lossOf(h2Q, p2)
             label.new(bar_index, x2, "H2 exit " + (hS2 ? "stop " : hT2 ? "target " : "15:55 ") + fmt(p2) + " pts", color=p2 > 0 ? color.new(color.teal, 10) : color.new(color.maroon, 10), textcolor=color.white, style=h2Pos > 0 ? label.style_label_down : label.style_label_up, size=size.small)
             alert("H2 exit " + fmt(p2) + " pts", alert.freq_once_per_bar)
             h2Pos := 0

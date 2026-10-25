@@ -26,3 +26,21 @@ MNQ, RTH 1m bars and ETH 5m bars, Jan 2022 to Oct 2026. Each result is checked i
 
 ## Earlier result kept
 - **8:30 news reversion to the 8:29 price** on CPI, PPI and NFP days, 5m bars, stop 38-50. PF 1.5-2.2 and positive every year, but only about 12 trades a year. See FAIR_PRICING_BACKTEST_RESULTS.md.
+
+## Candidate A v2: trend-day pullback (TDP), tested Oct 25 2026
+- **Day filter at 10:30:**
+  - First-hour efficiency of at least 0.6: |10:29 close - 9:30 open| >= 0.6 × the first-hour range.
+  - 10:29 close outside the prior-day range, on the same side.
+- **Entry:** limit order after 10:30 at dayExtreme - 0.33 × firstHourRange. The day extreme keeps updating. No entry after 12:00. One trade per day.
+- **Stop:** 0.4 × ADR (10-day average range), about 130 pts in 2025-26.
+- **Target:** 1.5R, otherwise flat at 15:55.
+- **Results:**
+  - 196 trades, about 41 a year, 59% win.
+  - PF 1.53 (2022-24) and 1.55 (2025-26). Every year between 1.42 and 1.62.
+  - Average +0.20R, max drawdown 5.5R, at most 5 losses in a row.
+  - Longs PF 1.79/1.76, shorts 1.27/1.39.
+- **Robustness:**
+  - 3,726 versions tested.
+  - In the neighbourhood (limit retrace k 0.33-0.5, stop 0.25-0.4 ADR, no time stop), 181 of 192 versions are PF > 1 in both periods. The median worse-period PF is 1.25.
+  - Entries at 10:30 or with a 60-min time stop fail.
+- **Caveat:** about 3-4 trades a month at +0.2R is too slow to pass an eval alone. It needs to be combined with the Playbook.

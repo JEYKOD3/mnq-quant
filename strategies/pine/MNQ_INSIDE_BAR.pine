@@ -1,0 +1,129 @@
+//@version=6
+indicator("MNQ Inside Bar Breakout", shorttitle="IB", overlay=true, max_boxes_count=300, max_lines_count=300, max_labels_count=300)
+
+// ---------- inputs ----------
+grpS = "Signals"
+riskUsd   = input.float(200, "Risk per trade ($)", group=grpS)
+maxQty    = input.int(10, "Max contracts", group=grpS)
+rr        = input.float(1.0, "Target (R)", step=0.25, group=grpS)
+needFull  = input.bool(true, "Full candle body must close outside the mother candle", group=grpS)
+withTrend = input.bool(true, "Only take breakouts in the trend direction", group=grpS)
+sessIn    = input.session("0930-1545", "Signal hours (New York time)", group=grpS)
+minStop   = input.float(5, "Min stop (pts)", group=grpS)
+maxStop   = input.float(80, "Max stop (pts)", group=grpS)
+expiry    = input.int(30, "Box expires after N bars", group=grpS)
+grpT = "Trend (2 of 3 must agree)"
+tf1    = input.timeframe("15", "Trend timeframe 1", group=grpT)
+tf2    = input.timeframe("60", "Trend timeframe 2", group=grpT)
+tf3    = input.timeframe("240", "Trend timeframe 3", group=grpT)
+emaLen = input.int(21, "EMA length", group=grpT)
+
+pv   = syminfo.pointvalue
+tick = syminfo.mintick
+fmt(x) => str.tostring(x, format.mintick)
+
+// ---------- trend: close vs EMA on 3 higher timeframes (no repaint) ----------
+fDir() => close > ta.ema(close, emaLen) ? 1 : -1
+d1 = request.security(syminfo.tickerid, tf1, fDir()[1], lookahead=barmerge.lookahead_on)
+d2 = request.security(syminfo.tickerid, tf2, fDir()[1], lookahead=barmerge.lookahead_on)
+d3 = request.security(syminfo.tickerid, tf3, fDir()[1], lookahead=barmerge.lookahead_on)
+votes = d1 + d2 + d3
+trend = votes > 0 ? 1 : -1
+
+arrow(d) => d > 0 ? "▲" : "▼"
+colr(d) => d > 0 ? color.lime : color.red
+var table tt = table.new(position.top_right, 4, 2, bgcolor=color.new(color.black, 30), border_width=1)
+if barstate.islast
+    table.cell(tt, 0, 0, "IB trend", text_color=color.white, text_size=size.small)
+    table.cell(tt, 1, 0, tf1 + " " + arrow(d1), text_color=colr(d1), text_size=size.small)
+    table.cell(tt, 2, 0, tf2 + " " + arrow(d2), text_color=colr(d2), text_size=size.small)
+    table.cell(tt, 3, 0, tf3 + " " + arrow(d3), text_color=colr(d3), text_size=size.small)
+    table.cell(tt, 0, 1, trend > 0 ? "UP: longs only" : "DOWN: shorts only", text_color=colr(trend), text_size=size.small)
+    table.merge_cells(tt, 0, 1, 3, 1)
+
+// ---------- mother candle + inside bars ----------
+inSess = not na(time(timeframe.period, sessIn, "America/New_York"))
+var bool  armed = false
+var float mbH = na
+var float mbL = na
+var int   mbBar = 0
+var box   bx = na
+var int   tDir = 0
+var float tE = na
+var float tS = na
+var float tT = na
+var line  lE = na
+var line  lS = na
+var line  lT = na
+
+longSig = false
+shortSig = false
+insideNow = false
+
+// 1) manage an open signal (one at a time)
+if tDir != 0
+    hitS = tDir > 0 ? low <= tS : high >= tS
+    hitT = tDir > 0 ? high >= tT : low <= tT
+    line.set_x2(lE, bar_index)
+    line.set_x2(lS, bar_index)
+    line.set_x2(lT, bar_index)
+    if hitS or hitT
+        win = hitT and not hitS
+        label.new(bar_index, tDir > 0 ? high : low, win ? "IB ✓ +" + str.tostring(rr) + "R" : "IB ✗ -1R", style=tDir > 0 ? label.style_label_down : label.style_label_up, color=win ? color.new(color.green, 20) : color.new(color.red, 20), textcolor=color.white, size=size.tiny)
+        tDir := 0
+
+// 2) breakout of the active box
+if armed
+    bodyLo = math.min(open, close)
+    bodyHi = math.max(open, close)
+    upOut = needFull ? bodyLo > mbH : close > mbH
+    dnOut = needFull ? bodyHi < mbL : close < mbL
+    box.set_right(bx, bar_index)
+    if upOut or dnOut
+        side = upOut ? 1 : -1
+        armed := false
+        box.set_bgcolor(bx, color.new(side > 0 ? color.lime : color.red, 85))
+        allowed = (not withTrend or side == trend) and inSess and tDir == 0
+        e = close
+        s = side > 0 ? mbL - tick : mbH + tick
+        r = math.abs(e - s)
+        q = math.min(maxQty, math.floor(riskUsd / (r * pv)))
+        if allowed and r >= minStop and r <= maxStop and q >= 1
+            t = e + side * rr * r
+            ticksS = math.round(r / tick)
+            ticksT = math.round(rr * r / tick)
+            tDir := side
+            tE := e
+            tS := s
+            tT := t
+            lE := line.new(bar_index, e, bar_index + 1, e, color=color.new(color.white, 20))
+            lS := line.new(bar_index, s, bar_index + 1, s, color=color.new(color.red, 0), style=line.style_dashed)
+            lT := line.new(bar_index, t, bar_index + 1, t, color=color.new(color.lime, 0), style=line.style_dashed)
+            txt = "IB " + (side > 0 ? "▲ LONG " : "▼ SHORT ") + str.tostring(q) + " MNQ\nSL " + str.tostring(ticksS) + " · TP " + str.tostring(ticksT) + " ticks"
+            tip = (side > 0 ? "BUY " : "SELL ") + str.tostring(q) + " MNQ at market\nEntry " + fmt(e) + "\nStop " + fmt(s) + " (" + fmt(r) + " pts, risk $" + str.tostring(math.round(q * r * pv)) + ")\nTarget " + fmt(t) + " (" + str.tostring(rr) + "R)\nOrder panel: Stop loss " + str.tostring(ticksS) + " ticks, Take profit " + str.tostring(ticksT) + " ticks\nTrend " + (trend > 0 ? "UP" : "DOWN") + " (" + tf1 + "/" + tf2 + "/" + tf3 + ")"
+            label.new(bar_index, side > 0 ? low : high, txt, style=side > 0 ? label.style_label_up : label.style_label_down, color=side > 0 ? color.new(color.lime, 10) : color.new(color.red, 10), textcolor=color.black, size=size.small, tooltip=tip)
+            longSig := side > 0
+            shortSig := side < 0
+        else
+            why = not inSess ? "outside hours" : (withTrend and side != trend) ? "against trend" : tDir != 0 ? "trade open" : r > maxStop ? "stop too big" : r < minStop ? "stop too small" : "risk too big for 1 MNQ"
+            label.new(bar_index, side > 0 ? low : high, "IB " + (side > 0 ? "▲" : "▼") + " skip", style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(color.gray, 40), textcolor=color.white, size=size.tiny, tooltip="Breakout, no trade: " + why)
+    else if bar_index - mbBar > expiry
+        armed := false
+        box.set_bgcolor(bx, color.new(color.gray, 92))
+    else
+        insideNow := true
+
+// 3) new mother candle: this bar sits inside the previous one
+isInside = high <= high[1] and low >= low[1]
+if not armed and isInside and not longSig and not shortSig
+    armed := true
+    mbH := high[1]
+    mbL := low[1]
+    mbBar := bar_index - 1
+    bx := box.new(bar_index - 1, mbH, bar_index, mbL, border_color=color.new(color.yellow, 0), border_width=1, bgcolor=color.new(color.yellow, 88), text="MC", text_size=size.tiny, text_color=color.yellow, text_halign=text.align_left, text_valign=text.align_top)
+    insideNow := true
+
+barcolor(insideNow ? color.yellow : na, title="Inside bars")
+
+alertcondition(longSig, "IB long", "IB breakout LONG on {{ticker}}")
+alertcondition(shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

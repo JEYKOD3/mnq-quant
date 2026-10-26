@@ -1106,3 +1106,133 @@ if showCk and barstate.islast
         col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
         table.cell(ckT, k + 1, 4, array.get(names, k) + (ckOpen ? " " + st : ""), text_color=col, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip=st + ": " + array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
 
+// ==================== INSIDE BAR BREAKOUT (friend) ====================
+
+// ---------- inputs ----------
+ib_grpS = "Inside Bar (friend): signals"
+ib_on = input.bool(true, "Show the inside bar module", group=ib_grpS)
+ib_riskUsd   = input.float(200, "Risk per trade ($)", group=ib_grpS)
+ib_maxQty    = input.int(10, "Max contracts", group=ib_grpS)
+ib_rr        = input.float(1.0, "Target (R)", step=0.25, group=ib_grpS)
+ib_needFull  = input.bool(true, "Full candle body must close outside the mother candle", group=ib_grpS)
+ib_withTrend = input.bool(true, "Only take breakouts in the trend direction", group=ib_grpS)
+ib_sessIn    = input.session("0930-1545", "Signal hours (New York time)", group=ib_grpS)
+ib_minStop   = input.float(5, "Min stop (pts)", group=ib_grpS)
+ib_maxStop   = input.float(80, "Max stop (pts)", group=ib_grpS)
+ib_expiry    = input.int(30, "Box expires after N bars", group=ib_grpS)
+ib_grpT = "Inside Bar (friend): trend, 2 of 3 must agree"
+ib_tf1    = input.timeframe("15", "Trend timeframe 1", group=ib_grpT)
+ib_tf2    = input.timeframe("60", "Trend timeframe 2", group=ib_grpT)
+ib_tf3    = input.timeframe("240", "Trend timeframe 3", group=ib_grpT)
+ib_emaLen = input.int(21, "EMA length", group=ib_grpT)
+
+ib_pv   = syminfo.pointvalue
+ib_tick = syminfo.mintick
+ib_fmt(x) => str.tostring(x, format.mintick)
+
+// ---------- trend: close vs EMA on 3 higher timeframes (no repaint) ----------
+ib_fDir() => close > ta.ema(close, ib_emaLen) ? 1 : -1
+ib_d1 = request.security(syminfo.tickerid, ib_tf1, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_d2 = request.security(syminfo.tickerid, ib_tf2, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_d3 = request.security(syminfo.tickerid, ib_tf3, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_votes = ib_d1 + ib_d2 + ib_d3
+ib_trend = ib_votes > 0 ? 1 : -1
+
+ib_arrow(ib_d) => ib_d > 0 ? "▲" : "▼"
+ib_colr(ib_d) => ib_d > 0 ? color.lime : color.red
+var table ib_tt = table.new(position.middle_right, 4, 2, bgcolor=color.new(color.black, 30), border_width=1)
+if barstate.islast and ib_on
+    table.cell(ib_tt, 0, 0, "IB trend", text_color=color.white, text_size=size.small)
+    table.cell(ib_tt, 1, 0, ib_tf1 + " " + ib_arrow(ib_d1), text_color=ib_colr(ib_d1), text_size=size.small)
+    table.cell(ib_tt, 2, 0, ib_tf2 + " " + ib_arrow(ib_d2), text_color=ib_colr(ib_d2), text_size=size.small)
+    table.cell(ib_tt, 3, 0, ib_tf3 + " " + ib_arrow(ib_d3), text_color=ib_colr(ib_d3), text_size=size.small)
+    table.cell(ib_tt, 0, 1, ib_trend > 0 ? "UP: longs only" : "DOWN: shorts only", text_color=ib_colr(ib_trend), text_size=size.small)
+    table.merge_cells(ib_tt, 0, 1, 3, 1)
+
+// ---------- mother candle + inside bars ----------
+ib_inSess = not na(time(timeframe.period, ib_sessIn, "America/New_York"))
+ib_recent = time > timenow - 3 * 86400000
+var bool  ib_armed = false
+var float ib_mbH = na
+var float ib_mbL = na
+var int   ib_mbBar = 0
+var box   ib_bx = na
+var int   ib_tDir = 0
+var float ib_tE = na
+var float ib_tS = na
+var float ib_tT = na
+var line  ib_lE = na
+var line  ib_lS = na
+var line  ib_lT = na
+
+ib_longSig = false
+ib_shortSig = false
+ib_insideNow = false
+
+// 1) manage an open signal (one at a time)
+if ib_tDir != 0
+    ib_hitS = ib_tDir > 0 ? low <= ib_tS : high >= ib_tS
+    ib_hitT = ib_tDir > 0 ? high >= ib_tT : low <= ib_tT
+    line.set_x2(ib_lE, bar_index)
+    line.set_x2(ib_lS, bar_index)
+    line.set_x2(ib_lT, bar_index)
+    if ib_hitS or ib_hitT
+        ib_win = ib_hitT and not ib_hitS
+        label.new(bar_index, ib_tDir > 0 ? high : low, ib_win ? "IB ✓ +" + str.tostring(ib_rr) + "R" : "IB ✗ -1R", style=ib_tDir > 0 ? label.style_label_down : label.style_label_up, color=ib_win ? color.new(color.green, 20) : color.new(color.red, 20), textcolor=color.white, size=size.tiny)
+        ib_tDir := 0
+
+// 2) breakout of the active box
+if ib_on and ib_armed
+    ib_bodyLo = math.min(open, close)
+    ib_bodyHi = math.max(open, close)
+    ib_upOut = ib_needFull ? ib_bodyLo > ib_mbH : close > ib_mbH
+    ib_dnOut = ib_needFull ? ib_bodyHi < ib_mbL : close < ib_mbL
+    box.set_right(ib_bx, bar_index)
+    if ib_upOut or ib_dnOut
+        ib_side = ib_upOut ? 1 : -1
+        ib_armed := false
+        box.set_bgcolor(ib_bx, color.new(ib_side > 0 ? color.lime : color.red, 85))
+        ib_allowed = (not ib_withTrend or ib_side == ib_trend) and ib_inSess and ib_tDir == 0
+        ib_e = close
+        ib_s = ib_side > 0 ? ib_mbL - ib_tick : ib_mbH + ib_tick
+        ib_r = math.abs(ib_e - ib_s)
+        ib_q = math.min(ib_maxQty, math.floor(ib_riskUsd / (ib_r * ib_pv)))
+        if ib_allowed and ib_r >= ib_minStop and ib_r <= ib_maxStop and ib_q >= 1
+            ib_t = ib_e + ib_side * ib_rr * ib_r
+            ib_ticksS = math.round(ib_r / ib_tick)
+            ib_ticksT = math.round(ib_rr * ib_r / ib_tick)
+            ib_tDir := ib_side
+            ib_tE := ib_e
+            ib_tS := ib_s
+            ib_tT := ib_t
+            ib_lE := line.new(bar_index, ib_e, bar_index + 1, ib_e, color=color.new(color.white, 20))
+            ib_lS := line.new(bar_index, ib_s, bar_index + 1, ib_s, color=color.new(color.red, 0), style=line.style_dashed)
+            ib_lT := line.new(bar_index, ib_t, bar_index + 1, ib_t, color=color.new(color.lime, 0), style=line.style_dashed)
+            ib_txt = "IB " + (ib_side > 0 ? "▲ LONG " : "▼ SHORT ") + str.tostring(ib_q) + " MNQ\nSL " + str.tostring(ib_ticksS) + " · TP " + str.tostring(ib_ticksT) + " ticks"
+            ib_tip = (ib_side > 0 ? "BUY " : "SELL ") + str.tostring(ib_q) + " MNQ at market\nEntry " + ib_fmt(ib_e) + "\nStop " + ib_fmt(ib_s) + " (" + ib_fmt(ib_r) + " pts, risk $" + str.tostring(math.round(ib_q * ib_r * ib_pv)) + ")\nTarget " + ib_fmt(ib_t) + " (" + str.tostring(ib_rr) + "R)\nOrder panel: Stop loss " + str.tostring(ib_ticksS) + " ticks, Take profit " + str.tostring(ib_ticksT) + " ticks\nTrend " + (ib_trend > 0 ? "UP" : "DOWN") + " (" + ib_tf1 + "/" + ib_tf2 + "/" + ib_tf3 + ")"
+            label.new(bar_index, ib_side > 0 ? low : high, ib_txt, style=ib_side > 0 ? label.style_label_up : label.style_label_down, color=ib_side > 0 ? color.new(color.lime, 10) : color.new(color.red, 10), textcolor=color.black, size=size.small, tooltip=ib_tip)
+            ib_longSig := ib_side > 0
+            ib_shortSig := ib_side < 0
+        else if ib_inSess
+            ib_why = not ib_inSess ? "outside hours" : (ib_withTrend and ib_side != ib_trend) ? "against trend" : ib_tDir != 0 ? "trade open" : ib_r > ib_maxStop ? "stop too big" : ib_r < ib_minStop ? "stop too small" : "risk too big for 1 MNQ"
+            label.new(bar_index, ib_side > 0 ? low : high, "IB " + (ib_side > 0 ? "▲" : "▼") + " skip", style=ib_side > 0 ? label.style_label_up : label.style_label_down, color=color.new(color.gray, 40), textcolor=color.white, size=size.tiny, tooltip="Breakout, no trade: " + ib_why)
+    else if bar_index - ib_mbBar > ib_expiry
+        ib_armed := false
+        box.set_bgcolor(ib_bx, color.new(color.gray, 92))
+    else
+        ib_insideNow := true
+
+// 3) new mother candle: this bar sits inside the previous one
+ib_isInside = high <= high[1] and low >= low[1]
+if ib_on and ib_recent and not ib_armed and ib_isInside and not ib_longSig and not ib_shortSig
+    ib_armed := true
+    ib_mbH := high[1]
+    ib_mbL := low[1]
+    ib_mbBar := bar_index - 1
+    ib_bx := box.new(bar_index - 1, ib_mbH, bar_index, ib_mbL, border_color=color.new(color.yellow, 0), border_width=1, bgcolor=color.new(color.yellow, 88), text="MC", text_size=size.tiny, text_color=color.yellow, text_halign=text.align_left, text_valign=text.align_top)
+    ib_insideNow := true
+
+barcolor(ib_insideNow ? color.yellow : na, title="Inside bars")
+
+alertcondition(ib_longSig, "IB long", "IB breakout LONG on {{ticker}}")
+alertcondition(ib_shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

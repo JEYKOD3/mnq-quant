@@ -288,6 +288,22 @@ def sl6(stopp=15., tgtp=15., be=8., gapmin=2.):
     return out
 
 # ---------- friend's mother candle ----------
+TRIG = 'body'
+MCMODE = 'one'   # 'one' = first trade only; 'win' = keep trading the setup after losses, stop after the first win (max 4/day)
+def wmode(fn):
+    def g():
+        global MCMODE
+        MCMODE = 'win'
+        try: return fn()
+        finally: MCMODE = 'one'
+    return g
+def trig(mode, fn):
+    def g():
+        global TRIG
+        TRIG = mode
+        try: return fn()
+        finally: TRIG = 'body'
+    return g
 def mc_scan(b, s_win, e_win, tgtR, bf, d, name, tend=955, maxone=True):
     """mother bar + >=1 inside bars; box alive until a close beyond the opposite side; trigger = full body beyond MB in bias dir."""
     out = []
@@ -313,7 +329,7 @@ def mc_scan(b, s_win, e_win, tgtR, bf, d, name, tend=955, maxone=True):
                         if r > 0:
                             xi, xP, why, rf = walk(b, k + 1, s, eP, stp, eP + s * tgtR * r, tend)
                             out.append(mk(d, name, s, m, eP, stp, xi, xP, why, rf, b))
-                            if maxone: return out
+                            if MCMODE == 'one' or (MCMODE == 'win' and out[-1]['pts'] > 0) or len(out) >= 4: return out
                             i = xi; break
                     break
                 k += 1
@@ -345,12 +361,14 @@ def mc5(tgtR=1., biasf=False):
         b5 = agg5(b)
         bf = (lambda m, d=d: bias(d, m)) if biasf else None
         t = mc_scan(b5, 570, 630, tgtR, bf, d, 'MC5')
-        # re-walk on 1m for honest exits
+        # re-walk on 1m for honest exits (skip overlaps; in 'win' mode stop after the first 1m-walk win)
+        lastx = -1
         for x in t:
             i = idx_at(b, x['eT'] + 5)
-            if i is None: continue
+            if i is None or b[i][0] < lastx: continue
+            if out and out[-1]['d'] == d and MCMODE == 'win' and out[-1]['pts'] > 0: break
             xi, xP, why, rf = walk(b, i, x['side'], x['eP'], x['stp'], x['eP'] + x['side'] * tgtR * x['r'], 955)
-            out.append(mk(d, 'MC5', x['side'], b[i][0], x['eP'], x['stp'], xi, xP, why, rf, b))
+            out.append(mk(d, 'MC5', x['side'], b[i][0], x['eP'], x['stp'], xi, xP, why, rf, b)); lastx = out[-1]['xT']
     return out
 
 # ---------- S4 trend-filtered ORB ----------
@@ -400,6 +418,15 @@ FAM = {
     'MC 5m pre-open 9:00-9:30 1R': lambda: mc5pre(1.), 'MC 5m pre-open 2R': lambda: mc5pre(2.),
     'MC 5m pre-open 1R HTF bias': lambda: mc5pre(1., True), 'MC 5m pre-open 2R HTF bias': lambda: mc5pre(2., True),
     'MC 5m 9:30-10:30 1R HTF bias': lambda: mc5(1., True), 'MC 5m 9:30-10:30 2R HTF bias': lambda: mc5(2., True),
+    'MC 1m 9:30-10:30 1R close-trigger': trig('close', lambda: mc1(1.)), 'MC 1m 9:30-10:30 1R close-trigger HTF bias': trig('close', lambda: mc1(1., True)),
+    'MC 5m pre-open 1R close-trigger': trig('close', lambda: mc5pre(1.)), 'MC 5m 9:30-10:30 1R close-trigger HTF bias': trig('close', lambda: mc5(1., True)),
+    'MC 5m 9:30-10:30 1R': lambda: mc5(1.),
+    'MCW 1m 9:30-10:30 1R stop-after-win': wmode(lambda: mc1(1.)), 'MCW 1m 9:30-10:30 1R stop-after-win HTF bias': wmode(lambda: mc1(1., True)),
+    'MCW 1m 9:30-11:30 1R stop-after-win': wmode(lambda: mc1(1., False, 570, 690)), 'MCW 1m 9:30-11:30 1R stop-after-win HTF bias': wmode(lambda: mc1(1., True, 570, 690)),
+    'MCW 1m 9:30-10:30 2R stop-after-win (cmp)': wmode(lambda: mc1(2.)),
+    'MCW 5m pre-open 1R stop-after-win': wmode(lambda: mc5pre(1.)), 'MCW 5m pre-open 1R stop-after-win HTF bias': wmode(lambda: mc5pre(1., True)),
+    'MCW 5m 9:30-10:30 1R stop-after-win': wmode(lambda: mc5(1.)), 'MCW 5m 9:30-10:30 1R stop-after-win HTF bias': wmode(lambda: mc5(1., True)),
+    'MCW 5m 9:30-10:30 2R stop-after-win HTF bias (cmp)': wmode(lambda: mc5(2., True)),
     'S4 trend ORB15 2R SMA200': lambda: s4(), 'S4 ORB15 1.5R': lambda: s4(rr=1.5), 'S4 ORB15 3R': lambda: s4(rr=3.),
     'S4 ORB30 2R': lambda: s4(orm=30), 'S4 ORB15 2R SMA150': lambda: s4(n=150), 'S4 ORB15 2R cap50': lambda: s4(cap=50),
 }
@@ -419,7 +446,9 @@ if __name__ == '__main__':
     mode = sys.argv[1] if len(sys.argv) > 1 else 'scan'
     if mode == 'scan':
         out = {}; CACHE = {}
+        only = sys.argv[2] if len(sys.argv) > 2 else None
         for nm, fn in FAM.items():
+            if only and only not in nm: continue
             tr = fn(); CACHE[nm] = tr; row = {}
             for k, (a, z) in BLK.items(): row[k] = stats(tr, a, z); row[k + '_slip8'] = stats(tr, a, z, 8.0)
             row['years'] = years(tr)

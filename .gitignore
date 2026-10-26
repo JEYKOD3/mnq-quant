@@ -6,3 +6,4 @@ __pycache__/
 journal/*.db
 .env
 db/mnq.sqlite
+scripts/y2026/mc_struct_trades.json

@@ -1,6 +1,7 @@
-# MNQ Playbook (Pine v6), TradingView version 27
+# MNQ Playbook (Pine v6), TradingView version 31
 
-Current: D2 0.6 ADR + 13:15 exit; all flat by 15:00; Pinball 2R/3h; STOP DAY banner; R9 recovery mode; daily budget 1050 (chart setting); today-only trades strip; strategy checklist (left column, hover each); week of Oct 26 red folders in the calendar.
+Adds the order-panel PRESET name to every signal tag (nearest saved bracket per strategy).
+Presets (stop pts -> SL ticks / TP ticks): NEWS 50 (200/200); H2 18,30,50,75 (TP 2R); V4+ 50,80,125,190,290 (TP 1.25R); D2 120,170,240,340,480 (no TP); TDP 85,115,155,210,300 (TP 1.5R); PIN 160,200,250,320,400 (TP 2R).
 
 ```pine
 //@version=5
@@ -27,7 +28,8 @@ panelIcon = input.bool(true, "Panel as one line, hover ⓘ for details", group="
 showLog = input.bool(false, "Show last trades table", group="Chart")
 logIcon = input.bool(true, "Last trades as one ⓘ line, hover for the table", group="Chart")
 logToday = input.bool(true, "Last trades: today only (resets at the 18:00 session open)", group="Chart")
-showCk = input.bool(true, "Strategy checklist (left side, hover each strategy)", group="Chart")
+showCk = input.bool(true, "Strategy checklist (top left, hover each strategy)", group="Chart")
+ckOpen = input.bool(false, "Checklist expanded (status words); off = compact one line", group="Chart")
 showStats = input.bool(false, "Show results table (loaded bars)", group="Chart")
 emaLen = input.int(20, "EMA length (0 = off)", group="Chart")
 plot(emaLen > 0 ? ta.ema(close, emaLen) : na, "EMA", color=color.new(color.fuchsia, 40))
@@ -65,7 +67,7 @@ pfDD   = input.float(2000, "Trailing max loss, end of day ($)", group="Prop firm
 pfCons = input.float(0.4, "Consistency: best day max share of profit (Lucid Flex default 40%)", group="Prop firm (update each morning)")
 mllLine= math.min(peakEOD - pfDD, evStart + 100)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
-dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
+dayCap = input.float(1050, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
 stopLos = input.int(3, "STOP the day after N losing trades (0 = off)", group="Sizing")
 recIn  = input.float(400, "RECOVERY mode (1 MNQ only) when room above max-loss line is under ($)", group="Sizing")
 recOut = input.float(700, "Back to normal sizing when room is at least ($)", group="Sizing")
@@ -193,6 +195,8 @@ if dChg
             if not found and pNum > dNum
                 nextEv := nm + " " + str.substring(p, 5, 10) + " " + str.substring(p, 11, 13) + ":" + str.substring(p, 13, 15)
                 found := true
+evDesc(nm) =>
+    nm == "CPI" ? "Consumer Price Index: monthly inflation in what households pay. The biggest scheduled mover for NQ. Hot = rates up = Nasdaq down. Our NEWS module trades the reversion to the 8:29 price." : nm == "PPI" ? "Producer Price Index: inflation in what businesses get paid (wholesale). Moves NQ less than CPI, but a surprise can still spike it. NEWS module trades it." : nm == "NFP" ? "Nonfarm Payrolls (jobs report): jobs added, unemployment rate, wages. Very volatile first minutes. NEWS module trades it; study: fade the 8:30-9:30 move at 9:30." : nm == "FOMC" ? "Fed rate decision and statement at 14:00. Study: the first 15 min move returns to the 13:59 price 87% of the time; never chase it; D2 is skipped on FOMC days." : str.contains(nm, "Powell") ? "Fed Chair press conference: often reverses or extends the 14:00 move. Stand aside until it settles." : str.contains(nm, "GDP") ? "GDP (economic growth) and PCE (the Fed's preferred inflation gauge) at 8:30. Study: no reliable edge, do not trade the release candle." : str.contains(nm, "Durable") ? "Durable Goods Orders: business spending on long-lasting goods. Usually a medium mover." : str.contains(nm, "Confidence") ? "Conference Board Consumer Confidence at 10:00. Medium mover." : nm == "JOLTS" ? "Job openings (JOLTS) at 10:00. Medium mover, no edge found." : nm == "ECI" ? "Employment Cost Index: wage inflation, quarterly. Medium mover." : str.contains(nm, "PMI") ? "Chicago PMI: regional manufacturing survey. Usually small." : str.contains(nm, "Activity") ? "Chicago Fed National Activity Index. Minor." : "Scheduled economic release."
 todayEv() =>
     s = ""
     for k = 0 to array.size(evN) - 1
@@ -212,7 +216,7 @@ if array.size(evM) > 0
     for k = 0 to array.size(evM) - 1
         if mnt == array.get(evM, k) and mnt != nz(mnt[1], -1)
             line.new(bar_index, low, bar_index, high, extend=extend.both, color=color.new(color.red, 50), style=line.style_dotted)
-            label.new(bar_index, high, array.get(evN, k), color=color.new(color.red, 15), textcolor=color.white, style=label.style_label_down, size=size.tiny, tooltip="Scheduled release: " + array.get(evN, k) + " at " + hhmm() + " ET")
+            label.new(bar_index, high, array.get(evN, k), color=color.new(color.red, 15), textcolor=color.white, style=label.style_label_down, size=size.tiny, tooltip=array.get(evN, k) + " at " + hhmm() + " ET\n" + evDesc(array.get(evN, k)))
 
 // ---------- day state ----------
 var float rOpen = na
@@ -293,13 +297,26 @@ pnlOf(q, pts) => q * (pts * 2 - 4.74)
 
 // ---------- drawing helpers ----------
 // entry: small tag "V4+ ▲ 4" (strategy, direction, contracts); hover for the full story. Zones: green to target, red to stop.
+// order-panel presets: nearest saved bracket for this strategy (stop in points; target = R x stop)
+pBk(nm) => nm == "NEWS" ? array.from(50.0) : nm == "H2" ? array.from(18.0, 30.0, 50.0, 75.0) : nm == "V4+" ? array.from(50.0, 80.0, 125.0, 190.0, 290.0) : nm == "D2" ? array.from(120.0, 170.0, 240.0, 340.0, 480.0) : nm == "TDP" ? array.from(85.0, 115.0, 155.0, 210.0, 300.0) : array.from(160.0, 200.0, 250.0, 320.0, 400.0)
+pR(nm) => nm == "NEWS" ? 1.0 : nm == "H2" ? 2.0 : nm == "V4+" ? 1.25 : nm == "D2" ? 0.0 : nm == "TDP" ? 1.5 : 2.0
+presetOf(nm, rp) =>
+    bk = pBk(nm)
+    best = array.get(bk, 0)
+    for v in bk
+        if math.abs(v - rp) < math.abs(best - rp)
+            best := v
+    best
 entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
         rp = math.abs(e - s)
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
+        pv = presetOf(nm, rp)
+        pName = nm + " " + str.tostring(pv, "#")
+        pLine = "PRESET: " + pName + "  (SL " + str.tostring(pv * 4, "#") + " ticks · " + (pR(nm) > 0 ? "TP " + str.tostring(pv * pR(nm) * 4, "#") + " ticks" : "no TP") + ")" + (math.abs(pv - rp) > 0.5 ? "\nExact stop is " + fmt(rp) + " pts: drag the SL line onto the red dotted line if you want it exact" : "")
         head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : recov ? " · SKIP, RECOVERY: risk too big for the room" : " · SKIP, budget full"))
-        tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
-        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
+        tip = head + "\n" + pLine + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
+        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q) + (q > 0 ? " · " + str.tostring(presetOf(nm, math.abs(e - s)), "#") : ""), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
 // while a trade is open: thin dotted stop (red) and target (green) lines; at the exit they are replaced by one line entry -> exit
 zone(show, e, lvl, good) => show and not na(lvl) ? line.new(bar_index, lvl, bar_index + 1, lvl, color=color.new(good ? color.lime : color.red, 30), style=line.style_dotted, width=1) : line(na)
@@ -393,6 +410,11 @@ bgcolor(dayStop and inRTH ? color.new(color.red, 85) : na, title="STOP day tint"
 var table stopT = table.new(position.middle_center, 1, 2, bgcolor=color.new(#2a0000, 10), border_color=color.red, border_width=3, frame_color=color.red, frame_width=3)
 if barstate.islast
     table.clear(stopT, 0, 0, 0, 1)
+    showBan = dayStop or recov
+    table.set_frame_color(stopT, showBan ? color.red : color.new(color.black, 100))
+    table.set_border_color(stopT, showBan ? color.red : color.new(color.black, 100))
+    table.set_bgcolor(stopT, showBan ? color.new(#2a0000, 10) : color.new(color.black, 100))
+    table.set_frame_width(stopT, showBan ? 3 : 0)
     if dayStop
         table.cell(stopT, 0, 0, "STOP · NO MORE TRADES TODAY", text_color=color.white, text_size=size.huge)
         table.cell(stopT, 0, 1, stopWhy + "\nClose the platform. Tomorrow is a new day.", text_color=color.new(#ffb3b3, 0), text_size=size.large)
@@ -1035,10 +1057,12 @@ if showLog and barstate.islast
 // ---------- strategy checklist (middle left): one colored cell per strategy, hover for the boxes ----------
 ck(b) => b ? "✓ " : "✗ "
 wt(b, w) => b ? "… " : w
-var table ckT = table.new(position.middle_left, 1, 7, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table ckT = table.new(position.top_left, 7, 5, border_color=color.new(color.gray, 70), border_width=0)
 if showCk and barstate.islast
-    table.clear(ckT, 0, 0, 0, 6)
-    table.cell(ckT, 0, 0, "ⓘ CHECKLIST", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
+    table.clear(ckT, 0, 0, 6, 4)
+    for r = 0 to 3
+        table.cell(ckT, 0, r, " ", text_size=size.normal, bgcolor=color.new(color.black, 100))
+    table.cell(ckT, 0, 4, ckOpen ? "ⓘ CHECKLIST" : "ⓘ", text_color=color.yellow, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
     live = not na(adr10) and not na(rOpen) and inRTH
     mvN = live ? (close - rOpen) / adr10 : 0.0
     fh = not na(ibH) and not na(ibL) ? ibH - ibL : 0.0
@@ -1077,7 +1101,7 @@ if showCk and barstate.islast
         it = array.get(inT, k)
         st = it ? "IN TRADE" : not gate ? "STOP" : array.get(full, k) ? "READY" : array.get(offT, k) ? "off" : array.get(part, k) ? "watch" : "wait"
         col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
-        table.cell(ckT, 0, k + 1, array.get(names, k) + " " + st, text_color=col, text_size=size.normal, text_halign=text.align_left, tooltip=array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
+        table.cell(ckT, k + 1, 4, array.get(names, k) + (ckOpen ? " " + st : ""), text_color=col, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip=st + ": " + array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
 
 
 ```

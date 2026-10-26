@@ -60,7 +60,8 @@ mllLine= math.min(peakEOD - pfDD, evStart + 100)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
 dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
 stopLos = input.int(3, "STOP the day after N losing trades (0 = off)", group="Sizing")
-stopRoom = input.float(400, "STOP the day when room above max-loss line is under ($)", group="Sizing")
+recIn  = input.float(400, "RECOVERY mode (1 MNQ only) when room above max-loss line is under ($)", group="Sizing")
+recOut = input.float(700, "Back to normal sizing when room is at least ($)", group="Sizing")
 
 // ---------- news calendar (yyyy-mm-dd HHMM NAME, comma separated, no spaces after commas) ----------
 calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-28 1400 FOMC,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
@@ -246,6 +247,7 @@ var float rkH2 = 0.0
 var float dayLoss = 0.0
 var int[] dLos = array.from(0)
 var bool dayStop = false
+var bool recov = false
 var string stopWhy = ""
 var float dayPnl = 0.0
 var int budDay = -1
@@ -269,9 +271,15 @@ sizeFor(riskPts, w) =>
     used = usedNow()
     pc = perC(riskPts)
     budget = math.min(w * frac * room, frac * room - used, dayCap - used)
+    r1 = (riskPts + 0.25 + 8) * 2 + 4.74
+    avail = acct + dayPnl - mllLine - (used - dayLoss) - 100
     q = dayStop ? 0 : budget > 0 ? math.floor(budget / pc) : 0
     if not dayStop and q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
         q := 1
+    if recov
+        q := not dayStop and r1 <= avail ? 1 : 0
+    else
+        q := math.min(q, math.max(0, math.floor(avail / r1)))
     math.max(0, q)
 lossOf(q, pts) => pts < 0 ? q * (-pts * 2 + 4.74) : 0.0
 pnlOf(q, pts) => q * (pts * 2 - 4.74)
@@ -282,7 +290,7 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
         rp = math.abs(e - s)
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
-        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : " · SKIP, budget full"))
+        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : recov ? " · SKIP, RECOVERY: risk too big for the room" : " · SKIP, budget full"))
         tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
         label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
@@ -346,15 +354,18 @@ var float nbL = na
 var int nwPos = 0
 var int nwPend = 0
 var int nwN_ = 0
+// ---------- RECOVERY mode: under recIn of room, 1 MNQ only, until room >= recOut ----------
+roomNow = acct + dayPnl - mllLine
+if not recov and roomNow < recIn
+    recov := true
+else if recov and roomNow >= recOut
+    recov := false
 // ---------- STOP DAY: hard stop, big warning ----------
 if mnt >= 480 and mnt < 960 and budDay == dom and not dayStop
     nLos = array.get(dLos, 0)
     if dayLoss >= dayCap - 150
         dayStop := true
         stopWhy := "Daily loss budget used (" + usd(dayLoss) + " of " + usd(dayCap) + ")"
-    else if acct + dayPnl - mllLine < stopRoom
-        dayStop := true
-        stopWhy := "Only " + usd(acct + dayPnl - mllLine) + " above the max-loss line"
     else if stopLos > 0 and nLos >= stopLos
         dayStop := true
         stopWhy := str.tostring(nLos) + " losing trades today"
@@ -373,6 +384,12 @@ if barstate.islast
     if dayStop
         table.cell(stopT, 0, 0, "STOP · NO MORE TRADES TODAY", text_color=color.white, text_size=size.huge)
         table.cell(stopT, 0, 1, stopWhy + "\nClose the platform. Tomorrow is a new day.", text_color=color.new(#ffb3b3, 0), text_size=size.large)
+    else if recov
+        openRk = usedNow() - dayLoss
+        maxRisk = roomNow - openRk - 100
+        dead = maxRisk < 60
+        table.cell(stopT, 0, 0, dead ? "DEAD ZONE · NO SETUP FITS" : "RECOVERY · 1 MNQ ONLY", text_color=color.white, text_size=size.large, bgcolor=dead ? color.new(#5a0000, 0) : color.new(#7a4a00, 0))
+        table.cell(stopT, 0, 1, "Room " + usd(roomNow) + " above the max-loss line · normal sizing back at " + usd(recOut) + "\n" + (dead ? "Nothing fits safely. Stop here; consider starting a new eval." : "Max risk per trade " + usd(maxRisk) + ". Take only signals the chart sizes at 1."), text_color=color.new(#ffe0b3, 0), text_size=size.normal, bgcolor=dead ? color.new(#5a0000, 0) : color.new(#7a4a00, 0))
 
 var int nwLossRow = 0
 var float nwE = na

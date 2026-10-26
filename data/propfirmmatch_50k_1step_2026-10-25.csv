@@ -1,0 +1,77 @@
+firm,plan,activation_fee,max_micros,target,max_loss,dd_type,split,eval_consistency,funded_consistency,price_discounted,price_list,billing
+Funded Futures Family,Velocity,0,50,4000,2250,intraday,90,40,40,26.50,265,monthly
+Funded Futures Family,Premier Plus FastPass Intraday,0,40,3000,2000,intraday,90,none,40,69.30,154,monthly
+Funded Futures Family,Premier Plus FastPass EOD,0,40,3000,1500,eod,90,none,40,87.30,194,monthly
+Funded Futures Family,Prime Max,0,50,3000,2000,eod,90,none,40,204.00,204,monthly
+Funded Futures Family,Prime Standard,0,40,3000,2000,eod,90,none,40,179.00,179,monthly
+TradeDay,QuickPay Intraday,0,50,3000,2000,intraday,80,30,none,58.95,131,monthly
+TradeDay,QuickPay EOD,0,50,3000,2000,eod,80,30,none,78.75,175,monthly
+TradeDay,FastPass EOD,0,50,3000,2000,eod,80,45,45,94.50,189,monthly
+Ylos Trading,Standard,59,100,3000,2500,eod,100,none,40,18.00,180,one time
+Ylos Trading,No Activation,0,100,3000,2500,eod,100,none,40,74.25,247.50,one time
+Ylos Trading,Freedom,0,50,3000,2000,eod,100,40,none,129.00,430,one time
+Goat Funded Futures,EOD,0,50,3000,2000,eod,80,50,30,69.00,138,one time
+Goat Funded Futures,Flex,0,30,3000,2000,eod,80,50,none,109.00,218,monthly
+Goat Funded Futures,Goat Daily,0,40,3000,2000,eod,90,40,none,119.00,238,one time
+Goat Funded Futures,1-Day Pass,0,30,3000,2000,eod,90,none,35,109.00,218,one time
+Traders Launch,Static 90%,0,20,3000,1000,static,90,50,none,271.20,339,one time
+Traders Launch,Static 80%,0,20,3000,1000,static,80,50,none,239.20,299,one time
+Traders Launch,Static 60%,0,20,3000,1000,static,60,50,none,191.20,239,one time
+Apex Trader Funding,Standard Intraday,99,60,3000,2000,intraday,100,none,50,24.90,249,one time
+Apex Trader Funding,Standard EOD,129,60,3000,2000,eod,100,none,50,59.00,590,one time
+Apex Trader Funding,No Activation Intraday,0,60,3000,2000,intraday,100,none,50,49.00,490,one time
+Apex Trader Funding,No Activation EOD,0,60,3000,2000,eod,100,none,50,119.00,1190,one time
+Apex Trader Funding,Legacy (Tradovate/Rithmic/WealthCharts),125,100,3000,2500,intraday,100,none,30,19.70,197,monthly
+Topstep,Standard,149,50,3000,2000,eod,90,55,40,49.00,49,monthly
+Topstep,No Activation Fee,0,50,3000,2000,eod,90,55,40,95.00,95,monthly
+Topstep,Static Drawdown Combine,0,40,4000,2000,static,90,55,none,149.00,149,one time
+Earn2Trade,Trader Career Path,139,60,3000,2000,trailing,80,30,none,95.00,190,monthly
+Earn2Trade,Gauntlet Mini,139,60,3000,2000,trailing,80,30,none,85.00,170,monthly
+The Trading Pit Futures,Prime,0,50,3000,2000,eod,80,40,none,79.20,99,one time
+AquaFunded Futures,Standard,0,40,3000,2000,eod,90,none,40,104.00,160,one time
+AquaFunded Futures,Flex No DLL,0,40,3000,2000,eod,90,50,none,101.40,156,one time
+AquaFunded Futures,Flex DLL,0,40,3000,2000,eod,90,50,none,85.15,131,one time
+AquaFunded Futures,Daily,0,40,3000,2000,eod,90,40,none,73.45,113,one time
+Top One Futures,Elite Daily,0,30,3000,2000,eod,90,40,none,109.00,218,one time
+Top One Futures,Elite Access,189 (EOD),30,3000,2000,eod,90,none,40,39.00,39,one time
+FundedNext Futures,Legacy,0,30,3000,2000,eod,80,40,none,179.99,199.99,one time
+FundedNext Futures,Rapid Pro,0,40,3000,2000,eod,90,none,40,159.99,299.98,one time
+FundedNext Futures,Rapid Daily,0,40,3000,2000,eod,90,none,none,169.99,299.98,one time
+FundedNext Futures,Flex,0,30,2500,1500,eod,95,40,none,75.25,141.99,one time
+The5ers Futures,Day Trade,0,40,3000,2000,eod,80,40,40,90.00,100,one time
+The5ers Futures,Swing Summer,0,40,3000,2000,eod,80,40,40,216.00,240,one time
+E8 Futures,Zero Max,0,40,3000,1500,eod,80,40,none,213.20,328,one time
+E8 Futures,Zero Starter,0,40,3000,1500,eod,80,40,none,141.70,218,one time
+E8 Futures,Signature,0,40,3000,2000,eod,80,none,35,127.50,170,one time
+DayTraders,EOD (listed intraday),5,100,3000,2000,intraday,100,50,30,105.00,105,one time
+DayTraders,S2L,0,20,3000,2000,intraday,80,25,none,179.00,179,one time
+DayTraders,Static,5,60,3750,1000,static,100,50,30,50.00,50,one time
+DayTraders,Trail,5,100,3000,2500,intraday,100,50,30,70.00,70,one time
+My Funded Futures,Rapid,0,50,3000,2000,eod,90,50,none,104.50,209,one time
+My Funded Futures,Builder,0,40,3000,2000,eod,80,none,50,76.50,153,one time
+My Funded Futures,Pro,0,30,3000,2000,eod,80,50,none,132.50,265,one time
+My Funded Futures,Rapid EOD,0,30,3000,2000,eod,90,30,none,112.50,225,one time
+Trade The Pool,Day Trade Flex,0,na,3000,2000,static,70,50,50,228.00,285,monthly
+Trade The Pool,Edge,0,na,3000,2000,eod,80,none,40,124.80,156,one time
+Hola Prime Futures,1 Step Prime,0,30,3000,2000,eod,90,40,35,159.00,159,monthly
+Blue Guardian Futures,Express,0,40,3000,2000,eod,90,40,none,97.50,130,one time
+Blue Guardian Futures,Standard,0,40,3000,2000,eod,90,none,40,156.75,209,one time
+Blue Guardian Futures,Reserve,0,40,3000,2000,eod,90,40,none,84.00,112,one time
+Tradeify,Select Daily,0,40,3000,2000,eod,90,40,none,115.50,165,one time
+Tradeify,Growth,0,40,3000,2000,eod,90,none,35,101.50,145,one time
+Tradeify,Select Flex,0,40,3000,2000,eod,90,40,none,115.50,165,one time
+FuturesElite,Elite without DLL,0,40,3000,2000,eod,90,40,none,112.00,160,one time
+FuturesElite,Elite with DLL,0,40,3000,2000,eod,90,40,none,97.30,139,one time
+FuturesElite,Prime,0,40,3000,2000,eod,90,none,40,116.35,179,one time
+FuturesElite,Nitro,0,50,3000,2000,eod,90,50,none,98.80,152,one time
+FTMO Futures,Growth,0,na,3000,2000,eod,90,40,none,83.30,119,monthly
+FTMO Futures,Pro,0,na,3000,3000,eod,90,50,none,97.30,139,monthly
+Finotive Futures,One step,0,40,3000,2000,eod,90,none,40,107.40,179,one time
+Blueberry Futures,Accelerated,0,20,3000,2000,intraday,90,none,20,73.60,184,monthly
+Blueberry Futures,Ascent,0,20,3000,2000,eod,90,none,35,98.00,245,monthly
+Lucid Trading,LucidDaily Intraday DLL,0,40,3000,2000,intraday,90,50,none,100.10,100.10,one time
+Lucid Trading,LucidDaily EOD DLL,0,40,3000,2000,eod,90,50,none,130.20,130.20,one time
+Lucid Trading,LucidFlex,0,40,3000,2000,eod,90,50 (official site now 40),none,130.20,130.20,one time
+Lucid Trading,LucidPro,0,40,3000,2000,eod,90,none,40,150.50,150.50,one time
+# Source: propfirmmatch.com/futures/prop-firm-challenges, filter 50K / 1 step / discount applied (code MATCH), captured 2026-10-25 22:40 ET.
+# Column order on the site for consistency is EVAL | FUNDED; "none" means no rule listed. Some rows on the site may be stale vs official pages (e.g. Lucid Flex eval consistency).

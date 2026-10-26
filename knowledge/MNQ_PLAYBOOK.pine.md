@@ -275,13 +275,18 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
         tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
         label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
-zone(show, e, lvl, good) => show and not na(lvl) ? box.new(bar_index, math.max(e, lvl), bar_index + 1, math.min(e, lvl), border_color=color.new(good ? color.green : color.red, 70), bgcolor=color.new(good ? color.green : color.red, 88)) : na
+// while a trade is open: thin dotted stop (red) and target (green) lines; at the exit they are replaced by one line entry -> exit
+zone(show, e, lvl, good) => show and not na(lvl) ? line.new(bar_index, lvl, bar_index + 1, lvl, color=color.new(good ? color.lime : color.red, 30), style=line.style_dotted, width=1) : line(na)
 grow(b) =>
     if not na(b)
-        box.set_right(b, bar_index)
+        line.set_x2(b, bar_index)
     true
-exitTag(show, nm, side, x, pts, q, why) =>
+exitTag(show, nm, side, x, pts, q, why, e, bS, bT) =>
     if show
+        x1 = na(bS) ? bar_index : line.get_x1(bS)
+        line.delete(bS)
+        line.delete(bT)
+        line.new(x1, e, bar_index, x, color=color.new(pts >= 0 ? color.lime : color.red, 15), width=2)
         label.new(bar_index, x, (pts >= 0 ? "✓ " : "✗ ") + fmt(pts), color=color.new(pts >= 0 ? color.teal : color.maroon, 20), textcolor=color.white, style=side > 0 ? label.style_label_down : label.style_label_up, size=size.tiny, tooltip=nm + " EXIT · " + why + "\n――――――――――――\nResult: " + (pts >= 0 ? "+" : "") + fmt(pts) + " pts × " + str.tostring(q) + " MNQ = " + usd(pnlOf(q, pts)) + "\nExit: " + fmt(x) + "  at " + hhmm())
     true
 
@@ -333,8 +338,8 @@ var float nwS = na
 var float nwT = na
 var int nwQ = 0
 var string nwET = ""
-var box nwBT = na
-var box nwBS = na
+var line nwBT = na
+var line nwBS = na
 if dChg
     nwF := na
     array.clear(nO)
@@ -367,7 +372,7 @@ if useNW and news830 and mnt >= 360 and mnt < 640
             dayPnl += pnlOf(nwQ, pts)
             nwLossRow := pts < 0 ? nwLossRow + 1 : 0
             logTrade("NEWS", nwPos, nwET, hS ? "stop" : hT ? "target" : "10:30", pts)
-            exitTag(g1, "NEWS", nwPos, x, pts, nwQ, hS ? "stop" : hT ? "target" : "10:30 time exit")
+            exitTag(g1, "NEWS", nwPos, x, pts, nwQ, hS ? "stop" : hT ? "target" : "10:30 time exit", nwE, nwBS, nwBT)
             if g1
                 alert("NEWS exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             nwPos := 0
@@ -445,8 +450,8 @@ var float v4R = na
 var int v4Q = 0
 var bool v4AtBE = false
 var string v4ET = ""
-var box v4BT = na
-var box v4BS = na
+var line v4BT = na
+var line v4BS = na
 if newDay
     dr := 0
     saw := false
@@ -475,7 +480,7 @@ if useV4 and inRTH
             dayLoss += lossOf(v4Q, pts)
             dayPnl += pnlOf(v4Q, pts)
             logTrade("V4+", v4Pos, v4ET, why, pts)
-            exitTag(g1, "V4+", v4Pos, xP, pts, v4Q, why)
+            exitTag(g1, "V4+", v4Pos, xP, pts, v4Q, why, v4E, v4BS, v4BT)
             if g1
                 alert("V4+ exit " + why + " " + fmt(pts) + " pts", alert.freq_once_per_bar)
             v4Pos := 0
@@ -506,7 +511,7 @@ if useV4 and inRTH
                 dayLoss += lossOf(v4Q, pts)
                 dayPnl += pnlOf(v4Q, pts)
                 logTrade("V4+", pSide, v4ET, "stop", pts)
-                exitTag(g1, "V4+", pSide, v4S, pts, v4Q, "stop (same bar)")
+                exitTag(g1, "V4+", pSide, v4S, pts, v4Q, "stop (same bar)", v4E, v4BS, v4BT)
         pSide := 0
     if not v4Done and v4Pos == 0 and biasSet and bias != 0 and bias == trendDir and mnt >= 585 and mnt <= 780
         closes5 = (mi + 1) % 5 == 0
@@ -545,7 +550,7 @@ var float d2S = na
 var float d2W8 = 1.0
 var bool d2Done = false
 var int d2Q = 0
-var box d2BS = na
+var line d2BS = na
 if newDay
     d2Pos := 0
     d2Done := false
@@ -561,7 +566,7 @@ if useD2 and inRTH
             dayLoss += lossOf(d2Q, pts)
             dayPnl += pnlOf(d2Q, pts)
             logTrade("D2", d2Pos, "10:30", hit ? "stop" : "15:00", pts)
-            exitTag(g1, "D2", d2Pos, xP, pts, d2Q, hit ? "stop" : "15:00 time exit")
+            exitTag(g1, "D2", d2Pos, xP, pts, d2Q, hit ? "stop" : "15:00 time exit", d2E, d2BS, line(na))
             if g1
                 alert("D2 exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             d2Pos := 0
@@ -595,8 +600,8 @@ var float tdT = na
 var int tdQ = 0
 var string tdET = ""
 var line tdLn = na
-var box tdBT = na
-var box tdBS = na
+var line tdBT = na
+var line tdBS = na
 if newDay
     tdS := 0
     tdPos := 0
@@ -615,7 +620,7 @@ if useTD and inRTH
             dayLoss += lossOf(tdQ, p3)
             dayPnl += pnlOf(tdQ, p3)
             logTrade("TDP", tdPos, tdET, hS3 ? "stop" : hT3 ? "target" : "15:55", p3)
-            exitTag(g2, "TDP", tdPos, x3, p3, tdQ, hS3 ? "stop" : hT3 ? "target" : "15:55")
+            exitTag(g2, "TDP", tdPos, x3, p3, tdQ, hS3 ? "stop" : hT3 ? "target" : "15:55", tdE, tdBS, tdBT)
             if g2
                 alert("TDP exit " + fmt(p3) + " pts", alert.freq_once_per_bar)
             tdPos := 0
@@ -658,7 +663,7 @@ if useTD and inRTH
                 dayLoss += lossOf(tdQ, p3)
                 dayPnl += pnlOf(tdQ, p3)
                 logTrade("TDP", tdS, tdET, "stop", p3)
-                exitTag(g2, "TDP", tdS, tdSt, p3, tdQ, "stop (same bar)")
+                exitTag(g2, "TDP", tdS, tdSt, p3, tdQ, "stop (same bar)", tdE, tdBS, tdBT)
         else
             tdExt := tdS > 0 ? math.max(tdExt, high) : math.min(tdExt, low)
             line.delete(tdLn)
@@ -675,7 +680,7 @@ var bool pnDone = false
 var int pnQ = 0
 var int pnT0 = 0
 var string pnET = ""
-var box pnBS = na
+var line pnBS = na
 if newDay
     pnPos := 0
     pnDone := false
@@ -693,7 +698,7 @@ if usePin and inRTH
             dayLoss += lossOf(pnQ, pts)
             dayPnl += pnlOf(pnQ, pts)
             logTrade("PIN", pnPos, pnET, hit ? "stop" : capHit ? "time cap" : "15:55", pts)
-            exitTag(g2, "PIN", pnPos, xP, pts, pnQ, hit ? "stop" : capHit ? "time cap" : "15:55")
+            exitTag(g2, "PIN", pnPos, xP, pts, pnQ, hit ? "stop" : capHit ? "time cap" : "15:55", pnE, pnBS, line(na))
             if g2
                 alert("PINBALL exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             pnPos := 0
@@ -722,7 +727,7 @@ if usePin and inRTH
                 dayLoss += lossOf(pnQ, pts)
                 dayPnl += pnlOf(pnQ, pts)
                 logTrade("PIN", pinSide, pnET, "stop", pts)
-                exitTag(g2, "PIN", pinSide, pnS, pts, pnQ, "stop (same bar)")
+                exitTag(g2, "PIN", pinSide, pnS, pts, pnQ, "stop (same bar)", pnE, pnBS, line(na))
 
 // ===================== H2: second-entry pullbacks on trend days (half size) =====================
 var float[] bH = array.new_float()
@@ -746,8 +751,8 @@ var float h2S = na
 var float h2T = na
 var int h2Q = 0
 var string h2ET = ""
-var box h2BT = na
-var box h2BS = na
+var line h2BT = na
+var line h2BS = na
 if newDay
     array.clear(bH)
     array.clear(bL)
@@ -796,7 +801,7 @@ if useH2 and inRTH
             dayLoss += lossOf(h2Q, p2)
             dayPnl += pnlOf(h2Q, p2)
             logTrade("H2", h2Pos, h2ET, hS2 ? "stop" : hT2 ? "target" : "15:55", p2)
-            exitTag(g2, "H2", h2Pos, x2, p2, h2Q, hS2 ? "stop" : hT2 ? "target" : "15:55")
+            exitTag(g2, "H2", h2Pos, x2, p2, h2Q, hS2 ? "stop" : hT2 ? "target" : "15:55", h2E, h2BS, h2BT)
             if g2
                 alert("H2 exit " + fmt(p2) + " pts", alert.freq_once_per_bar)
             h2Pos := 0

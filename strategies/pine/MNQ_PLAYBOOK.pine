@@ -66,7 +66,7 @@ recIn  = input.float(400, "RECOVERY mode (1 MNQ only) when room above max-loss l
 recOut = input.float(700, "Back to normal sizing when room is at least ($)", group="Sizing")
 
 // ---------- news calendar (yyyy-mm-dd HHMM NAME, comma separated, no spaces after commas) ----------
-calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-28 1400 FOMC,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
+calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-26 0830 Natl Activity,2026-10-27 0830 Durable Goods,2026-10-27 1000 Cons Confidence,2026-10-28 1400 FOMC,2026-10-28 1430 Powell presser,2026-10-29 0830 GDP + PCE,2026-10-30 0830 ECI,2026-10-30 0945 Chicago PMI,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
 showSpike = input.bool(true, "Mark unexpected spikes", group="News")
 spikeK = input.float(4.0, "Spike = 1m range >= K x median of last 30 bars", group="News")
 spikeA = input.float(0.06, "... and >= this x ADR", group="News")

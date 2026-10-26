@@ -1,6 +1,6 @@
-# MNQ Playbook (Pine v6), TradingView version 21
+# MNQ Playbook (Pine v6), TradingView version 27
 
-D2 0.6 ADR + 13:15 exit; all strategies flat by 15:00; Pinball 2R / 3h; STOP DAY banner; colored one-line strips; Lucid Flex 40% consistency, floor locks at 50,100.
+Current: D2 0.6 ADR + 13:15 exit; all flat by 15:00; Pinball 2R/3h; STOP DAY banner; R9 recovery mode; daily budget 1050 (chart setting); today-only trades strip; strategy checklist (left column, hover each); week of Oct 26 red folders in the calendar.
 
 ```pine
 //@version=5
@@ -26,6 +26,8 @@ showPanel = input.bool(true, "Show panel", group="Chart")
 panelIcon = input.bool(true, "Panel as one line, hover ⓘ for details", group="Chart")
 showLog = input.bool(false, "Show last trades table", group="Chart")
 logIcon = input.bool(true, "Last trades as one ⓘ line, hover for the table", group="Chart")
+logToday = input.bool(true, "Last trades: today only (resets at the 18:00 session open)", group="Chart")
+showCk = input.bool(true, "Strategy checklist (left side, hover each strategy)", group="Chart")
 showStats = input.bool(false, "Show results table (loaded bars)", group="Chart")
 emaLen = input.int(20, "EMA length (0 = off)", group="Chart")
 plot(emaLen > 0 ? ta.ema(close, emaLen) : na, "EMA", color=color.new(color.fuchsia, 40))
@@ -65,10 +67,11 @@ mllLine= math.min(peakEOD - pfDD, evStart + 100)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
 dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
 stopLos = input.int(3, "STOP the day after N losing trades (0 = off)", group="Sizing")
-stopRoom = input.float(400, "STOP the day when room above max-loss line is under ($)", group="Sizing")
+recIn  = input.float(400, "RECOVERY mode (1 MNQ only) when room above max-loss line is under ($)", group="Sizing")
+recOut = input.float(700, "Back to normal sizing when room is at least ($)", group="Sizing")
 
 // ---------- news calendar (yyyy-mm-dd HHMM NAME, comma separated, no spaces after commas) ----------
-calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-28 1400 FOMC,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
+calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-26 0830 Natl Activity,2026-10-27 0830 Durable Goods,2026-10-27 1000 Cons Confidence,2026-10-28 1400 FOMC,2026-10-28 1430 Powell presser,2026-10-29 0830 GDP + PCE,2026-10-30 0830 ECI,2026-10-30 0945 Chicago PMI,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
 showSpike = input.bool(true, "Mark unexpected spikes", group="News")
 spikeK = input.float(4.0, "Spike = 1m range >= K x median of last 30 bars", group="News")
 spikeA = input.float(0.06, "... and >= this x ADR", group="News")
@@ -251,6 +254,7 @@ var float rkH2 = 0.0
 var float dayLoss = 0.0
 var int[] dLos = array.from(0)
 var bool dayStop = false
+var bool recov = false
 var string stopWhy = ""
 var float dayPnl = 0.0
 var int budDay = -1
@@ -274,9 +278,15 @@ sizeFor(riskPts, w) =>
     used = usedNow()
     pc = perC(riskPts)
     budget = math.min(w * frac * room, frac * room - used, dayCap - used)
+    r1 = (riskPts + 0.25 + 8) * 2 + 4.74
+    avail = acct + dayPnl - mllLine - (used - dayLoss) - 100
     q = dayStop ? 0 : budget > 0 ? math.floor(budget / pc) : 0
     if not dayStop and q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
         q := 1
+    if recov
+        q := not dayStop and r1 <= avail ? 1 : 0
+    else
+        q := math.min(q, math.max(0, math.floor(avail / r1)))
     math.max(0, q)
 lossOf(q, pts) => pts < 0 ? q * (-pts * 2 + 4.74) : 0.0
 pnlOf(q, pts) => q * (pts * 2 - 4.74)
@@ -287,7 +297,7 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
         rp = math.abs(e - s)
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
-        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : " · SKIP, budget full"))
+        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : recov ? " · SKIP, RECOVERY: risk too big for the room" : " · SKIP, budget full"))
         tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
         label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
@@ -312,6 +322,11 @@ var string[] lgD = array.new_string()
 var string[] lgS = array.new_string()
 var string[] lgX = array.new_string()
 var float[] lgP = array.new_float()
+if logToday and ta.change(time_tradingday) != 0
+    array.clear(lgD)
+    array.clear(lgS)
+    array.clear(lgX)
+    array.clear(lgP)
 logTrade(nm, side, eT, why, pts) =>
     array.push(lgD, str.format_time(time, "MMM dd", tz))
     array.push(lgS, nm + (side > 0 ? " LONG " : " SHORT ") + eT)
@@ -351,15 +366,18 @@ var float nbL = na
 var int nwPos = 0
 var int nwPend = 0
 var int nwN_ = 0
+// ---------- RECOVERY mode: under recIn of room, 1 MNQ only, until room >= recOut ----------
+roomNow = acct + dayPnl - mllLine
+if not recov and roomNow < recIn
+    recov := true
+else if recov and roomNow >= recOut
+    recov := false
 // ---------- STOP DAY: hard stop, big warning ----------
 if mnt >= 480 and mnt < 960 and budDay == dom and not dayStop
     nLos = array.get(dLos, 0)
     if dayLoss >= dayCap - 150
         dayStop := true
         stopWhy := "Daily loss budget used (" + usd(dayLoss) + " of " + usd(dayCap) + ")"
-    else if acct + dayPnl - mllLine < stopRoom
-        dayStop := true
-        stopWhy := "Only " + usd(acct + dayPnl - mllLine) + " above the max-loss line"
     else if stopLos > 0 and nLos >= stopLos
         dayStop := true
         stopWhy := str.tostring(nLos) + " losing trades today"
@@ -378,6 +396,12 @@ if barstate.islast
     if dayStop
         table.cell(stopT, 0, 0, "STOP · NO MORE TRADES TODAY", text_color=color.white, text_size=size.huge)
         table.cell(stopT, 0, 1, stopWhy + "\nClose the platform. Tomorrow is a new day.", text_color=color.new(#ffb3b3, 0), text_size=size.large)
+    else if recov
+        openRk = usedNow() - dayLoss
+        maxRisk = roomNow - openRk - 100
+        dead = maxRisk < 60
+        table.cell(stopT, 0, 0, dead ? "DEAD ZONE · NO SETUP FITS" : "RECOVERY · 1 MNQ ONLY", text_color=color.white, text_size=size.large, bgcolor=dead ? color.new(#5a0000, 0) : color.new(#7a4a00, 0))
+        table.cell(stopT, 0, 1, "Room " + usd(roomNow) + " above the max-loss line · normal sizing back at " + usd(recOut) + "\n" + (dead ? "Nothing fits safely. Stop here; consider starting a new eval." : "Max risk per trade " + usd(maxRisk) + ". Take only signals the chart sizes at 1."), text_color=color.new(#ffe0b3, 0), text_size=size.normal, bgcolor=dead ? color.new(#5a0000, 0) : color.new(#7a4a00, 0))
 
 var int nwLossRow = 0
 var float nwE = na
@@ -976,14 +1000,14 @@ if showLog and barstate.islast
     nL = array.size(lgP)
     if logIcon
         table.clear(lt, 0, 0, 5, 0)
-        ttip = "LAST TRADES (1 MNQ, newest first)\n"
+        ttip = (logToday ? "TODAY'S SIGNALS" : "LAST TRADES") + " (1 MNQ, newest first; your real fills are in the Tradovate panel)\n"
         for i = 0 to 7
             if i < nL
                 j = nL - 1 - i
                 pv = array.get(lgP, j)
                 ttip := ttip + "\n" + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "   " + (pv >= 0 ? "+" : "") + fmt(pv) + " pts (" + (pv >= 0 ? "+" : "") + usd(pv * 2) + ")"
         if nL == 0
-            ttip := ttip + "\nnone on loaded bars"
+            ttip := ttip + "\nnone yet today"
         table.cell(lt, 0, 0, "ⓘ TRADES", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
         if nL == 0
             table.cell(lt, 1, 0, "none yet", text_color=color.silver, text_size=size.normal, tooltip=ttip)
@@ -998,7 +1022,7 @@ if showLog and barstate.islast
         table.cell(lt, 2, 0, "exit", text_color=color.yellow, text_size=size.normal)
         table.cell(lt, 3, 0, "pts (1 MNQ $)", text_color=color.yellow, text_size=size.normal)
         if nL == 0
-            table.cell(lt, 0, 1, "none on loaded bars", text_color=color.white, text_size=size.normal)
+            table.cell(lt, 0, 1, "none yet today", text_color=color.white, text_size=size.normal)
         for i = 0 to 7
             if i < nL
                 j = nL - 1 - i
@@ -1007,5 +1031,53 @@ if showLog and barstate.islast
                 table.cell(lt, 1, i + 1, array.get(lgS, j), text_color=color.white, text_size=size.normal)
                 table.cell(lt, 2, i + 1, array.get(lgX, j), text_color=color.white, text_size=size.normal)
                 table.cell(lt, 3, i + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal)
+
+// ---------- strategy checklist (middle left): one colored cell per strategy, hover for the boxes ----------
+ck(b) => b ? "✓ " : "✗ "
+wt(b, w) => b ? "… " : w
+var table ckT = table.new(position.middle_left, 1, 7, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
+if showCk and barstate.islast
+    table.clear(ckT, 0, 0, 0, 6)
+    table.cell(ckT, 0, 0, "ⓘ CHECKLIST", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
+    live = not na(adr10) and not na(rOpen) and inRTH
+    mvN = live ? (close - rOpen) / adr10 : 0.0
+    fh = not na(ibH) and not na(ibL) ? ibH - ibL : 0.0
+    effN = live and fh > 0 ? math.abs(close - rOpen) / fh : 0.0
+    outN = live ? (close > rOpen ? close > pdh : close < pdl) : false
+    gate = not dayStop
+    // NEWS
+    n1 = news830
+    n2 = not na(nwF)
+    nOk = n1 and n2 and nwN_ < 4 and nwLossRow < 3 and mnt < 570
+    nTip = "NEWS 8:30 reversion\n" + ck(n1) + "CPI / PPI / NFP day\n" + (mnt < 509 ? "… " : ck(n2)) + "8:29 fair price set" + (n2 ? " (" + fmt(nwF) + ")" : "") + "\n" + (mnt < 510 ? "… " : ck(mnt < 570)) + "Window 8:30-9:29\n" + ck(nwLossRow < 3) + "Fewer than 3 losses in a row\n· Trigger: 5m candle back toward the fair price (displacement or break of structure)"
+    // V4+
+    v1 = biasSet and bias != 0 and bias == trendDir
+    v2 = mnt >= 585 and mnt <= 780
+    v3 = dr != 0 and dr == bias
+    vN = (v1 ? 1 : 0) + (v2 ? 1 : 0) + (v3 ? 1 : 0) + (saw ? 1 : 0)
+    vTip = "V4+ opening-range retest\n" + wt(not biasSet, ck(v1)) + "Daily trend (" + (trendDir > 0 ? "UP" : "DOWN") + ") and today's bias agree" + (biasSet ? " (bias " + (bias > 0 ? "LONG" : bias < 0 ? "SHORT" : "none") + ")" : " (set at 9:45)") + "\n" + wt(mnt < 585, ck(v2)) + "Window 9:45-13:00\n" + ck(v3) + "5m close outside the 9:30-9:45 range, bias side\n" + ck(saw) + "Price came back to retest the range edge\n· Trigger: strong candle away from the range"
+    // D2
+    d1 = not cpiOrFomc
+    d2c = math.abs(mvN) >= d2Th
+    dTip = "D2 10:30 continuation\n" + ck(d1) + "Not a CPI or FOMC day\n" + (mnt <= 629 ? (d2c ? "✓ " : "✗ ") + "Move from the open now " + str.tostring(mvN, "#.##") + " ADR (needs " + str.tostring(d2Th) + " at 10:29)" : (d2Pos != 0 or d2Done ? "✓ " : "✗ ") + "Moved " + str.tostring(d2Th) + " ADR by 10:29") + "\n" + wt(mnt < 629, ck(d2Pos != 0 or d2Done)) + "Entry at 10:30, stop at the open, out by 13:15"
+    // TDP
+    t1 = effN >= tdEff
+    tTip = "TDP trend-day pullback\n" + (mnt <= 629 ? ck(t1) + "First hour efficiency now " + str.tostring(math.round(effN * 100)) + "% (needs " + str.tostring(math.round(tdEff * 100)) + "% at 10:29)\n" + ck(outN) + "Price outside the prior-day range" : ck(tdS != 0) + "Armed at 10:29 (clean first hour, outside prior-day range)") + "\n" + wt(mnt < 630, ck(tdS != 0 and mnt < 720)) + "Limit pullback (1/3 of first-hour range) before 12:00"
+    // Pinball
+    pTip = "Momentum Pinball\n" + ck(pinSide != 0) + "3-day RSI " + (na(rsi3) ? "n/a" : str.tostring(math.round(rsi3))) + (pinSide > 0 ? " oversold" : pinSide < 0 ? " overbought" : " (needs < 30 in an UP trend or > 70 in a DOWN trend)") + "\n" + wt(mnt < 630, ck(mnt >= 630 and mnt <= 900)) + "Window 10:30-15:00\n· Trigger: price breaks the first-hour " + (pinSide > 0 ? "high" : pinSide < 0 ? "low" : "high/low")
+    // H2
+    hTip = "H2 trend-day second entry (half size)\n" + wt(mnt < 629, ck(tdDir != 0)) + "Trend day: moved " + str.tostring(h2Th) + " ADR by 10:30\n" + wt(mnt < 629, ck(tdDir != 0 and tdDir == trendDir)) + "Same direction as the daily trend\n" + ck(h2N_ < h2Max) + "Fewer than " + str.tostring(h2Max) + " H2 trades today\n· Trigger: 5m pullback, second push back with the trend"
+    names = array.from("NEWS", "V4+", "D2", "TDP", "PIN", "H2")
+    tips = array.from(nTip, vTip, dTip, tTip, pTip, hTip)
+    inT = array.from(nwPos != 0, v4Pos != 0, d2Pos != 0, tdPos != 0, pnPos != 0, h2Pos != 0)
+    full = array.from(nOk, v1 and v2 and v3 and saw, d1 and d2c and mnt <= 629, tdS != 0 and not tdDone and mnt < 720, pinSide != 0 and not pnDone and mnt >= 630 and mnt <= 900, tdDir != 0 and tdDir == trendDir and h2N_ < h2Max and mnt >= 630 and mnt <= 900)
+    part = array.from(n1, v1 and not v4Done and mnt <= 780, d1 and math.abs(mvN) >= d2Th * 0.6 and mnt <= 629, effN >= tdEff * 0.7 and mnt <= 629, pinSide != 0 and not pnDone, tdDir != 0 and h2N_ < h2Max)
+    offT = array.from(not news830 or mnt >= 640, v4Done or mnt > 780 or (biasSet and not v1), d2Done or (mnt > 629 and d2Pos == 0) or cpiOrFomc, tdDone or (mnt > 629 and tdS == 0) or mnt >= 720, pinSide == 0 or pnDone or mnt > 900, (mnt > 629 and tdDir == 0) or h2N_ >= h2Max or mnt > 900)
+    for k = 0 to 5
+        it = array.get(inT, k)
+        st = it ? "IN TRADE" : not gate ? "STOP" : array.get(full, k) ? "READY" : array.get(offT, k) ? "off" : array.get(part, k) ? "watch" : "wait"
+        col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
+        table.cell(ckT, 0, k + 1, array.get(names, k) + " " + st, text_color=col, text_size=size.normal, text_halign=text.align_left, tooltip=array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
+
 
 ```

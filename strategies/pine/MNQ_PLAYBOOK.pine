@@ -1183,6 +1183,7 @@ if ib_tDir != 0
     line.set_x2(ib_lE, bar_index)
     line.set_x2(ib_lS, bar_index)
     line.set_x2(ib_lT, bar_index)
+    box.set_right(ib_bx, bar_index)
     if ib_hitS or ib_hitT
         ib_win = ib_hitT and not ib_hitS
         callout(ib_tDir > 0 ? high : low, ib_tDir > 0 ? -1 : 1, 0.7, ib_win ? "IB ✓ +" + str.tostring(ib_rr) + "R" : "IB ✗ -1R", ib_win ? color.new(color.green, 20) : color.new(color.red, 20), color.white, size.tiny, "")
@@ -1230,6 +1231,10 @@ if ib_on and ib_recent and not ib_armed and ib_isInside and not ib_longSig and n
     ib_mbH := high[1]
     ib_mbL := low[1]
     ib_mbBar := bar_index - 1
+
+// candles colored only while an inside-bar trade is open (from the breakout bar to the exit bar)
+ib_inTrade = ib_tDir != 0 or ib_tDir[1] != 0
+barcolor(ib_on and ib_inTrade ? (ib_tDir != 0 ? (ib_tDir > 0 ? color.new(color.lime, 0) : color.new(color.orange, 0)) : (ib_tDir[1] > 0 ? color.new(color.lime, 0) : color.new(color.orange, 0))) : na, title="IB trade candles")
 
 alertcondition(ib_longSig, "IB long", "IB breakout LONG on {{ticker}}")
 alertcondition(ib_shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

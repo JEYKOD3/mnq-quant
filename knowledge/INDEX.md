@@ -11,3 +11,4 @@
 - ../data/transcripts/*.txt      raw Wade transcripts (17)
 Pending: 37 Wade videos (ids in project doc WADE_FIRST_PRINCIPLES list; need user's Chrome), Brooks books if provided.
 Workflow: pick rule ID -> write test under scripts/ named after ID -> append result to RULES.md line -> doc in docs/research -> project_write.
+- PASS_STRATEGIES_CATALOG.md  19 community/vendor eval strategies w/ evidence tags, risk frameworks, shortlist SL1-SL6 (2026-10-26)

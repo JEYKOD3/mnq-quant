@@ -1,0 +1,6 @@
+FOMC  IS  n  24  24h drift mean +0.341 ADR (up 75%)  9:30->13:55 mean +0.114 (up 62%)  long open->13:55 PF 2.82 avg $+56
+FOMC  OOS n  14  24h drift mean -0.001 ADR (up 50%)  9:30->13:55 mean -0.113 (up 36%)  long open->13:55 PF 0.23 avg $-91
+FOMC  ALL n  38  24h drift mean +0.215 ADR (up 66%)  9:30->13:55 mean +0.030 (up 53%)  long open->13:55 PF 1.03 avg $+2
+CLEAN IS  n 424  24h drift mean +0.010 ADR (up 51%)  9:30->13:55 mean +0.003 (up 51%)  long open->13:55 PF 0.93 avg $-8
+CLEAN OOS n 254  24h drift mean -0.044 ADR (up 49%)  9:30->13:55 mean -0.037 (up 52%)  long open->13:55 PF 0.85 avg $-25
+CLEAN ALL n 678  24h drift mean -0.010 ADR (up 50%)  9:30->13:55 mean -0.012 (up 51%)  long open->13:55 PF 0.89 avg $-14

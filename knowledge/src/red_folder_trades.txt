@@ -1,0 +1,281 @@
+Task 3: simple mechanical ideas per red folder. 1 MNQ, net of 2x2.37 commission + 1 tick entry slip + 1 tick stop slip.
+IS = 2022-2024, OOS = 2025-2026. Every rule is also run on CLEAN days at the same clock time as a control.
+Run: python3 trades.py > ../../knowledge/src/red_folder_trades.txt
+
+== CPI  (57 days)
+  fade15 k.10 tgt=F stop=1x        IS n 32 PF 1.58 $ +42 w66% | OOS n 15 PF 1.44 $ +33 w60% | ALL n 47 PF 1.54 $ +39 w64%
+  fade15 k.05 tgt=F stop=1x        IS n 35 PF 1.61 $ +40 w66% | OOS n 19 PF 1.31 $ +20 w53% | ALL n 54 PF 1.50 $ +33 w61%
+  fade15 k.10 tgt=F stop=0.5x      IS n 32 PF 1.17 $ +13 w44% | OOS n 15 PF 1.01 $  +0 w40% | ALL n 47 PF 1.11 $  +9 w43%
+  follow30 k.10 stop.25 ->close    IS n 31 PF 0.92 $  -8 w23% | OOS n 17 PF 0.27 $-107 w18% | ALL n 48 PF 0.62 $ -43 w21%
+  follow30 k.10 stop.25 2R         IS n 31 PF 0.58 $ -39 w26% | OOS n 17 PF 0.50 $ -67 w24% | ALL n 48 PF 0.55 $ -49 w25%
+  fade30 k.10 stop.25 ->close      IS n 31 PF 1.40 $ +34 w32% | OOS n 17 PF 0.88 $ -13 w41% | ALL n 48 PF 1.19 $ +17 w35%
+  follow60 k.10 stop.25 ->close    IS n 30 PF 0.65 $ -36 w20% | OOS n 16 PF 0.15 $-133 w12% | ALL n 46 PF 0.42 $ -70 w17%
+  fade60 k.10 stop.25 ->close      IS n 30 PF 0.97 $  -3 w20% | OOS n 16 PF 0.98 $  -2 w38% | ALL n 46 PF 0.97 $  -3 w26%
+  follow5 k.05 stop.20 hold60      IS n 34 PF 0.79 $ -13 w38% | OOS n 20 PF 0.35 $ -55 w40% | ALL n 54 PF 0.60 $ -29 w39%
+  predrift k.08 hold30             IS n 14 PF 2.40 $ +74 w43% | OOS n 10 PF 0.80 $ -16 w50% | ALL n 24 PF 1.57 $ +36 w46%
+  next day fade event move         IS n 29 PF 1.01 $  +1 w45% | OOS n 13 PF 3.56 $+241 w62% | ALL n 42 PF 1.68 $ +76 w50%
+  next day follow event move       IS n 29 PF 0.89 $ -15 w34% | OOS n 13 PF 0.33 $-161 w31% | ALL n 42 PF 0.63 $ -60 w33%
+
+== PPI  (57 days)
+  fade15 k.10 tgt=F stop=1x        IS n 19 PF 0.77 $ -10 w47% | OOS n 14 PF 1.16 $ +11 w57% | ALL n 33 PF 0.98 $  -1 w52%
+  fade15 k.05 tgt=F stop=1x        IS n 28 PF 0.59 $ -16 w39% | OOS n 17 PF 1.12 $  +7 w53% | ALL n 45 PF 0.85 $  -7 w44%
+  fade15 k.10 tgt=F stop=0.5x      IS n 19 PF 0.57 $ -16 w26% | OOS n 14 PF 1.05 $  +2 w36% | ALL n 33 PF 0.81 $  -8 w30%
+  follow30 k.10 stop.25 ->close    IS n 22 PF 1.44 $ +36 w36% | OOS n 14 PF 0.45 $ -77 w21% | ALL n 36 PF 0.93 $  -8 w31%
+  follow30 k.10 stop.25 2R         IS n 22 PF 1.07 $  +6 w36% | OOS n 14 PF 1.04 $  +5 w36% | ALL n 36 PF 1.06 $  +6 w36%
+  fade30 k.10 stop.25 ->close      IS n 22 PF 1.14 $ +13 w27% | OOS n 14 PF 0.91 $  -9 w36% | ALL n 36 PF 1.04 $  +4 w31%
+  follow60 k.10 stop.25 ->close    IS n 26 PF 1.28 $ +24 w35% | OOS n 19 PF 0.86 $ -19 w32% | ALL n 45 PF 1.05 $  +6 w33%
+  fade60 k.10 stop.25 ->close      IS n 26 PF 1.18 $ +15 w31% | OOS n 19 PF 2.26 $+109 w47% | ALL n 45 PF 1.66 $ +55 w38%
+  follow5 k.05 stop.20 hold60      IS n 29 PF 0.53 $ -21 w38% | OOS n 20 PF 0.31 $ -62 w25% | ALL n 49 PF 0.40 $ -38 w33%
+  predrift k.08 hold30             IS n 10 PF 0.75 $  -9 w50% | OOS n 12 PF 1.10 $  +6 w50% | ALL n 22 PF 0.98 $  -1 w50%
+  next day fade event move         IS n 31 PF 1.09 $ +11 w39% | OOS n 19 PF 1.18 $ +30 w37% | ALL n 50 PF 1.13 $ +18 w38%
+  next day follow event move       IS n 31 PF 1.44 $ +40 w45% | OOS n 19 PF 1.21 $ +35 w53% | ALL n 50 PF 1.32 $ +38 w48%
+
+== NFP  (55 days)
+  fade15 k.10 tgt=F stop=1x        IS n 27 PF 1.90 $ +49 w56% | OOS n 18 PF 0.98 $  -2 w56% | ALL n 45 PF 1.45 $ +28 w56%
+  fade15 k.05 tgt=F stop=1x        IS n 29 PF 1.95 $ +48 w59% | OOS n 19 PF 1.00 $  +0 w58% | ALL n 48 PF 1.48 $ +29 w58%
+  fade15 k.10 tgt=F stop=0.5x      IS n 27 PF 1.05 $  +3 w33% | OOS n 18 PF 0.71 $ -18 w39% | ALL n 45 PF 0.91 $  -5 w36%
+  follow30 k.10 stop.25 ->close    IS n 28 PF 0.55 $ -47 w21% | OOS n 17 PF 1.61 $ +71 w35% | ALL n 45 PF 0.98 $  -3 w27%
+  follow30 k.10 stop.25 2R         IS n 28 PF 0.50 $ -53 w21% | OOS n 17 PF 0.63 $ -43 w35% | ALL n 45 PF 0.55 $ -49 w27%
+  fade30 k.10 stop.25 ->close      IS n 28 PF 2.55 $+109 w50% | OOS n 17 PF 2.63 $+155 w35% | ALL n 45 PF 2.58 $+127 w44%
+  follow60 k.10 stop.25 ->close    IS n 26 PF 0.56 $ -44 w23% | OOS n 17 PF 1.49 $ +62 w29% | ALL n 43 PF 0.98 $  -2 w26%
+  fade60 k.10 stop.25 ->close      IS n 26 PF 3.25 $+124 w50% | OOS n 17 PF 1.49 $ +59 w24% | ALL n 43 PF 2.21 $ +98 w40%
+  follow5 k.05 stop.20 hold60      IS n 31 PF 0.31 $ -45 w29% | OOS n 19 PF 0.38 $ -51 w32% | ALL n 50 PF 0.34 $ -47 w30%
+  predrift k.08 hold30             IS n 18 PF 0.30 $ -57 w22% | OOS n  6 PF 1.71 $ +29 w50% | ALL n 24 PF 0.50 $ -36 w29%
+  next day fade event move         IS n 32 PF 0.72 $ -35 w31% | OOS n 18 PF 1.77 $ +96 w44% | ALL n 50 PF 1.10 $ +12 w36%
+  next day follow event move       IS n 32 PF 1.31 $ +28 w47% | OOS n 18 PF 0.42 $-106 w39% | ALL n 50 PF 0.84 $ -20 w44%
+
+== GDP  (19 days)
+  fade15 k.10 tgt=F stop=1x        IS n  6 PF 0.93 $  -3 w50% | OOS n  3 PF 1.10 $  +9 w67% | ALL n  9 PF 1.01 $  +1 w56%
+  fade15 k.05 tgt=F stop=1x        IS n  8 PF 0.74 $ -13 w38% | OOS n  6 PF 1.10 $  +6 w67% | ALL n 14 PF 0.91 $  -5 w50%
+  fade15 k.10 tgt=F stop=0.5x      IS n  6 PF 0.23 $ -38 w17% | OOS n  3 PF 0.38 $ -55 w33% | ALL n  9 PF 0.30 $ -44 w22%
+  follow30 k.10 stop.25 ->close    IS n  7 PF 0.36 $ -76 w14% | OOS n  5 PF 1.16 $ +23 w20% | ALL n 12 PF 0.73 $ -35 w17%
+  follow30 k.10 stop.25 2R         IS n  7 PF 0.27 $ -87 w14% | OOS n  5 PF 0.64 $ -53 w20% | ALL n 12 PF 0.44 $ -73 w17%
+  fade30 k.10 stop.25 ->close      IS n  7 PF 1.22 $ +21 w29% | OOS n  5 PF 1.68 $ +80 w40% | ALL n 12 PF 1.44 $ +45 w33%
+  follow60 k.10 stop.25 ->close    IS n  8 PF 0.26 $ -90 w12% | OOS n  4 PF 1.21 $ +30 w25% | ALL n 12 PF 0.61 $ -50 w17%
+  fade60 k.10 stop.25 ->close      IS n  8 PF 3.31 $+150 w50% | OOS n  4 PF 1.17 $ +26 w25% | ALL n 12 PF 2.16 $+109 w42%
+  follow5 k.05 stop.20 hold60      IS n  9 PF 0.50 $ -25 w33% | OOS n  3 PF 4.71 $+210 w67% | ALL n 12 PF 1.67 $ +34 w42%
+  predrift k.08 hold30             IS n  8 PF 1.30 $ +12 w50% | OOS n  5 PF 1.36 $ +21 w60% | ALL n 13 PF 1.33 $ +15 w54%
+  next day fade event move         IS n 11 PF 1.73 $ +94 w36% | OOS n  4 PF 5.94 $+170 w75% | ALL n 15 PF 2.10 $+114 w47%
+  next day follow event move       IS n 11 PF 1.46 $ +57 w64% | OOS n  4 PF 0.13 $-218 w25% | ALL n 15 PF 0.90 $ -16 w53%
+
+== PCE  (54 days)
+  fade15 k.10 tgt=F stop=1x        IS n 18 PF 0.94 $  -4 w39% | OOS n 12 PF 2.42 $ +59 w75% | ALL n 30 PF 1.43 $ +22 w53%
+  fade15 k.05 tgt=F stop=1x        IS n 28 PF 0.72 $ -14 w32% | OOS n 14 PF 2.17 $ +49 w71% | ALL n 42 PF 1.15 $  +7 w45%
+  fade15 k.10 tgt=F stop=0.5x      IS n 18 PF 0.97 $  -1 w33% | OOS n 12 PF 1.15 $  +7 w42% | ALL n 30 PF 1.05 $  +2 w37%
+  follow30 k.10 stop.25 ->close    IS n 18 PF 2.32 $ +99 w33% | OOS n 13 PF 0.83 $ -24 w15% | ALL n 31 PF 1.47 $ +48 w26%
+  follow30 k.10 stop.25 2R         IS n 18 PF 1.09 $  +7 w33% | OOS n 13 PF 0.48 $ -72 w15% | ALL n 31 PF 0.74 $ -26 w26%
+  fade30 k.10 stop.25 ->close      IS n 18 PF 0.14 $ -91 w17% | OOS n 13 PF 2.24 $+108 w46% | ALL n 31 PF 0.92 $  -7 w29%
+  follow60 k.10 stop.25 ->close    IS n 23 PF 1.68 $ +59 w30% | OOS n 11 PF 1.83 $ +87 w36% | ALL n 34 PF 1.73 $ +68 w32%
+  fade60 k.10 stop.25 ->close      IS n 23 PF 0.17 $ -93 w17% | OOS n 11 PF 0.77 $ -26 w27% | ALL n 34 PF 0.37 $ -71 w21%
+  follow5 k.05 stop.20 hold60      IS n 24 PF 0.89 $  -6 w38% | OOS n 13 PF 0.79 $ -18 w23% | ALL n 37 PF 0.84 $ -10 w32%
+  predrift k.08 hold30             IS n 18 PF 0.42 $ -35 w28% | OOS n 10 PF 0.62 $ -26 w50% | ALL n 28 PF 0.50 $ -32 w36%
+  morning-trend at T ->close       IS n  0 PF 0.00 $  +0 w0% | OOS n  2 PF 0.00 $-254 w0% | ALL n  2 PF 0.00 $-254 w0%
+  next day fade event move         IS n 28 PF 0.76 $ -25 w43% | OOS n 14 PF 2.59 $+120 w64% | ALL n 42 PF 1.25 $ +23 w50%
+  next day follow event move       IS n 28 PF 0.90 $ -10 w43% | OOS n 14 PF 0.33 $-127 w21% | ALL n 42 PF 0.62 $ -49 w36%
+
+== RETAIL  (58 days)
+  fade15 k.10 tgt=F stop=1x        IS n 18 PF 0.39 $ -33 w39% | OOS n  8 PF 1.46 $ +22 w50% | ALL n 26 PF 0.70 $ -16 w42%
+  fade15 k.05 tgt=F stop=1x        IS n 26 PF 0.36 $ -30 w35% | OOS n 15 PF 1.16 $  +7 w47% | ALL n 41 PF 0.63 $ -17 w39%
+  fade15 k.10 tgt=F stop=0.5x      IS n 18 PF 0.20 $ -32 w17% | OOS n  8 PF 0.51 $ -27 w25% | ALL n 26 PF 0.32 $ -30 w19%
+  follow30 k.10 stop.25 ->close    IS n 19 PF 1.50 $ +41 w37% | OOS n 12 PF 0.50 $ -62 w25% | ALL n 31 PF 1.01 $  +1 w32%
+  follow30 k.10 stop.25 2R         IS n 19 PF 1.32 $ +25 w42% | OOS n 12 PF 1.44 $ +39 w42% | ALL n 31 PF 1.37 $ +30 w42%
+  fade30 k.10 stop.25 ->close      IS n 19 PF 1.13 $ +14 w21% | OOS n 12 PF 0.46 $ -67 w25% | ALL n 31 PF 0.85 $ -17 w23%
+  follow60 k.10 stop.25 ->close    IS n 23 PF 0.92 $  -7 w26% | OOS n 14 PF 0.61 $ -52 w29% | ALL n 37 PF 0.78 $ -24 w27%
+  fade60 k.10 stop.25 ->close      IS n 23 PF 1.24 $ +24 w26% | OOS n 14 PF 1.44 $ +48 w43% | ALL n 37 PF 1.32 $ +33 w32%
+  follow5 k.05 stop.20 hold60      IS n 20 PF 1.38 $ +15 w45% | OOS n 10 PF 1.82 $ +34 w60% | ALL n 30 PF 1.53 $ +21 w50%
+  predrift k.08 hold30             IS n 11 PF 0.27 $ -34 w18% | OOS n  8 PF 0.00 $ -97 w0% | ALL n 19 PF 0.11 $ -60 w11%
+  next day fade event move         IS n 26 PF 1.65 $ +58 w65% | OOS n 21 PF 2.04 $+128 w52% | ALL n 47 PF 1.86 $ +89 w60%
+  next day follow event move       IS n 26 PF 0.67 $ -42 w31% | OOS n 21 PF 0.47 $ -87 w38% | ALL n 47 PF 0.57 $ -62 w34%
+
+== CLAIMS  (170 days)
+  fade15 k.10 tgt=F stop=1x        IS n 46 PF 0.55 $ -24 w41% | OOS n 20 PF 0.54 $ -28 w40% | ALL n 66 PF 0.55 $ -26 w41%
+  fade15 k.05 tgt=F stop=1x        IS n 74 PF 0.55 $ -19 w43% | OOS n 35 PF 0.65 $ -15 w51% | ALL n109 PF 0.59 $ -18 w46%
+  fade15 k.10 tgt=F stop=0.5x      IS n 46 PF 0.68 $ -11 w28% | OOS n 20 PF 0.66 $ -13 w30% | ALL n 66 PF 0.67 $ -12 w29%
+  follow30 k.10 stop.25 ->close    IS n 50 PF 1.43 $ +35 w32% | OOS n 22 PF 1.05 $  +6 w23% | ALL n 72 PF 1.28 $ +26 w29%
+  follow30 k.10 stop.25 2R         IS n 50 PF 1.08 $  +6 w36% | OOS n 22 PF 0.84 $ -17 w32% | ALL n 72 PF 0.99 $  -1 w35%
+  fade30 k.10 stop.25 ->close      IS n 50 PF 1.48 $ +39 w30% | OOS n 22 PF 0.77 $ -30 w14% | ALL n 72 PF 1.18 $ +18 w25%
+  follow60 k.10 stop.25 ->close    IS n 61 PF 1.41 $ +35 w33% | OOS n 30 PF 1.42 $ +48 w37% | ALL n 91 PF 1.41 $ +39 w34%
+  fade60 k.10 stop.25 ->close      IS n 61 PF 1.61 $ +51 w31% | OOS n 30 PF 0.35 $ -93 w17% | ALL n 91 PF 1.04 $  +4 w26%
+  follow5 k.05 stop.20 hold60      IS n 53 PF 1.22 $  +9 w43% | OOS n 31 PF 0.70 $ -25 w39% | ALL n 84 PF 0.93 $  -4 w42%
+  predrift k.08 hold30             IS n 49 PF 1.63 $ +14 w57% | OOS n 31 PF 1.15 $  +5 w48% | ALL n 80 PF 1.41 $ +10 w54%
+  next day fade event move         IS n 86 PF 0.84 $ -23 w38% | OOS n 47 PF 1.37 $ +55 w47% | ALL n133 PF 1.03 $  +5 w41%
+  next day follow event move       IS n 86 PF 1.37 $ +39 w49% | OOS n 47 PF 1.04 $  +6 w43% | ALL n133 PF 1.23 $ +28 w47%
+
+== ISM_MFG  (58 days)
+  fade15 k.10 tgt=F stop=1x        IS n 25 PF 0.70 $ -19 w48% | OOS n 14 PF 0.74 $ -16 w36% | ALL n 39 PF 0.71 $ -18 w44%
+  fade15 k.05 tgt=F stop=1x        IS n 30 PF 0.73 $ -15 w50% | OOS n 18 PF 0.82 $  -9 w44% | ALL n 48 PF 0.76 $ -13 w48%
+  fade15 k.10 tgt=F stop=0.5x      IS n 25 PF 0.74 $ -12 w32% | OOS n 14 PF 0.88 $  -5 w29% | ALL n 39 PF 0.78 $ -10 w31%
+  follow30 k.10 stop.25 ->close    IS n 25 PF 1.52 $ +36 w36% | OOS n 16 PF 0.67 $ -32 w31% | ALL n 41 PF 1.12 $  +9 w34%
+  follow30 k.10 stop.25 2R         IS n 25 PF 1.29 $ +19 w40% | OOS n 16 PF 0.97 $  -2 w38% | ALL n 41 PF 1.14 $ +10 w39%
+  fade30 k.10 stop.25 ->close      IS n 25 PF 0.60 $ -34 w28% | OOS n 16 PF 1.75 $ +65 w38% | ALL n 41 PF 1.05 $  +4 w32%
+  follow60 k.10 stop.25 ->close    IS n 28 PF 1.60 $ +35 w43% | OOS n 19 PF 0.57 $ -46 w32% | ALL n 47 PF 1.03 $  +2 w38%
+  fade60 k.10 stop.25 ->close      IS n 28 PF 1.27 $ +19 w36% | OOS n 19 PF 0.32 $ -82 w26% | ALL n 47 PF 0.76 $ -22 w32%
+  follow5 k.05 stop.20 hold60      IS n 27 PF 1.82 $ +43 w44% | OOS n 15 PF 1.18 $ +12 w47% | ALL n 42 PF 1.55 $ +32 w45%
+  predrift k.08 hold30             IS n 25 PF 1.51 $ +21 w56% | OOS n 16 PF 0.68 $ -25 w44% | ALL n 41 PF 1.06 $  +3 w51%
+  morning-trend at T ->close       IS n 21 PF 1.27 $ +23 w43% | OOS n 11 PF 0.89 $ -12 w36% | ALL n 32 PF 1.12 $ +11 w41%
+  next day fade event move         IS n 25 PF 1.35 $ +35 w44% | OOS n 13 PF 0.44 $-147 w23% | ALL n 38 PF 0.82 $ -27 w37%
+  next day follow event move       IS n 25 PF 1.33 $ +36 w44% | OOS n 13 PF 3.53 $+290 w62% | ALL n 38 PF 2.11 $+123 w50%
+
+== ISM_SRV  (57 days)
+  fade15 k.10 tgt=F stop=1x        IS n 25 PF 0.68 $ -18 w40% | OOS n 13 PF 0.87 $  -9 w54% | ALL n 38 PF 0.75 $ -15 w45%
+  fade15 k.05 tgt=F stop=1x        IS n 32 PF 0.60 $ -21 w34% | OOS n 17 PF 0.74 $ -16 w47% | ALL n 49 PF 0.65 $ -19 w39%
+  fade15 k.10 tgt=F stop=0.5x      IS n 25 PF 0.64 $ -16 w28% | OOS n 13 PF 0.83 $  -8 w31% | ALL n 38 PF 0.71 $ -13 w29%
+  follow30 k.10 stop.25 ->close    IS n 30 PF 0.64 $ -31 w30% | OOS n 11 PF 3.04 $+125 w55% | ALL n 41 PF 1.13 $ +11 w37%
+  follow30 k.10 stop.25 2R         IS n 30 PF 0.69 $ -26 w33% | OOS n 11 PF 2.45 $ +89 w55% | ALL n 41 PF 1.06 $  +5 w39%
+  fade30 k.10 stop.25 ->close      IS n 30 PF 1.67 $ +49 w37% | OOS n 11 PF 0.85 $ -13 w36% | ALL n 41 PF 1.42 $ +32 w37%
+  follow60 k.10 stop.25 ->close    IS n 29 PF 0.55 $ -37 w31% | OOS n 17 PF 1.83 $ +58 w53% | ALL n 46 PF 0.98 $  -2 w39%
+  fade60 k.10 stop.25 ->close      IS n 29 PF 2.79 $ +89 w55% | OOS n 17 PF 0.13 $-107 w24% | ALL n 46 PF 1.22 $ +17 w43%
+  follow5 k.05 stop.20 hold60      IS n 25 PF 0.77 $ -13 w40% | OOS n 17 PF 0.87 $  -9 w35% | ALL n 42 PF 0.82 $ -12 w38%
+  predrift k.08 hold30             IS n 29 PF 1.05 $  +2 w38% | OOS n 17 PF 0.64 $ -34 w29% | ALL n 46 PF 0.84 $ -11 w35%
+  morning-trend at T ->close       IS n 20 PF 0.86 $ -14 w35% | OOS n 10 PF 1.53 $ +48 w50% | ALL n 30 PF 1.07 $  +7 w40%
+  next day fade event move         IS n 25 PF 1.23 $ +26 w40% | OOS n 15 PF 1.33 $ +46 w53% | ALL n 40 PF 1.27 $ +34 w45%
+  next day follow event move       IS n 25 PF 1.24 $ +23 w44% | OOS n 15 PF 0.59 $ -86 w27% | ALL n 40 PF 0.87 $ -18 w38%
+
+== JOLTS  (56 days)
+  fade15 k.10 tgt=F stop=1x        IS n 22 PF 1.14 $  +7 w59% | OOS n 10 PF 1.11 $  +8 w50% | ALL n 32 PF 1.12 $  +7 w56%
+  fade15 k.05 tgt=F stop=1x        IS n 29 PF 0.88 $  -6 w45% | OOS n 17 PF 1.03 $  +2 w47% | ALL n 46 PF 0.94 $  -3 w46%
+  fade15 k.10 tgt=F stop=0.5x      IS n 22 PF 1.44 $ +16 w55% | OOS n 10 PF 1.54 $ +26 w40% | ALL n 32 PF 1.48 $ +19 w50%
+  follow30 k.10 stop.25 ->close    IS n 20 PF 1.36 $ +23 w45% | OOS n 14 PF 0.98 $  -2 w36% | ALL n 34 PF 1.16 $ +13 w41%
+  follow30 k.10 stop.25 2R         IS n 20 PF 1.56 $ +33 w50% | OOS n 14 PF 1.46 $ +42 w50% | ALL n 34 PF 1.51 $ +37 w50%
+  fade30 k.10 stop.25 ->close      IS n 20 PF 0.39 $ -57 w25% | OOS n 14 PF 0.94 $  -5 w36% | ALL n 34 PF 0.61 $ -36 w29%
+  follow60 k.10 stop.25 ->close    IS n 25 PF 0.88 $  -8 w36% | OOS n 20 PF 0.57 $ -52 w30% | ALL n 45 PF 0.70 $ -28 w33%
+  fade60 k.10 stop.25 ->close      IS n 25 PF 1.75 $ +50 w44% | OOS n 20 PF 1.11 $ +10 w30% | ALL n 45 PF 1.41 $ +32 w38%
+  follow5 k.05 stop.20 hold60      IS n 32 PF 1.06 $  +3 w41% | OOS n 15 PF 0.79 $ -15 w40% | ALL n 47 PF 0.96 $  -3 w40%
+  predrift k.08 hold30             IS n 24 PF 1.78 $ +30 w54% | OOS n 13 PF 1.40 $ +22 w54% | ALL n 37 PF 1.61 $ +27 w54%
+  morning-trend at T ->close       IS n 16 PF 1.08 $  +7 w38% | OOS n  8 PF 7.64 $+229 w62% | ALL n 24 PF 2.10 $ +81 w46%
+  next day fade event move         IS n 24 PF 1.15 $ +17 w38% | OOS n 16 PF 0.67 $ -70 w31% | ALL n 40 PF 0.88 $ -18 w35%
+  next day follow event move       IS n 24 PF 1.05 $  +5 w42% | OOS n 16 PF 1.88 $+108 w56% | ALL n 40 PF 1.39 $ +46 w47%
+
+== TESTIMONY  (17 days)
+  fade15 k.10 tgt=F stop=1x        IS n  9 PF 2.81 $ +44 w67% | OOS n  2 PF 9.90 $+126 w100% | ALL n 11 PF 3.95 $ +59 w73%
+  fade15 k.05 tgt=F stop=1x        IS n 13 PF 2.85 $ +35 w69% | OOS n  3 PF 4.96 $ +67 w67% | ALL n 16 PF 3.21 $ +41 w69%
+  fade15 k.10 tgt=F stop=0.5x      IS n  9 PF 5.24 $ +55 w67% | OOS n  2 PF 9.90 $+126 w100% | ALL n 11 PF 7.37 $ +68 w73%
+  follow30 k.10 stop.25 ->close    IS n  9 PF 0.90 $  -7 w44% | OOS n  2 PF 0.27 $ -63 w50% | ALL n 11 PF 0.75 $ -17 w45%
+  follow30 k.10 stop.25 2R         IS n  9 PF 0.96 $  -2 w44% | OOS n  2 PF 0.27 $ -63 w50% | ALL n 11 PF 0.80 $ -13 w45%
+  fade30 k.10 stop.25 ->close      IS n  9 PF 0.40 $ -56 w22% | OOS n  2 PF 0.71 $ -18 w50% | ALL n 11 PF 0.44 $ -49 w27%
+  follow60 k.10 stop.25 ->close    IS n  9 PF 0.19 $ -80 w22% | OOS n  3 PF 0.16 $ -94 w33% | ALL n 12 PF 0.18 $ -83 w25%
+  fade60 k.10 stop.25 ->close      IS n  9 PF 1.06 $  +4 w22% | OOS n  3 PF 0.34 $ -64 w33% | ALL n 12 PF 0.81 $ -13 w25%
+  follow5 k.05 stop.20 hold60      IS n  8 PF 0.42 $ -42 w25% | OOS n  2 PF 0.68 $ -21 w50% | ALL n 10 PF 0.46 $ -37 w30%
+  predrift k.08 hold30             IS n  9 PF 1.83 $ +33 w56% | OOS n  2 PF 0.81 $ -12 w50% | ALL n 11 PF 1.56 $ +25 w55%
+  morning-trend at T ->close       IS n  5 PF 4.72 $+136 w60% | OOS n  2 PF 0.10 $ -87 w50% | ALL n  7 PF 2.33 $ +72 w57%
+  next day fade event move         IS n 11 PF 2.25 $+122 w55% | OOS n  3 PF 1.13 $ +13 w67% | ALL n 14 PF 2.01 $ +98 w57%
+  next day follow event move       IS n 11 PF 0.45 $ -87 w27% | OOS n  3 PF 1.32 $ +37 w33% | ALL n 14 PF 0.60 $ -61 w29%
+
+== JACKSON  (4 days)
+  fade15 k.10 tgt=F stop=1x        IS n  2 PF 9.90 $+159 w100% | OOS n  1 PF 0.00 $  -8 w0% | ALL n  3 PF 40.96 $+103 w67%
+  fade15 k.05 tgt=F stop=1x        IS n  2 PF 9.90 $+159 w100% | OOS n  1 PF 0.00 $  -8 w0% | ALL n  3 PF 40.96 $+103 w67%
+  fade15 k.10 tgt=F stop=0.5x      IS n  2 PF 3.91 $ +82 w50% | OOS n  1 PF 0.00 $  -8 w0% | ALL n  3 PF 3.43 $ +52 w33%
+  follow30 k.10 stop.25 ->close    IS n  3 PF 2.85 $+158 w33% | OOS n  1 PF 9.90 $ +16 w100% | ALL n  4 PF 2.91 $+123 w50%
+  follow30 k.10 stop.25 2R         IS n  3 PF 2.81 $ +87 w67% | OOS n  1 PF 9.90 $ +16 w100% | ALL n  4 PF 2.93 $ +69 w75%
+  fade30 k.10 stop.25 ->close      IS n  3 PF 0.84 $ -12 w33% | OOS n  1 PF 0.00 $-128 w0% | ALL n  4 PF 0.53 $ -41 w25%
+  follow60 k.10 stop.25 ->close    IS n  2 PF 4.77 $+213 w50% | OOS n  1 PF 0.00 $-128 w0% | ALL n  3 PF 2.24 $ +99 w33%
+  fade60 k.10 stop.25 ->close      IS n  2 PF 4.10 $+163 w50% | OOS n  1 PF 9.90 $ +71 w100% | ALL n  3 PF 4.78 $+132 w67%
+  follow5 k.05 stop.20 hold60      IS n  2 PF 0.00 $-101 w0% | OOS n  1 PF 9.90 $+272 w100% | ALL n  3 PF 1.35 $ +24 w33%
+  predrift k.08 hold30             IS n  2 PF 0.00 $ -88 w0% | OOS n  1 PF 9.90 $+636 w100% | ALL n  3 PF 3.61 $+153 w33%
+  morning-trend at T ->close       IS n  1 PF 0.00 $-134 w0% | OOS n  0 PF 0.00 $  +0 w0% | ALL n  1 PF 0.00 $-134 w0%
+  next day fade event move         IS n  1 PF 9.90 $  +9 w100% | OOS n  1 PF 0.00 $-239 w0% | ALL n  2 PF 0.04 $-115 w50%
+  next day follow event move       IS n  1 PF 0.00 $-196 w0% | OOS n  1 PF 9.90 $ +71 w100% | ALL n  2 PF 0.36 $ -62 w50%
+
+== FOMC  (38 days)
+  fade15 k.10 tgt=F stop=1x        IS n 17 PF 1.36 $ +27 w53% | OOS n  8 PF 3.61 $+112 w75% | ALL n 25 PF 1.84 $ +54 w60%
+  fade15 k.05 tgt=F stop=1x        IS n 22 PF 1.23 $ +15 w45% | OOS n 12 PF 3.17 $ +76 w67% | ALL n 34 PF 1.67 $ +37 w53%
+  fade15 k.10 tgt=F stop=0.5x      IS n 17 PF 1.25 $ +14 w35% | OOS n  8 PF 1.68 $ +38 w38% | ALL n 25 PF 1.38 $ +21 w36%
+  follow30 k.10 stop.25 ->close    IS n 16 PF 0.11 $-102 w12% | OOS n  8 PF 0.35 $ -98 w25% | ALL n 24 PF 0.20 $-100 w17%
+  follow30 k.10 stop.25 2R         IS n 16 PF 0.27 $ -78 w19% | OOS n  8 PF 1.20 $ +25 w38% | ALL n 24 PF 0.61 $ -44 w25%
+  fade30 k.10 stop.25 ->close      IS n 16 PF 1.80 $ +72 w25% | OOS n  8 PF 0.95 $  -6 w50% | ALL n 24 PF 1.46 $ +46 w33%
+  follow60 k.10 stop.25 ->close    IS n 17 PF 2.22 $ +72 w47% | OOS n 13 PF 0.59 $ -44 w23% | ALL n 30 PF 1.28 $ +22 w37%
+  fade60 k.10 stop.25 ->close      IS n 17 PF 1.44 $ +34 w41% | OOS n 13 PF 1.73 $ +65 w46% | ALL n 30 PF 1.58 $ +47 w43%
+  follow5 k.05 stop.20 hold60      IS n 20 PF 0.51 $ -48 w15% | OOS n 12 PF 0.65 $ -39 w17% | ALL n 32 PF 0.57 $ -44 w16%
+  predrift k.08 hold30             IS n  7 PF 0.73 $ -22 w43% | OOS n  9 PF 0.06 $-105 w11% | ALL n 16 PF 0.30 $ -68 w25%
+  morning-trend at T ->close       IS n 10 PF 1.12 $ +12 w40% | OOS n  7 PF 0.03 $-145 w14% | ALL n 17 PF 0.57 $ -53 w29%
+  next day fade event move         IS n 20 PF 1.21 $ +30 w40% | OOS n 11 PF 1.21 $ +22 w55% | ALL n 31 PF 1.21 $ +27 w45%
+  next day follow event move       IS n 20 PF 1.58 $ +64 w55% | OOS n 11 PF 0.50 $-110 w27% | ALL n 31 PF 1.01 $  +2 w45%
+
+== FOMC_PC  (38 days)
+  fade15 k.10 tgt=F stop=1x        IS n 21 PF 1.19 $ +15 w52% | OOS n  9 PF 5.94 $+159 w78% | ALL n 30 PF 1.91 $ +58 w60%
+  fade15 k.05 tgt=F stop=1x        IS n 23 PF 1.13 $  +9 w48% | OOS n 12 PF 4.08 $+109 w58% | ALL n 35 PF 1.71 $ +43 w51%
+  fade15 k.10 tgt=F stop=0.5x      IS n 21 PF 1.33 $ +19 w33% | OOS n  9 PF 2.28 $ +68 w56% | ALL n 30 PF 1.60 $ +34 w40%
+  follow30 k.10 stop.25 ->close    IS n 23 PF 2.97 $ +99 w57% | OOS n 13 PF 0.18 $ -88 w15% | ALL n 36 PF 1.44 $ +32 w42%
+  follow30 k.10 stop.25 2R         IS n 23 PF 2.57 $ +79 w57% | OOS n 13 PF 0.18 $ -88 w15% | ALL n 36 PF 1.26 $ +19 w42%
+  fade30 k.10 stop.25 ->close      IS n 23 PF 0.85 $ -14 w30% | OOS n 13 PF 2.46 $ +93 w54% | ALL n 36 PF 1.30 $ +25 w39%
+  follow60 k.10 stop.25 ->close    IS n 22 PF 2.66 $ +68 w59% | OOS n 13 PF 1.32 $ +22 w31% | ALL n 35 PF 1.99 $ +51 w49%
+  fade60 k.10 stop.25 ->close      IS n 22 PF 0.66 $ -27 w32% | OOS n 13 PF 1.23 $ +14 w62% | ALL n 35 PF 0.84 $ -12 w43%
+  follow5 k.05 stop.20 hold60      IS n 21 PF 0.01 $-105 w5% | OOS n 11 PF 0.51 $ -32 w36% | ALL n 32 PF 0.13 $ -80 w16%
+  predrift k.08 hold30             IS n 16 PF 0.21 $ -72 w12% | OOS n 10 PF 0.78 $ -22 w20% | ALL n 26 PF 0.44 $ -53 w15%
+  morning-trend at T ->close       IS n 20 PF 0.37 $ -70 w25% | OOS n  8 PF 0.00 $-205 w0% | ALL n 28 PF 0.22 $-109 w18%
+  next day fade event move         IS n 20 PF 0.97 $  -5 w40% | OOS n 10 PF 1.95 $ +69 w60% | ALL n 30 PF 1.17 $ +20 w47%
+  next day follow event move       IS n 20 PF 1.32 $ +36 w50% | OOS n 10 PF 0.40 $-143 w20% | ALL n 30 PF 0.85 $ -24 w40%
+
+== FOMC_MIN  (39 days)
+  fade15 k.10 tgt=F stop=1x        IS n  9 PF 1.70 $ +26 w56% | OOS n  3 PF 2.09 $ +25 w67% | ALL n 12 PF 1.77 $ +26 w58%
+  fade15 k.05 tgt=F stop=1x        IS n 15 PF 1.40 $ +12 w53% | OOS n  9 PF 2.21 $ +23 w67% | ALL n 24 PF 1.61 $ +16 w58%
+  fade15 k.10 tgt=F stop=0.5x      IS n  9 PF 1.14 $  +5 w33% | OOS n  3 PF 0.00 $ -42 w0% | ALL n 12 PF 0.82 $  -7 w25%
+  follow30 k.10 stop.25 ->close    IS n 21 PF 0.57 $ -28 w38% | OOS n  8 PF 0.08 $-112 w25% | ALL n 29 PF 0.37 $ -51 w34%
+  follow30 k.10 stop.25 2R         IS n 21 PF 0.42 $ -38 w38% | OOS n  8 PF 0.08 $-112 w25% | ALL n 29 PF 0.28 $ -58 w34%
+  fade30 k.10 stop.25 ->close      IS n 21 PF 1.93 $ +36 w57% | OOS n  8 PF 1.09 $  +7 w50% | ALL n 29 PF 1.58 $ +28 w55%
+  follow60 k.10 stop.25 ->close    IS n 16 PF 0.51 $ -31 w38% | OOS n  5 PF 0.04 $-146 w20% | ALL n 21 PF 0.31 $ -58 w33%
+  fade60 k.10 stop.25 ->close      IS n 16 PF 2.88 $ +48 w62% | OOS n  5 PF 34.73 $+285 w80% | ALL n 21 PF 5.88 $+104 w67%
+  follow5 k.05 stop.20 hold60      IS n 15 PF 0.80 $ -13 w20% | OOS n  9 PF 0.08 $ -85 w22% | ALL n 24 PF 0.46 $ -40 w21%
+  predrift k.08 hold30             IS n 12 PF 0.48 $ -32 w33% | OOS n  9 PF 0.64 $ -20 w67% | ALL n 21 PF 0.55 $ -27 w48%
+  morning-trend at T ->close       IS n 11 PF 0.87 $  -9 w36% | OOS n  9 PF 3.31 $+109 w78% | ALL n 20 PF 1.78 $ +44 w55%
+  next day fade event move         IS n 11 PF 0.88 $ -14 w45% | OOS n  6 PF 1.29 $ +33 w67% | ALL n 17 PF 1.02 $  +3 w53%
+  next day follow event move       IS n 11 PF 1.41 $ +44 w45% | OOS n  6 PF 0.70 $ -67 w33% | ALL n 17 PF 1.03 $  +4 w41%
+
+== CLEAN0830  (602 days)
+  fade15 k.10 tgt=F stop=1x        IS n 69 PF 0.82 $  -8 w45% | OOS n 51 PF 0.82 $ -10 w47% | ALL n120 PF 0.82 $  -9 w46%
+  fade15 k.05 tgt=F stop=1x        IS n200 PF 0.69 $  -9 w43% | OOS n108 PF 0.86 $  -5 w51% | ALL n308 PF 0.76 $  -8 w46%
+  fade15 k.10 tgt=F stop=0.5x      IS n 69 PF 0.99 $  +0 w32% | OOS n 51 PF 0.72 $ -11 w31% | ALL n120 PF 0.85 $  -5 w32%
+  follow30 k.10 stop.25 ->close    IS n113 PF 1.21 $ +18 w30% | OOS n 71 PF 1.22 $ +23 w30% | ALL n184 PF 1.22 $ +20 w30%
+  follow30 k.10 stop.25 2R         IS n113 PF 1.02 $  +1 w35% | OOS n 71 PF 1.05 $  +5 w37% | ALL n184 PF 1.03 $  +3 w36%
+  fade30 k.10 stop.25 ->close      IS n113 PF 1.00 $  +0 w31% | OOS n 71 PF 1.06 $  +7 w27% | ALL n184 PF 1.03 $  +3 w29%
+  follow60 k.10 stop.25 ->close    IS n170 PF 1.23 $ +19 w31% | OOS n103 PF 1.03 $  +3 w29% | ALL n273 PF 1.14 $ +13 w30%
+  fade60 k.10 stop.25 ->close      IS n170 PF 0.99 $  -1 w29% | OOS n103 PF 0.78 $ -25 w30% | ALL n273 PF 0.90 $ -10 w30%
+  follow5 k.05 stop.20 hold60      IS n116 PF 0.77 $ -11 w40% | OOS n 70 PF 1.07 $  +4 w44% | ALL n186 PF 0.90 $  -5 w41%
+  predrift k.08 hold30             IS n174 PF 0.74 $  -7 w39% | OOS n107 PF 0.76 $ -10 w40% | ALL n281 PF 0.75 $  -8 w39%
+  next day fade event move         IS n264 PF 1.00 $  +0 w41% | OOS n163 PF 0.97 $  -5 w43% | ALL n427 PF 0.98 $  -2 w41%
+  next day follow event move       IS n264 PF 0.98 $  -3 w45% | OOS n163 PF 1.03 $  +5 w45% | ALL n427 PF 1.00 $  +0 w45%
+
+== CLEAN1000  (747 days)
+  fade15 k.10 tgt=F stop=1x        IS n233 PF 0.75 $ -13 w45% | OOS n124 PF 1.17 $ +12 w52% | ALL n357 PF 0.92 $  -4 w48%
+  fade15 k.05 tgt=F stop=1x        IS n343 PF 0.72 $ -12 w45% | OOS n184 PF 1.06 $  +3 w48% | ALL n527 PF 0.86 $  -6 w46%
+  fade15 k.10 tgt=F stop=0.5x      IS n233 PF 0.70 $ -11 w30% | OOS n124 PF 0.77 $ -14 w31% | ALL n357 PF 0.73 $ -12 w30%
+  follow30 k.10 stop.25 ->close    IS n281 PF 1.37 $ +25 w43% | OOS n159 PF 0.75 $ -26 w32% | ALL n440 PF 1.08 $  +6 w39%
+  follow30 k.10 stop.25 2R         IS n281 PF 1.31 $ +20 w45% | OOS n159 PF 0.90 $ -10 w36% | ALL n440 PF 1.12 $  +9 w42%
+  fade30 k.10 stop.25 ->close      IS n281 PF 0.68 $ -27 w30% | OOS n159 PF 1.01 $  +1 w33% | ALL n440 PF 0.81 $ -17 w31%
+  follow60 k.10 stop.25 ->close    IS n349 PF 1.17 $ +11 w38% | OOS n199 PF 0.99 $  -1 w35% | ALL n548 PF 1.09 $  +7 w37%
+  fade60 k.10 stop.25 ->close      IS n349 PF 0.68 $ -26 w31% | OOS n199 PF 1.00 $  +0 w38% | ALL n548 PF 0.81 $ -16 w33%
+  follow5 k.05 stop.20 hold60      IS n254 PF 0.98 $  -1 w44% | OOS n160 PF 1.15 $ +10 w46% | ALL n414 PF 1.06 $  +3 w45%
+  predrift k.08 hold30             IS n353 PF 0.88 $  -6 w43% | OOS n214 PF 1.07 $  +4 w46% | ALL n567 PF 0.97 $  -2 w44%
+  morning-trend at T ->close       IS n203 PF 1.23 $ +19 w40% | OOS n141 PF 0.97 $  -4 w38% | ALL n344 PF 1.10 $ +10 w39%
+  next day fade event move         IS n322 PF 0.91 $ -12 w41% | OOS n188 PF 1.13 $ +21 w43% | ALL n510 PF 1.00 $  +0 w42%
+  next day follow event move       IS n322 PF 1.09 $ +11 w44% | OOS n188 PF 0.90 $ -16 w41% | ALL n510 PF 1.00 $  +1 w43%
+
+== CLEAN1400  (747 days)
+  fade15 k.10 tgt=F stop=1x        IS n109 PF 0.66 $ -15 w44% | OOS n 55 PF 1.17 $  +8 w51% | ALL n164 PF 0.84 $  -7 w46%
+  fade15 k.05 tgt=F stop=1x        IS n236 PF 0.64 $ -11 w44% | OOS n123 PF 0.90 $  -4 w47% | ALL n359 PF 0.74 $  -9 w45%
+  fade15 k.10 tgt=F stop=0.5x      IS n109 PF 0.50 $ -16 w23% | OOS n 55 PF 1.16 $  +6 w36% | ALL n164 PF 0.73 $  -9 w27%
+  follow30 k.10 stop.25 ->close    IS n197 PF 1.03 $  +2 w47% | OOS n 98 PF 0.84 $ -11 w46% | ALL n295 PF 0.95 $  -3 w47%
+  follow30 k.10 stop.25 2R         IS n197 PF 0.96 $  -2 w48% | OOS n 98 PF 0.80 $ -14 w46% | ALL n295 PF 0.90 $  -6 w47%
+  fade30 k.10 stop.25 ->close      IS n197 PF 0.80 $ -11 w41% | OOS n 98 PF 0.88 $  -8 w44% | ALL n295 PF 0.83 $ -10 w42%
+  follow60 k.10 stop.25 ->close    IS n235 PF 1.07 $  +3 w54% | OOS n116 PF 0.97 $  -2 w45% | ALL n351 PF 1.03 $  +1 w51%
+  fade60 k.10 stop.25 ->close      IS n235 PF 0.65 $ -18 w38% | OOS n116 PF 0.88 $  -8 w43% | ALL n351 PF 0.74 $ -15 w40%
+  follow5 k.05 stop.20 hold60      IS n147 PF 1.32 $ +13 w45% | OOS n 83 PF 0.79 $ -12 w42% | ALL n230 PF 1.08 $  +4 w44%
+  predrift k.08 hold30             IS n296 PF 1.04 $  +1 w48% | OOS n151 PF 1.00 $  +0 w48% | ALL n447 PF 1.02 $  +1 w48%
+  morning-trend at T ->close       IS n313 PF 1.34 $ +16 w51% | OOS n195 PF 0.84 $ -11 w42% | ALL n508 PF 1.10 $  +5 w48%
+  next day fade event move         IS n202 PF 0.91 $ -11 w41% | OOS n101 PF 1.31 $ +51 w42% | ALL n303 PF 1.07 $ +10 w41%
+  next day follow event move       IS n202 PF 0.96 $  -4 w40% | OOS n101 PF 1.10 $ +18 w42% | ALL n303 PF 1.02 $  +3 w41%
+
+== CLEAN1430  (747 days)
+  fade15 k.10 tgt=F stop=1x        IS n107 PF 0.62 $ -16 w43% | OOS n 52 PF 1.30 $ +13 w58% | ALL n159 PF 0.85 $  -6 w48%
+  fade15 k.05 tgt=F stop=1x        IS n254 PF 0.65 $ -11 w46% | OOS n128 PF 1.19 $  +6 w55% | ALL n382 PF 0.84 $  -5 w49%
+  fade15 k.10 tgt=F stop=0.5x      IS n107 PF 0.67 $ -10 w31% | OOS n 52 PF 0.83 $  -7 w37% | ALL n159 PF 0.73 $  -9 w33%
+  follow30 k.10 stop.25 ->close    IS n175 PF 1.26 $ +10 w52% | OOS n 89 PF 0.61 $ -30 w37% | ALL n264 PF 0.94 $  -3 w47%
+  follow30 k.10 stop.25 2R         IS n175 PF 1.14 $  +6 w52% | OOS n 89 PF 0.59 $ -32 w37% | ALL n264 PF 0.87 $  -7 w47%
+  fade30 k.10 stop.25 ->close      IS n175 PF 0.58 $ -23 w38% | OOS n 89 PF 1.23 $ +13 w48% | ALL n264 PF 0.81 $ -11 w41%
+  follow60 k.10 stop.25 ->close    IS n249 PF 0.87 $  -5 w44% | OOS n115 PF 0.85 $  -7 w46% | ALL n364 PF 0.87 $  -5 w45%
+  fade60 k.10 stop.25 ->close      IS n249 PF 0.81 $  -6 w48% | OOS n115 PF 1.07 $  +3 w49% | ALL n364 PF 0.91 $  -3 w48%
+  follow5 k.05 stop.20 hold60      IS n161 PF 0.87 $  -5 w44% | OOS n 84 PF 0.80 $ -11 w45% | ALL n245 PF 0.84 $  -7 w44%
+  predrift k.08 hold30             IS n280 PF 1.05 $  +2 w47% | OOS n153 PF 0.90 $  -4 w48% | ALL n433 PF 0.99 $  +0 w47%
+  morning-trend at T ->close       IS n321 PF 1.24 $ +11 w51% | OOS n200 PF 0.70 $ -21 w42% | ALL n521 PF 0.97 $  -1 w48%
+  next day fade event move         IS n169 PF 1.00 $  +0 w40% | OOS n 87 PF 1.29 $ +48 w40% | ALL n256 PF 1.12 $ +16 w40%
+  next day follow event move       IS n169 PF 0.93 $  -8 w41% | OOS n 87 PF 1.00 $  +0 w41% | ALL n256 PF 0.96 $  -6 w41%

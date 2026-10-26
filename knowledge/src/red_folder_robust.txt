@@ -1,0 +1,173 @@
+1) permutation p-value (share of random clean-day samples doing at least as well in the claimed direction)
+  FOMC     fade15 k.10 tgt=F                IS n 17 PF 1.36 $ +27 w53% | OOS n  8 PF 3.61 $+112 w75% | ALL n 25 PF 1.84 $ +54 w60%  p=0.000
+  FOMC     fade30 ->close                   IS n 16 PF 1.80 $ +72 w25% | OOS n  8 PF 0.95 $  -6 w50% | ALL n 24 PF 1.46 $ +46 w33%  p=0.009
+  FOMC     fade60 ->close                   IS n 17 PF 1.44 $ +34 w41% | OOS n 13 PF 1.73 $ +65 w46% | ALL n 30 PF 1.58 $ +47 w43%  p=0.001
+  FOMC     follow30 ->close (claim: loses)  IS n 16 PF 0.11 $-102 w12% | OOS n  8 PF 0.35 $ -98 w25% | ALL n 24 PF 0.20 $-100 w17%  p=0.000
+  FOMC     next day fade                    IS n 20 PF 1.21 $ +30 w40% | OOS n 11 PF 1.21 $ +22 w55% | ALL n 31 PF 1.21 $ +27 w45%  p=0.296
+  FOMC_PC  fade15 k.10 tgt=F                IS n 21 PF 1.19 $ +15 w52% | OOS n  9 PF 5.94 $+159 w78% | ALL n 30 PF 1.91 $ +58 w60%  p=0.000
+  FOMC_PC  follow60 ->close                 IS n 22 PF 2.66 $ +68 w59% | OOS n 13 PF 1.32 $ +22 w31% | ALL n 35 PF 1.99 $ +51 w49%  p=0.000
+  NFP      fade30 ->close                   IS n 28 PF 2.55 $+109 w50% | OOS n 17 PF 2.63 $+155 w35% | ALL n 45 PF 2.58 $+127 w44%  p=0.000
+  NFP      fade60 ->close                   IS n 26 PF 3.25 $+124 w50% | OOS n 17 PF 1.49 $ +59 w24% | ALL n 43 PF 2.21 $ +98 w40%  p=0.000
+  CPI      fade15 k.10 tgt=F                IS n 32 PF 1.58 $ +42 w66% | OOS n 15 PF 1.44 $ +33 w60% | ALL n 47 PF 1.54 $ +39 w64%  p=0.000
+  CPI      follow60 (claim: loses)          IS n 30 PF 0.65 $ -36 w20% | OOS n 16 PF 0.15 $-133 w12% | ALL n 46 PF 0.42 $ -70 w17%  p=0.001
+  RETAIL   next day fade                    IS n 26 PF 1.65 $ +58 w65% | OOS n 21 PF 2.04 $+128 w52% | ALL n 47 PF 1.86 $ +89 w60%  p=0.047
+  PCE      follow60 ->close                 IS n 23 PF 1.68 $ +59 w30% | OOS n 11 PF 1.83 $ +87 w36% | ALL n 34 PF 1.73 $ +68 w32%  p=0.065
+  JOLTS    follow30 2R                      IS n 20 PF 1.56 $ +33 w50% | OOS n 14 PF 1.46 $ +42 w50% | ALL n 34 PF 1.51 $ +37 w50%  p=0.190
+  ISM_MFG  fade15 (claim: loses)            IS n 25 PF 0.70 $ -19 w48% | OOS n 14 PF 0.74 $ -16 w36% | ALL n 39 PF 0.71 $ -18 w44%  p=0.200
+  ISM_SRV  fade15 (claim: loses)            IS n 25 PF 0.68 $ -18 w40% | OOS n 13 PF 0.87 $  -9 w54% | ALL n 38 PF 0.75 $ -15 w45%  p=0.267
+  FOMC_MIN follow30 (claim: loses)          IS n 21 PF 0.57 $ -28 w38% | OOS n  8 PF 0.08 $-112 w25% | ALL n 29 PF 0.37 $ -51 w34%  p=0.003
+
+2) neighbours
+  FOMC fade at T+15 hold to close, k0.05 stop0.25ADR: IS n 22 PF 0.58 $ -48 w14% | OOS n 12 PF 0.66 $ -43 w33% | ALL n 34 PF 0.61 $ -46 w21%
+  FOMC fade at T+15 hold to close, k0.1 stop0.2ADR: IS n 17 PF 0.50 $ -50 w6% | OOS n  8 PF 1.13 $ +14 w38% | ALL n 25 PF 0.71 $ -30 w16%
+  FOMC fade at T+15 hold to close, k0.1 stop0.25ADR: IS n 17 PF 0.58 $ -49 w12% | OOS n  8 PF 0.91 $ -12 w38% | ALL n 25 PF 0.70 $ -37 w20%
+  FOMC fade at T+15 hold to close, k0.1 stop0.35ADR: IS n 17 PF 0.85 $ -22 w18% | OOS n  8 PF 0.65 $ -64 w38% | ALL n 25 PF 0.77 $ -35 w24%
+  FOMC fade at T+15 hold to close, k0.15 stop0.25ADR: IS n 13 PF 0.85 $ -16 w15% | OOS n  8 PF 0.91 $ -12 w38% | ALL n 21 PF 0.87 $ -15 w24%
+  FOMC fade at T+20 hold to close, k0.05 stop0.25ADR: IS n 20 PF 0.33 $ -82 w10% | OOS n 12 PF 0.60 $ -51 w25% | ALL n 32 PF 0.43 $ -70 w16%
+  FOMC fade at T+20 hold to close, k0.1 stop0.2ADR: IS n 20 PF 0.40 $ -59 w10% | OOS n  8 PF 0.73 $ -31 w25% | ALL n 28 PF 0.51 $ -51 w14%
+  FOMC fade at T+20 hold to close, k0.1 stop0.25ADR: IS n 20 PF 0.33 $ -82 w10% | OOS n  8 PF 0.59 $ -59 w25% | ALL n 28 PF 0.41 $ -76 w14%
+  FOMC fade at T+20 hold to close, k0.1 stop0.35ADR: IS n 20 PF 1.57 $ +66 w30% | OOS n  8 PF 0.42 $-115 w25% | ALL n 28 PF 1.10 $ +14 w29%
+  FOMC fade at T+20 hold to close, k0.15 stop0.25ADR: IS n 14 PF 0.51 $ -54 w14% | OOS n  6 PF 0.82 $ -25 w33% | ALL n 20 PF 0.62 $ -46 w20%
+  FOMC fade at T+30 hold to close, k0.05 stop0.25ADR: IS n 21 PF 1.70 $ +65 w24% | OOS n 13 PF 0.69 $ -36 w38% | ALL n 34 PF 1.26 $ +26 w29%
+  FOMC fade at T+30 hold to close, k0.1 stop0.2ADR: IS n 16 PF 2.23 $ +90 w25% | OOS n  8 PF 1.19 $ +18 w50% | ALL n 24 PF 1.81 $ +66 w33%
+  FOMC fade at T+30 hold to close, k0.1 stop0.25ADR: IS n 16 PF 1.80 $ +72 w25% | OOS n  8 PF 0.95 $  -6 w50% | ALL n 24 PF 1.46 $ +46 w33%
+  FOMC fade at T+30 hold to close, k0.1 stop0.35ADR: IS n 16 PF 2.20 $+111 w38% | OOS n  8 PF 0.68 $ -52 w50% | ALL n 24 PF 1.49 $ +57 w42%
+  FOMC fade at T+30 hold to close, k0.15 stop0.25ADR: IS n 15 PF 2.03 $ +88 w27% | OOS n  4 PF 0.64 $ -42 w50% | ALL n 19 PF 1.66 $ +61 w32%
+  FOMC fade at T+45 hold to close, k0.05 stop0.25ADR: IS n 21 PF 2.23 $ +87 w43% | OOS n 12 PF 1.00 $  +0 w42% | ALL n 33 PF 1.72 $ +56 w42%
+  FOMC fade at T+45 hold to close, k0.1 stop0.2ADR: IS n 19 PF 1.30 $ +24 w26% | OOS n  9 PF 0.73 $ -28 w22% | ALL n 28 PF 1.08 $  +7 w25%
+  FOMC fade at T+45 hold to close, k0.1 stop0.25ADR: IS n 19 PF 2.18 $ +86 w42% | OOS n  9 PF 0.70 $ -36 w33% | ALL n 28 PF 1.54 $ +47 w39%
+  FOMC fade at T+45 hold to close, k0.1 stop0.35ADR: IS n 19 PF 4.85 $+194 w63% | OOS n  9 PF 1.76 $ +96 w44% | ALL n 28 PF 3.17 $+162 w57%
+  FOMC fade at T+45 hold to close, k0.15 stop0.25ADR: IS n 16 PF 2.47 $+102 w44% | OOS n  9 PF 0.70 $ -36 w33% | ALL n 25 PF 1.61 $ +52 w40%
+  FOMC fade at T+60 hold to close, k0.05 stop0.25ADR: IS n 19 PF 1.47 $ +36 w42% | OOS n 13 PF 1.73 $ +65 w46% | ALL n 32 PF 1.58 $ +48 w44%
+  FOMC fade at T+60 hold to close, k0.1 stop0.2ADR: IS n 17 PF 1.78 $ +48 w41% | OOS n 13 PF 1.31 $ +31 w31% | ALL n 30 PF 1.52 $ +41 w37%
+  FOMC fade at T+60 hold to close, k0.1 stop0.25ADR: IS n 17 PF 1.44 $ +34 w41% | OOS n 13 PF 1.73 $ +65 w46% | ALL n 30 PF 1.58 $ +47 w43%
+  FOMC fade at T+60 hold to close, k0.1 stop0.35ADR: IS n 17 PF 1.07 $  +7 w41% | OOS n 13 PF 1.82 $ +75 w62% | ALL n 30 PF 1.37 $ +36 w50%
+  FOMC fade at T+60 hold to close, k0.15 stop0.25ADR: IS n 16 PF 1.22 $ +18 w38% | OOS n 13 PF 1.73 $ +65 w46% | ALL n 29 PF 1.46 $ +39 w41%
+  FOMC fade at T+90 hold to close, k0.05 stop0.25ADR: IS n 22 PF 1.21 $ +15 w36% | OOS n 12 PF 2.31 $ +59 w67% | ALL n 34 PF 1.51 $ +30 w47%
+  FOMC fade at T+90 hold to close, k0.1 stop0.2ADR: IS n 21 PF 1.51 $ +29 w38% | OOS n 12 PF 1.82 $ +47 w67% | ALL n 33 PF 1.62 $ +36 w48%
+  FOMC fade at T+90 hold to close, k0.1 stop0.25ADR: IS n 21 PF 1.31 $ +20 w38% | OOS n 12 PF 2.31 $ +59 w67% | ALL n 33 PF 1.59 $ +35 w48%
+  FOMC fade at T+90 hold to close, k0.1 stop0.35ADR: IS n 21 PF 1.21 $ +15 w38% | OOS n 12 PF 2.67 $ +65 w67% | ALL n 33 PF 1.55 $ +33 w48%
+  FOMC fade at T+90 hold to close, k0.15 stop0.25ADR: IS n 19 PF 0.72 $ -20 w32% | OOS n 11 PF 1.67 $ +33 w64% | ALL n 30 PF 0.99 $  -1 w43%
+  NFP fade at T+15 hold to close, k0.05 stop0.25ADR: IS n 30 PF 1.57 $ +47 w37% | OOS n 19 PF 1.31 $ +41 w16% | ALL n 49 PF 1.44 $ +44 w29%
+  NFP fade at T+15 hold to close, k0.1 stop0.2ADR: IS n 27 PF 0.77 $ -19 w22% | OOS n 18 PF 0.89 $ -13 w11% | ALL n 45 PF 0.83 $ -17 w18%
+  NFP fade at T+15 hold to close, k0.1 stop0.25ADR: IS n 27 PF 1.20 $ +19 w30% | OOS n 18 PF 1.40 $ +51 w17% | ALL n 45 PF 1.30 $ +32 w24%
+  NFP fade at T+15 hold to close, k0.1 stop0.35ADR: IS n 27 PF 1.03 $  +3 w33% | OOS n 18 PF 3.50 $+253 w44% | ALL n 45 PF 1.96 $+103 w38%
+  NFP fade at T+15 hold to close, k0.15 stop0.25ADR: IS n 24 PF 1.41 $ +36 w33% | OOS n 12 PF 0.00 $-153 w0% | ALL n 36 PF 0.75 $ -27 w22%
+  NFP fade at T+20 hold to close, k0.05 stop0.25ADR: IS n 30 PF 1.58 $ +51 w37% | OOS n 17 PF 3.28 $+216 w35% | ALL n 47 PF 2.22 $+111 w36%
+  NFP fade at T+20 hold to close, k0.1 stop0.2ADR: IS n 26 PF 2.19 $ +80 w38% | OOS n 15 PF 4.71 $+278 w40% | ALL n 41 PF 3.18 $+152 w39%
+  NFP fade at T+20 hold to close, k0.1 stop0.25ADR: IS n 26 PF 1.85 $ +67 w38% | OOS n 15 PF 4.23 $+269 w40% | ALL n 41 PF 2.75 $+141 w39%
+  NFP fade at T+20 hold to close, k0.1 stop0.35ADR: IS n 26 PF 2.11 $ +95 w50% | OOS n 15 PF 3.59 $+269 w47% | ALL n 41 PF 2.72 $+159 w49%
+  NFP fade at T+20 hold to close, k0.15 stop0.25ADR: IS n 23 PF 2.22 $ +91 w43% | OOS n 12 PF 3.99 $+242 w42% | ALL n 35 PF 2.86 $+143 w43%
+  NFP fade at T+30 hold to close, k0.05 stop0.25ADR: IS n 33 PF 2.69 $+111 w52% | OOS n 18 PF 2.26 $+132 w33% | ALL n 51 PF 2.49 $+118 w45%
+  NFP fade at T+30 hold to close, k0.1 stop0.2ADR: IS n 28 PF 2.94 $+116 w46% | OOS n 17 PF 3.25 $+174 w35% | ALL n 45 PF 3.08 $+138 w42%
+  NFP fade at T+30 hold to close, k0.1 stop0.25ADR: IS n 28 PF 2.55 $+109 w50% | OOS n 17 PF 2.63 $+155 w35% | ALL n 45 PF 2.58 $+127 w44%
+  NFP fade at T+30 hold to close, k0.1 stop0.35ADR: IS n 28 PF 1.97 $ +88 w50% | OOS n 17 PF 3.15 $+206 w53% | ALL n 45 PF 2.43 $+133 w51%
+  NFP fade at T+30 hold to close, k0.15 stop0.25ADR: IS n 24 PF 2.64 $+116 w50% | OOS n 15 PF 3.25 $+197 w40% | ALL n 39 PF 2.90 $+147 w46%
+  NFP fade at T+45 hold to close, k0.05 stop0.25ADR: IS n 32 PF 2.16 $ +83 w47% | OOS n 20 PF 2.16 $+137 w30% | ALL n 52 PF 2.16 $+104 w40%
+  NFP fade at T+45 hold to close, k0.1 stop0.2ADR: IS n 28 PF 2.72 $+101 w46% | OOS n 17 PF 1.18 $ +18 w24% | ALL n 45 PF 1.93 $ +70 w38%
+  NFP fade at T+45 hold to close, k0.1 stop0.25ADR: IS n 28 PF 2.77 $+113 w54% | OOS n 17 PF 2.30 $+139 w29% | ALL n 45 PF 2.53 $+123 w44%
+  NFP fade at T+45 hold to close, k0.1 stop0.35ADR: IS n 28 PF 2.69 $+131 w61% | OOS n 17 PF 3.10 $+200 w47% | ALL n 45 PF 2.86 $+157 w56%
+  NFP fade at T+45 hold to close, k0.15 stop0.25ADR: IS n 24 PF 3.46 $+135 w58% | OOS n 12 PF 2.39 $+139 w33% | ALL n 36 PF 2.95 $+136 w50%
+  NFP fade at T+60 hold to close, k0.05 stop0.25ADR: IS n 30 PF 2.69 $+104 w47% | OOS n 19 PF 1.69 $ +86 w26% | ALL n 49 PF 2.13 $ +97 w39%
+  NFP fade at T+60 hold to close, k0.1 stop0.2ADR: IS n 26 PF 2.54 $ +85 w42% | OOS n 17 PF 0.31 $ -85 w12% | ALL n 43 PF 1.22 $ +18 w30%
+  NFP fade at T+60 hold to close, k0.1 stop0.25ADR: IS n 26 PF 3.25 $+124 w50% | OOS n 17 PF 1.49 $ +59 w24% | ALL n 43 PF 2.21 $ +98 w40%
+  NFP fade at T+60 hold to close, k0.1 stop0.35ADR: IS n 26 PF 2.50 $+107 w50% | OOS n 17 PF 1.51 $ +72 w35% | ALL n 43 PF 1.94 $ +94 w44%
+  NFP fade at T+60 hold to close, k0.15 stop0.25ADR: IS n 24 PF 4.06 $+146 w54% | OOS n 14 PF 2.02 $+110 w29% | ALL n 38 PF 2.90 $+133 w45%
+  NFP fade at T+90 hold to close, k0.05 stop0.25ADR: IS n 33 PF 0.54 $ -44 w21% | OOS n 17 PF 4.37 $+279 w47% | ALL n 50 PF 1.71 $ +66 w30%
+  NFP fade at T+90 hold to close, k0.1 stop0.2ADR: IS n 27 PF 0.76 $ -17 w22% | OOS n 16 PF 5.92 $+319 w50% | ALL n 43 PF 2.57 $+108 w33%
+  NFP fade at T+90 hold to close, k0.1 stop0.25ADR: IS n 27 PF 0.76 $ -20 w26% | OOS n 16 PF 5.38 $+313 w50% | ALL n 43 PF 2.30 $+104 w35%
+  NFP fade at T+90 hold to close, k0.1 stop0.35ADR: IS n 27 PF 1.23 $ +22 w37% | OOS n 16 PF 4.78 $+315 w56% | ALL n 43 PF 2.43 $+131 w44%
+  NFP fade at T+90 hold to close, k0.15 stop0.25ADR: IS n 25 PF 0.66 $ -30 w24% | OOS n 13 PF 2.93 $+170 w38% | ALL n 38 PF 1.44 $ +39 w29%
+  FOMC fade15 to F (target=F) k0.03 stop0.5x dist: IS n 22 PF 1.11 $  +6 w27% | OOS n 12 PF 1.37 $ +17 w25% | ALL n 34 PF 1.20 $ +10 w26%
+  FOMC fade15 to F (target=F) k0.03 stop0.75x dist: IS n 22 PF 1.56 $ +28 w41% | OOS n 12 PF 3.18 $ +71 w58% | ALL n 34 PF 1.98 $ +43 w47%
+  FOMC fade15 to F (target=F) k0.03 stop1.0x dist: IS n 22 PF 1.23 $ +15 w45% | OOS n 12 PF 3.17 $ +76 w67% | ALL n 34 PF 1.67 $ +37 w53%
+  FOMC fade15 to F (target=F) k0.03 stop1.5x dist: IS n 22 PF 1.18 $ +14 w55% | OOS n 12 PF 4.66 $ +98 w83% | ALL n 34 PF 1.74 $ +44 w65%
+  FOMC fade15 to F (target=F) k0.05 stop0.5x dist: IS n 22 PF 1.11 $  +6 w27% | OOS n 12 PF 1.37 $ +17 w25% | ALL n 34 PF 1.20 $ +10 w26%
+  FOMC fade15 to F (target=F) k0.05 stop0.75x dist: IS n 22 PF 1.56 $ +28 w41% | OOS n 12 PF 3.18 $ +71 w58% | ALL n 34 PF 1.98 $ +43 w47%
+  FOMC fade15 to F (target=F) k0.05 stop1.0x dist: IS n 22 PF 1.23 $ +15 w45% | OOS n 12 PF 3.17 $ +76 w67% | ALL n 34 PF 1.67 $ +37 w53%
+  FOMC fade15 to F (target=F) k0.05 stop1.5x dist: IS n 22 PF 1.18 $ +14 w55% | OOS n 12 PF 4.66 $ +98 w83% | ALL n 34 PF 1.74 $ +44 w65%
+  FOMC fade15 to F (target=F) k0.1 stop0.5x dist: IS n 17 PF 1.25 $ +14 w35% | OOS n  8 PF 1.68 $ +38 w38% | ALL n 25 PF 1.38 $ +21 w36%
+  FOMC fade15 to F (target=F) k0.1 stop0.75x dist: IS n 17 PF 1.79 $ +45 w53% | OOS n  8 PF 3.48 $+103 w62% | ALL n 25 PF 2.23 $ +64 w56%
+  FOMC fade15 to F (target=F) k0.1 stop1.0x dist: IS n 17 PF 1.36 $ +27 w53% | OOS n  8 PF 3.61 $+112 w75% | ALL n 25 PF 1.84 $ +54 w60%
+  FOMC fade15 to F (target=F) k0.1 stop1.5x dist: IS n 17 PF 1.34 $ +29 w65% | OOS n  8 PF 5.31 $+142 w88% | ALL n 25 PF 1.94 $ +65 w72%
+  FOMC fade15 to F (target=F) k0.15 stop0.5x dist: IS n 13 PF 1.28 $ +18 w31% | OOS n  8 PF 1.68 $ +38 w38% | ALL n 21 PF 1.41 $ +26 w33%
+  FOMC fade15 to F (target=F) k0.15 stop0.75x dist: IS n 13 PF 1.98 $ +63 w54% | OOS n  8 PF 3.48 $+103 w62% | ALL n 21 PF 2.41 $ +78 w57%
+  FOMC fade15 to F (target=F) k0.15 stop1.0x dist: IS n 13 PF 1.50 $ +42 w54% | OOS n  8 PF 3.61 $+112 w75% | ALL n 21 PF 2.00 $ +69 w62%
+  FOMC fade15 to F (target=F) k0.15 stop1.5x dist: IS n 13 PF 1.56 $ +52 w69% | OOS n  8 PF 5.31 $+142 w88% | ALL n 21 PF 2.23 $ +86 w76%
+  FOMC fade15 to F (target=F) k0.2 stop0.5x dist: IS n 11 PF 1.44 $ +31 w36% | OOS n  4 PF 2.89 $+105 w50% | ALL n 15 PF 1.77 $ +51 w40%
+  FOMC fade15 to F (target=F) k0.2 stop0.75x dist: IS n 11 PF 1.96 $ +69 w55% | OOS n  4 PF 7.11 $+193 w75% | ALL n 15 PF 2.68 $+102 w60%
+  FOMC fade15 to F (target=F) k0.2 stop1.0x dist: IS n 11 PF 1.49 $ +46 w55% | OOS n  4 PF 5.39 $+183 w75% | ALL n 15 PF 2.03 $ +82 w60%
+  FOMC fade15 to F (target=F) k0.2 stop1.5x dist: IS n 11 PF 1.42 $ +46 w64% | OOS n  4 PF 9.90 $+264 w100% | ALL n 15 PF 2.29 $+104 w73%
+  RETAIL next-day fade k0 stop0.3: IS n 36 PF 1.50 $ +41 w42% | OOS n 22 PF 1.81 $ +96 w41% | ALL n 58 PF 1.65 $ +62 w41%
+  RETAIL next-day fade k0.2 stop0.3: IS n 26 PF 1.67 $ +54 w50% | OOS n 21 PF 2.01 $+113 w43% | ALL n 47 PF 1.85 $ +81 w47%
+  RETAIL next-day fade k0.4 stop0.3: IS n 23 PF 1.17 $ +14 w48% | OOS n 11 PF 3.22 $+200 w45% | ALL n 34 PF 1.88 $ +74 w47%
+  RETAIL next-day fade k0 stop0.5: IS n 36 PF 1.74 $ +62 w61% | OOS n 22 PF 1.76 $+103 w50% | ALL n 58 PF 1.75 $ +78 w57%
+  RETAIL next-day fade k0.2 stop0.5: IS n 26 PF 1.65 $ +58 w65% | OOS n 21 PF 2.04 $+128 w52% | ALL n 47 PF 1.86 $ +89 w60%
+  RETAIL next-day fade k0.4 stop0.5: IS n 23 PF 1.23 $ +21 w65% | OOS n 11 PF 4.90 $+270 w64% | ALL n 34 PF 2.23 $+102 w65%
+  RETAIL next-day fade k0 stop0.8: IS n 36 PF 1.76 $ +63 w64% | OOS n 22 PF 2.01 $+123 w55% | ALL n 58 PF 1.88 $ +86 w60%
+  RETAIL next-day fade k0.2 stop0.8: IS n 26 PF 1.97 $ +74 w69% | OOS n 21 PF 2.68 $+160 w57% | ALL n 47 PF 2.33 $+112 w64%
+  RETAIL next-day fade k0.4 stop0.8: IS n 23 PF 1.52 $ +38 w70% | OOS n 11 PF 5.52 $+278 w64% | ALL n 34 PF 2.66 $+116 w68%
+  FOMC next-day fade k0 stop0.3: IS n 24 PF 0.67 $ -40 w21% | OOS n 14 PF 1.04 $  +5 w29% | ALL n 38 PF 0.81 $ -23 w24%
+  FOMC next-day fade k0.2 stop0.3: IS n 20 PF 0.64 $ -45 w20% | OOS n 11 PF 0.95 $  -7 w27% | ALL n 31 PF 0.75 $ -31 w23%
+  FOMC next-day fade k0.4 stop0.3: IS n 16 PF 0.75 $ -31 w19% | OOS n  5 PF 4.53 $+202 w60% | ALL n 21 PF 1.22 $ +24 w29%
+  FOMC next-day fade k0 stop0.5: IS n 24 PF 1.12 $ +17 w38% | OOS n 14 PF 1.12 $ +14 w50% | ALL n 38 PF 1.12 $ +16 w42%
+  FOMC next-day fade k0.2 stop0.5: IS n 20 PF 1.21 $ +30 w40% | OOS n 11 PF 1.21 $ +22 w55% | ALL n 31 PF 1.21 $ +27 w45%
+  FOMC next-day fade k0.4 stop0.5: IS n 16 PF 0.65 $ -56 w31% | OOS n  5 PF 14.02 $+258 w80% | ALL n 21 PF 1.14 $ +19 w43%
+  FOMC next-day fade k0 stop0.8: IS n 24 PF 1.07 $ +11 w42% | OOS n 14 PF 1.22 $ +24 w50% | ALL n 38 PF 1.11 $ +15 w45%
+  FOMC next-day fade k0.2 stop0.8: IS n 20 PF 0.97 $  -6 w40% | OOS n 11 PF 1.41 $ +37 w55% | ALL n 31 PF 1.07 $  +9 w45%
+  FOMC next-day fade k0.4 stop0.8: IS n 16 PF 0.53 $ -93 w31% | OOS n  5 PF 14.02 $+258 w80% | ALL n 21 PF 0.94 $  -9 w43%
+  CPI next-day fade k0 stop0.3: IS n 36 PF 1.79 $ +65 w39% | OOS n 21 PF 1.56 $ +66 w43% | ALL n 57 PF 1.69 $ +65 w40%
+  CPI next-day fade k0.2 stop0.3: IS n 29 PF 0.97 $  -2 w31% | OOS n 13 PF 1.51 $ +56 w46% | ALL n 42 PF 1.16 $ +16 w36%
+  CPI next-day fade k0.4 stop0.3: IS n 24 PF 0.89 $ -11 w33% | OOS n  8 PF 1.42 $ +54 w38% | ALL n 32 PF 1.05 $  +5 w34%
+  CPI next-day fade k0 stop0.5: IS n 36 PF 1.58 $ +63 w50% | OOS n 21 PF 2.07 $+149 w52% | ALL n 57 PF 1.79 $ +95 w51%
+  CPI next-day fade k0.2 stop0.5: IS n 29 PF 1.01 $  +1 w45% | OOS n 13 PF 3.56 $+241 w62% | ALL n 42 PF 1.68 $ +76 w50%
+  CPI next-day fade k0.4 stop0.5: IS n 24 PF 1.02 $  +3 w50% | OOS n  8 PF 5.32 $+372 w62% | ALL n 32 PF 1.85 $ +95 w53%
+  CPI next-day fade k0 stop0.8: IS n 36 PF 1.50 $ +62 w56% | OOS n 21 PF 1.59 $+107 w52% | ALL n 57 PF 1.54 $ +78 w54%
+  CPI next-day fade k0.2 stop0.8: IS n 29 PF 1.03 $  +4 w52% | OOS n 13 PF 3.21 $+231 w62% | ALL n 42 PF 1.60 $ +74 w55%
+  CPI next-day fade k0.4 stop0.8: IS n 24 PF 0.97 $  -4 w58% | OOS n  8 PF 4.20 $+349 w62% | ALL n 32 PF 1.61 $ +84 w59%
+  NFP next-day fade k0 stop0.3: IS n 35 PF 0.86 $ -14 w26% | OOS n 19 PF 3.02 $+181 w47% | ALL n 54 PF 1.58 $ +55 w33%
+  NFP next-day fade k0.2 stop0.3: IS n 32 PF 0.81 $ -18 w25% | OOS n 18 PF 2.35 $+127 w44% | ALL n 50 PF 1.35 $ +34 w32%
+  NFP next-day fade k0.4 stop0.3: IS n 22 PF 0.73 $ -25 w23% | OOS n 14 PF 1.35 $ +38 w36% | ALL n 36 PF 0.99 $  -1 w28%
+  NFP next-day fade k0 stop0.5: IS n 35 PF 0.79 $ -25 w34% | OOS n 19 PF 2.27 $+151 w47% | ALL n 54 PF 1.31 $ +37 w39%
+  NFP next-day fade k0.2 stop0.5: IS n 32 PF 0.72 $ -35 w31% | OOS n 18 PF 1.77 $ +96 w44% | ALL n 50 PF 1.10 $ +12 w36%
+  NFP next-day fade k0.4 stop0.5: IS n 22 PF 0.76 $ -26 w32% | OOS n 14 PF 1.05 $  +7 w36% | ALL n 36 PF 0.89 $ -13 w33%
+  NFP next-day fade k0 stop0.8: IS n 35 PF 0.73 $ -37 w40% | OOS n 19 PF 4.24 $+264 w58% | ALL n 54 PF 1.59 $ +69 w46%
+  NFP next-day fade k0.2 stop0.8: IS n 32 PF 0.68 $ -44 w38% | OOS n 18 PF 3.51 $+215 w56% | ALL n 50 PF 1.41 $ +49 w44%
+  NFP next-day fade k0.4 stop0.8: IS n 22 PF 0.71 $ -36 w36% | OOS n 14 PF 3.46 $+175 w50% | ALL n 36 PF 1.44 $ +46 w42%
+  PCE next-day fade k0 stop0.3: IS n 35 PF 0.92 $  -6 w43% | OOS n 19 PF 0.85 $ -20 w32% | ALL n 54 PF 0.89 $ -11 w39%
+  PCE next-day fade k0.2 stop0.3: IS n 28 PF 0.75 $ -20 w39% | OOS n 14 PF 1.03 $  +4 w36% | ALL n 42 PF 0.87 $ -12 w38%
+  PCE next-day fade k0.4 stop0.3: IS n 24 PF 0.60 $ -33 w38% | OOS n 12 PF 1.23 $ +29 w42% | ALL n 36 PF 0.87 $ -12 w39%
+  PCE next-day fade k0 stop0.5: IS n 35 PF 0.82 $ -19 w46% | OOS n 19 PF 1.57 $ +59 w58% | ALL n 54 PF 1.08 $  +8 w50%
+  PCE next-day fade k0.2 stop0.5: IS n 28 PF 0.76 $ -25 w43% | OOS n 14 PF 2.59 $+120 w64% | ALL n 42 PF 1.25 $ +23 w50%
+  PCE next-day fade k0.4 stop0.5: IS n 24 PF 0.68 $ -32 w42% | OOS n 12 PF 4.82 $+180 w75% | ALL n 36 PF 1.47 $ +39 w53%
+  PCE next-day fade k0 stop0.8: IS n 35 PF 1.11 $ +10 w51% | OOS n 19 PF 1.94 $ +94 w68% | ALL n 54 PF 1.43 $ +39 w57%
+  PCE next-day fade k0.2 stop0.8: IS n 28 PF 1.02 $  +1 w50% | OOS n 14 PF 4.26 $+184 w79% | ALL n 42 PF 1.79 $ +62 w60%
+  PCE next-day fade k0.4 stop0.8: IS n 24 PF 0.95 $  -5 w50% | OOS n 12 PF 9.31 $+247 w83% | ALL n 36 PF 2.14 $ +79 w61%
+
+3) pooled families (all major events: CPI PPI NFP GDP PCE RETAIL ISM_MFG ISM_SRV JOLTS FOMC FOMC_PC FOMC_MIN TESTIMONY)
+  fade15 k.10 tgt=F stop=1x        events IS n248 PF 1.17 $ +10 w52% | OOS n129 PF 1.50 $ +31 w59% | ALL n377 PF 1.29 $ +17 w54%
+                                   clean  IS n411 PF 0.74 $ -12 w45% | OOS n230 PF 1.10 $  +6 w51% | ALL n641 PF 0.89 $  -6 w47%
+  fade15 k.05 tgt=F stop=1x        events IS n318 PF 1.06 $  +3 w47% | OOS n178 PF 1.38 $ +20 w55% | ALL n496 PF 1.17 $  +9 w50%
+                                   clean  IS n779 PF 0.69 $ -11 w44% | OOS n415 PF 0.98 $  -1 w49% | ALL n1194 PF 0.81 $  -8 w46%
+  fade15 k.10 tgt=F stop=0.5x      events IS n248 PF 1.01 $  +1 w35% | OOS n129 PF 1.08 $  +4 w37% | ALL n377 PF 1.04 $  +2 w36%
+                                   clean  IS n411 PF 0.69 $ -11 w28% | OOS n230 PF 0.83 $  -8 w32% | ALL n641 PF 0.75 $ -10 w30%
+  follow30 k.10 stop.25 ->close    events IS n269 PF 1.08 $  +6 w33% | OOS n150 PF 0.74 $ -32 w27% | ALL n419 PF 0.92 $  -7 w31%
+                                   clean  IS n591 PF 1.24 $ +16 w42% | OOS n328 PF 0.88 $ -11 w36% | ALL n919 PF 1.08 $  +6 w40%
+  follow30 k.10 stop.25 2R         events IS n269 PF 0.88 $  -9 w35% | OOS n150 PF 0.82 $ -20 w33% | ALL n419 PF 0.85 $ -13 w35%
+                                   clean  IS n591 PF 1.14 $  +9 w44% | OOS n328 PF 0.91 $  -8 w39% | ALL n919 PF 1.04 $  +3 w42%
+  fade30 k.10 stop.25 ->close      events IS n269 PF 1.16 $ +14 w32% | OOS n150 PF 1.37 $ +35 w40% | ALL n419 PF 1.24 $ +22 w35%
+                                   clean  IS n591 PF 0.78 $ -17 w34% | OOS n328 PF 1.00 $  +0 w35% | ALL n919 PF 0.87 $ -11 w34%
+  follow60 k.10 stop.25 ->close    events IS n282 PF 1.00 $  +0 w33% | OOS n171 PF 0.83 $ -19 w30% | ALL n453 PF 0.92 $  -7 w32%
+                                   clean  IS n754 PF 1.16 $ +10 w41% | OOS n418 PF 1.00 $  +0 w36% | ALL n1172 PF 1.09 $  +7 w40%
+  fade60 k.10 stop.25 ->close      events IS n282 PF 1.40 $ +29 w37% | OOS n171 PF 1.15 $ +15 w37% | ALL n453 PF 1.29 $ +24 w37%
+                                   clean  IS n754 PF 0.76 $ -18 w33% | OOS n418 PF 0.91 $  -8 w37% | ALL n1172 PF 0.82 $ -14 w34%
+  follow5 k.05 stop.20 hold60      events IS n295 PF 0.71 $ -18 w33% | OOS n166 PF 0.66 $ -27 w35% | ALL n461 PF 0.69 $ -21 w34%
+                                   clean  IS n517 PF 1.02 $  +1 w44% | OOS n313 PF 1.04 $  +3 w44% | ALL n830 PF 1.03 $  +2 w44%
+  predrift k.08 hold30             events IS n201 PF 0.90 $  -5 w39% | OOS n127 PF 0.70 $ -23 w40% | ALL n328 PF 0.81 $ -12 w39%
+                                   clean  IS n823 PF 0.90 $  -3 w44% | OOS n472 PF 0.99 $  +0 w45% | ALL n1295 PF 0.94 $  -2 w44%
+  morning-trend at T ->close       events IS n103 PF 0.96 $  -3 w37% | OOS n 57 PF 0.97 $  -3 w40% | ALL n160 PF 0.97 $  -3 w38%
+                                   clean  IS n516 PF 1.28 $ +17 w47% | OOS n336 PF 0.91 $  -8 w40% | ALL n852 PF 1.10 $  +7 w44%
+  next day fade event move         events IS n293 PF 1.14 $ +16 w43% | OOS n163 PF 1.42 $ +57 w49% | ALL n456 PF 1.25 $ +31 w45%
+                                   clean  IS n788 PF 0.94 $  -8 w41% | OOS n452 PF 1.12 $ +18 w43% | ALL n1240 PF 1.01 $  +2 w41%
+  next day follow event move       events IS n293 PF 1.13 $ +14 w43% | OOS n163 PF 0.78 $ -40 w38% | ALL n456 PF 0.96 $  -5 w41%
+                                   clean  IS n788 PF 1.02 $  +2 w44% | OOS n452 PF 0.99 $  -1 w43% | ALL n1240 PF 1.01 $  +1 w43%

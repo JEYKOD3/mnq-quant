@@ -1,0 +1,180 @@
+857 trades
+  ALL trades                                                 22-24 n 541 PF 1.60 avg $ +39 tot $+21042 | 25-26 n 316 PF 1.52 avg $ +44 tot $+13897
+
+1) by event day (all trades that day)
+  CPI days                                                   22-24 n  21 PF 1.82 avg $ +36 tot $  +748 | 25-26 n   8 PF 45.78 avg $+145 tot $ +1163
+  PPI days                                                   22-24 n  23 PF 2.91 avg $ +77 tot $ +1772 | 25-26 n  11 PF 9.90 avg $+200 tot $ +2205
+  NFP days                                                   22-24 n  27 PF 1.28 avg $ +26 tot $  +696 | 25-26 n  20 PF 2.09 avg $ +88 tot $ +1761
+  GDP days                                                   22-24 n   4 PF 2.14 avg $ +65 tot $  +261 | 25-26 n   6 PF 1.12 avg $ +12 tot $   +71
+  PCE days                                                   22-24 n  42 PF 2.06 avg $ +68 tot $ +2836 | 25-26 n  19 PF 1.02 avg $  +2 tot $   +34
+  RETAIL days                                                22-24 n  31 PF 3.43 avg $ +82 tot $ +2555 | 25-26 n   7 PF 3.14 avg $ +81 tot $  +566
+  ISM_MFG days                                               22-24 n  25 PF 1.41 avg $ +36 tot $  +890 | 25-26 n  20 PF 1.33 avg $ +25 tot $  +493
+  ISM_SRV days                                               22-24 n  33 PF 0.81 avg $ -19 tot $  -626 | 25-26 n  23 PF 11.79 avg $+149 tot $ +3416
+  JOLTS days                                                 22-24 n  26 PF 1.41 avg $ +31 tot $  +807 | 25-26 n  16 PF 2.77 avg $+125 tot $ +2002
+  FOMC days                                                  22-24 n  17 PF 1.45 avg $ +38 tot $  +646 | 25-26 n   3 PF 3.31 avg $+133 tot $  +398
+  FOMC_MIN days                                              22-24 n  15 PF 0.16 avg $ -96 tot $ -1440 | 25-26 n  11 PF 0.36 avg $-122 tot $ -1342
+  TESTIMONY days                                             22-24 n  15 PF 0.97 avg $  -2 tot $   -29 | 25-26 n   2 PF 9.90 avg $+117 tot $  +235
+  CLAIMS days                                                22-24 n 123 PF 1.90 avg $ +55 tot $ +6808 | 25-26 n  63 PF 1.09 avg $  +9 tot $  +566
+  days with no major red folder (claims allowed)             22-24 n 291 PF 1.51 avg $ +33 tot $ +9625 | 25-26 n 186 PF 1.26 avg $ +26 tot $ +4750
+
+2) intraday 10:00 / 14:00 events: trades entered in [T-15, T+15) vs held across T vs the rest of that day
+  ISM_MFG: entered T-15..T+15                                22-24 n   4 PF 1.24 avg $ +17 tot $   +66 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  ISM_MFG: open across T                                     22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  ISM_MFG: rest of the day                                   22-24 n  21 PF 1.44 avg $ +39 tot $  +824 | 25-26 n  20 PF 1.33 avg $ +25 tot $  +493
+  ISM_SRV: entered T-15..T+15                                22-24 n   8 PF 1.78 avg $ +53 tot $  +426 | 25-26 n   1 PF 9.90 avg $+331 tot $  +331
+  ISM_SRV: open across T                                     22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  ISM_SRV: rest of the day                                   22-24 n  25 PF 0.63 avg $ -42 tot $ -1052 | 25-26 n  22 PF 10.75 avg $+140 tot $ +3084
+  JOLTS: entered T-15..T+15                                  22-24 n   4 PF 1.10 avg $  +8 tot $   +34 | 25-26 n   1 PF 9.90 avg $+215 tot $  +215
+  JOLTS: open across T                                       22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  JOLTS: rest of the day                                     22-24 n  22 PF 1.47 avg $ +35 tot $  +774 | 25-26 n  15 PF 2.58 avg $+119 tot $ +1787
+  TESTIMONY: entered T-15..T+15                              22-24 n   3 PF 0.85 avg $ -13 tot $   -40 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  TESTIMONY: open across T                                   22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  TESTIMONY: rest of the day                                 22-24 n  12 PF 1.01 avg $  +1 tot $   +11 | 25-26 n   2 PF 9.90 avg $+117 tot $  +235
+  PCE: entered T-15..T+15                                    22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  PCE: open across T                                         22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  PCE: rest of the day                                       22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   1 PF 0.00 avg $-185 tot $  -185
+  FOMC: entered T-15..T+15                                   22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  FOMC: open across T                                        22-24 n  11 PF 2.58 avg $+105 tot $ +1160 | 25-26 n   2 PF 1.50 avg $ +43 tot $   +86
+  FOMC: rest of the day                                      22-24 n   6 PF 0.26 avg $ -86 tot $  -515 | 25-26 n   1 PF 9.90 avg $+312 tot $  +312
+  FOMC_MIN: entered T-15..T+15                               22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  FOMC_MIN: open across T                                    22-24 n   8 PF 0.18 avg $ -81 tot $  -646 | 25-26 n   7 PF 0.94 avg $  -7 tot $   -46
+  FOMC_MIN: rest of the day                                  22-24 n   7 PF 0.14 avg $-114 tot $  -795 | 25-26 n   4 PF 0.00 avg $-324 tot $ -1295
+
+3) any 10:00 red folder (ISM, JOLTS, testimony, 10:00 PCE): entries 9:45-10:15 vs same window on days without one
+  entered 9:45-10:15 on 10:00 red-folder days                22-24 n  16 PF 1.54 avg $ +37 tot $  +586 | 25-26 n   2 PF 9.90 avg $+273 tot $  +546
+  entered 9:45-10:15 on other days                           22-24 n  69 PF 2.02 avg $ +65 tot $ +4506 | 25-26 n  37 PF 1.90 avg $ +63 tot $ +2315
+  open across 10:00 on 10:00 red-folder days                 22-24 n   9 PF 1.29 avg $ +24 tot $  +215 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  open across 10:00 on other days                            22-24 n  35 PF 3.55 avg $+109 tot $ +3827 | 25-26 n  18 PF 2.02 avg $ +60 tot $ +1080
+
+4) candidate avoid rules: total $ effect if we skip these entries
+  skip entries 9:50-10:05 on 10:00 red-folder days: skipped trades 22-24 n  10 PF 1.47 avg $ +35 tot $  +347 | 25-26 n   1 PF 9.90 avg $+215 tot $  +215
+  skip entries 9:50-10:05 on 10:00 red-folder days: kept     22-24 n 531 PF 1.60 avg $ +39 tot $+20695 | 25-26 n 315 PF 1.51 avg $ +43 tot $+13682
+  skip entries 13:45-14:30 on FOMC days: skipped trades      22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  skip entries 13:45-14:30 on FOMC days: kept                22-24 n 541 PF 1.60 avg $ +39 tot $+21042 | 25-26 n 316 PF 1.52 avg $ +44 tot $+13897
+  skip entries after 13:30 on FOMC days: skipped trades      22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  skip entries after 13:30 on FOMC days: kept                22-24 n 541 PF 1.60 avg $ +39 tot $+21042 | 25-26 n 316 PF 1.52 avg $ +44 tot $+13897
+  skip entries 13:45-14:15 on FOMC minutes days: skipped trades 22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  skip entries 13:45-14:15 on FOMC minutes days: kept        22-24 n 541 PF 1.60 avg $ +39 tot $+21042 | 25-26 n 316 PF 1.52 avg $ +44 tot $+13897
+  skip all FOMC days: skipped trades                         22-24 n  17 PF 1.45 avg $ +38 tot $  +646 | 25-26 n   3 PF 3.31 avg $+133 tot $  +398
+  skip all FOMC days: kept                                   22-24 n 524 PF 1.61 avg $ +39 tot $+20396 | 25-26 n 313 PF 1.51 avg $ +43 tot $+13499
+  skip the day after FOMC: skipped trades                    22-24 n  24 PF 2.69 avg $ +82 tot $ +1968 | 25-26 n  10 PF 0.36 avg $-107 tot $ -1069
+  skip the day after FOMC: kept                              22-24 n 517 PF 1.56 avg $ +37 tot $+19074 | 25-26 n 306 PF 1.59 avg $ +49 tot $+14967
+
+5) by strategy, trades held across a 10:00 red folder or FOMC 14:00
+  V4+: open across 10:00 red folder                          22-24 n   9 PF 1.29 avg $ +24 tot $  +215 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  V4+: open across 10:00 other days                          22-24 n  35 PF 3.55 avg $+109 tot $ +3827 | 25-26 n  18 PF 2.02 avg $ +60 tot $ +1080
+  D2: open across 10:00 red folder                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  D2: open across 10:00 other days                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  Pinball: open across 10:00 red folder                      22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  Pinball: open across 10:00 other days                      22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  H2: open across 10:00 red folder                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  H2: open across 10:00 other days                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  TDP: open across 10:00 red folder                          22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  TDP: open across 10:00 other days                          22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  20220406 D2      entry 10:30 exit 14:02 $-284
+  20221123 V4+     entry 10:02 exit 12:57 $-173
+  20221123 H2      entry 10:35 exit 11:47 $-81
+  20230104 D2      entry 10:30 exit 11:31 $-247
+  20230705 V4+     entry 9:55 exit 15:55 $-41
+  20230705 D2      entry 10:30 exit 15:00 $-72
+  20230705 H2      entry 11:00 exit 11:13 $-60
+  20231121 D2      entry 10:30 exit 15:00 $-125
+  20240221 V4+     entry 12:24 exit 15:32 $-2
+  20240703 V4+     entry 9:50 exit 11:14 $+131
+  20241126 V4+     entry 9:50 exit 10:00 $-163
+  20250820 D2      entry 10:30 exit 15:00 $-329
+  20251008 D2      entry 10:30 exit 15:00 $+102
+  20251008 H2      entry 10:30 exit 10:50 $-72
+  20251008 H2      entry 13:00 exit 14:00 $+68
+  20251119 D2      entry 10:30 exit 12:05 $-694
+  20260218 D2      entry 10:30 exit 15:00 $-327
+  20260520 Pinball entry 10:30 exit 15:55 $+243
+  20260819 D2      entry 10:30 exit 15:00 $-137
+  20220406 TDP     entry 10:46 exit 14:02 $-214
+  20220525 TDP     entry 10:43 exit 15:55 $+139
+  20221123 TDP     entry 11:37 exit 12:57 $-202
+  20230705 TDP     entry 10:52 exit 15:55 $-45
+  20250820 TDP     entry 11:17 exit 11:32 $-188
+  20251119 TDP     entry 10:50 exit 11:24 $-341
+  20260520 TDP     entry 10:35 exit 15:55 $+334
+  minutes days, trades closed before 13:55                   22-24 n   7 PF 0.14 avg $-114 tot $  -795 | 25-26 n   4 PF 0.00 avg $-324 tot $ -1295
+  minutes days, trades open at/after 13:55                   22-24 n   8 PF 0.18 avg $ -81 tot $  -646 | 25-26 n   7 PF 0.94 avg $  -7 tot $   -46
+  minutes days V4+                                           22-24 n   5 PF 0.34 avg $ -50 tot $  -249 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+  minutes days D2                                            22-24 n   4 PF 0.00 avg $-182 tot $  -728 | 25-26 n   5 PF 0.07 avg $-277 tot $ -1386
+  minutes days Pinball                                       22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   1 PF 9.90 avg $+243 tot $  +243
+  minutes days H2                                            22-24 n   2 PF 0.00 avg $ -70 tot $  -141 | 25-26 n   2 PF 0.95 avg $  -2 tot $    -3
+  minutes days TDP                                           22-24 n   4 PF 0.30 avg $ -80 tot $  -322 | 25-26 n   3 PF 0.63 avg $ -65 tot $  -196
+  observed total on 39 minutes days $-2782; random any day: p = 0.003
+  observed total on 39 minutes days $-2782; random Wednesdays: p = 0.000
+
+by strategy x event day
+V4+
+    V4+ on CPI days                                          22-24 n   9 PF 2.56 avg $ +59 tot $  +530 | 25-26 n   4 PF 48.40 avg $+210 tot $  +841
+    V4+ on PPI days                                          22-24 n   5 PF 1.10 avg $  +7 tot $   +33 | 25-26 n   5 PF 9.90 avg $+203 tot $ +1017
+    V4+ on NFP days                                          22-24 n   4 PF 9.90 avg $+326 tot $ +1303 | 25-26 n   4 PF 0.00 avg $-107 tot $  -428
+    V4+ on GDP days                                          22-24 n   2 PF 2.67 avg $+108 tot $  +217 | 25-26 n   1 PF 9.90 avg $+132 tot $  +132
+    V4+ on PCE days                                          22-24 n  12 PF 1.07 avg $  +7 tot $   +81 | 25-26 n   2 PF 93.59 avg $+104 tot $  +207
+    V4+ on RETAIL days                                       22-24 n   8 PF 5.30 avg $+108 tot $  +868 | 25-26 n   4 PF 1.04 avg $  +3 tot $   +12
+    V4+ on ISM_MFG days                                      22-24 n   7 PF 0.71 avg $ -31 tot $  -216 | 25-26 n   3 PF 14.41 avg $ +49 tot $  +147
+    V4+ on ISM_SRV days                                      22-24 n   9 PF 1.33 avg $ +27 tot $  +239 | 25-26 n   3 PF 9.90 avg $+167 tot $  +500
+    V4+ on JOLTS days                                        22-24 n   8 PF 1.09 avg $  +9 tot $   +71 | 25-26 n   3 PF 5.30 avg $ +68 tot $  +203
+    V4+ on FOMC days                                         22-24 n   6 PF 2.67 avg $ +76 tot $  +456 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    V4+ on FOMC_MIN days                                     22-24 n   5 PF 0.34 avg $ -50 tot $  -249 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    V4+ on TESTIMONY days                                    22-24 n   5 PF 0.97 avg $  -3 tot $   -13 | 25-26 n   1 PF 9.90 avg $+204 tot $  +204
+    V4+ all                                                  22-24 n 147 PF 1.49 avg $ +34 tot $ +5034 | 25-26 n  73 PF 2.07 avg $ +64 tot $ +4701
+D2
+    D2 on CPI days                                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    D2 on PPI days                                           22-24 n   3 PF 7.11 avg $+130 tot $  +389 | 25-26 n   2 PF 9.90 avg $+127 tot $  +254
+    D2 on NFP days                                           22-24 n  11 PF 0.29 avg $-117 tot $ -1288 | 25-26 n   8 PF 5.74 avg $+275 tot $ +2197
+    D2 on GDP days                                           22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   3 PF 0.17 avg $-162 tot $  -487
+    D2 on PCE days                                           22-24 n  12 PF 2.53 avg $+113 tot $ +1352 | 25-26 n   8 PF 0.69 avg $ -50 tot $  -397
+    D2 on RETAIL days                                        22-24 n   7 PF 10.20 avg $+150 tot $ +1051 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    D2 on ISM_MFG days                                       22-24 n   8 PF 1.12 avg $ +14 tot $  +112 | 25-26 n  10 PF 1.71 avg $ +69 tot $  +688
+    D2 on ISM_SRV days                                       22-24 n  12 PF 0.70 avg $ -31 tot $  -371 | 25-26 n   5 PF 129.36 avg $+186 tot $  +929
+    D2 on JOLTS days                                         22-24 n   8 PF 0.89 avg $  -7 tot $   -60 | 25-26 n   6 PF 1.66 avg $ +87 tot $  +521
+    D2 on FOMC days                                          22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    D2 on FOMC_MIN days                                      22-24 n   4 PF 0.00 avg $-182 tot $  -728 | 25-26 n   5 PF 0.07 avg $-277 tot $ -1386
+    D2 on TESTIMONY days                                     22-24 n   4 PF 4.65 avg $ +88 tot $  +352 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    D2 all                                                   22-24 n 113 PF 1.55 avg $ +43 tot $ +4833 | 25-26 n 101 PF 1.24 avg $ +30 tot $ +3015
+Pinball
+    Pinball on CPI days                                      22-24 n   4 PF 4.08 avg $ +94 tot $  +376 | 25-26 n   1 PF 9.90 avg $+172 tot $  +172
+    Pinball on PPI days                                      22-24 n   3 PF 9.90 avg $+363 tot $ +1090 | 25-26 n   1 PF 9.90 avg $+258 tot $  +258
+    Pinball on NFP days                                      22-24 n   2 PF 1.18 avg $ +17 tot $   +33 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    Pinball on GDP days                                      22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    Pinball on PCE days                                      22-24 n   1 PF 9.90 avg $+655 tot $  +655 | 25-26 n   1 PF 0.00 avg $ -31 tot $   -31
+    Pinball on RETAIL days                                   22-24 n   3 PF 0.60 avg $ -36 tot $  -109 | 25-26 n   2 PF 9.90 avg $+192 tot $  +384
+    Pinball on ISM_MFG days                                  22-24 n   2 PF 1.53 avg $ +55 tot $  +109 | 25-26 n   2 PF 0.66 avg $ -25 tot $   -50
+    Pinball on ISM_SRV days                                  22-24 n   2 PF 0.00 avg $-202 tot $  -403 | 25-26 n   2 PF 9.90 avg $+302 tot $  +605
+    Pinball on JOLTS days                                    22-24 n   4 PF 12.34 avg $+247 tot $  +989 | 25-26 n   1 PF 9.90 avg $+335 tot $  +335
+    Pinball on FOMC days                                     22-24 n   1 PF 9.90 avg $+393 tot $  +393 | 25-26 n   1 PF 9.90 avg $+258 tot $  +258
+    Pinball on FOMC_MIN days                                 22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   1 PF 9.90 avg $+243 tot $  +243
+    Pinball on TESTIMONY days                                22-24 n   2 PF 9.90 avg $+138 tot $  +276 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    Pinball all                                              22-24 n  60 PF 2.75 avg $ +92 tot $ +5533 | 25-26 n  24 PF 1.79 avg $ +61 tot $ +1472
+H2
+    H2 on CPI days                                           22-24 n   4 PF 0.17 avg $ -56 tot $  -224 | 25-26 n   2 PF 3.73 avg $ +11 tot $   +23
+    H2 on PPI days                                           22-24 n   9 PF 0.58 avg $ -17 tot $  -155 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    H2 on NFP days                                           22-24 n   4 PF 0.37 avg $ -30 tot $  -121 | 25-26 n   5 PF 1.72 avg $ +30 tot $  +149
+    H2 on GDP days                                           22-24 n   2 PF 1.45 avg $ +22 tot $   +45 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    H2 on PCE days                                           22-24 n   8 PF 3.04 avg $ +47 tot $  +373 | 25-26 n   3 PF 1.74 avg $ +29 tot $   +86
+    H2 on RETAIL days                                        22-24 n   9 PF 7.03 avg $ +91 tot $  +820 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    H2 on ISM_MFG days                                       22-24 n   2 PF 1.23 avg $  +9 tot $   +17 | 25-26 n   3 PF 0.60 avg $ -13 tot $   -38
+    H2 on ISM_SRV days                                       22-24 n   2 PF 1.00 avg $  +0 tot $    +1 | 25-26 n   8 PF 3.09 avg $ +66 tot $  +529
+    H2 on JOLTS days                                         22-24 n   1 PF 0.00 avg $ -57 tot $   -57 | 25-26 n   1 PF 0.00 avg $ -18 tot $   -18
+    H2 on FOMC days                                          22-24 n   2 PF 0.00 avg $ -54 tot $  -109 | 25-26 n   1 PF 9.90 avg $+312 tot $  +312
+    H2 on FOMC_MIN days                                      22-24 n   2 PF 0.00 avg $ -70 tot $  -141 | 25-26 n   2 PF 0.95 avg $  -2 tot $    -3
+    H2 on TESTIMONY days                                     22-24 n   2 PF 0.00 avg $-121 tot $  -241 | 25-26 n   1 PF 9.90 avg $ +31 tot $   +31
+    H2 all                                                   22-24 n  99 PF 1.26 avg $ +11 tot $ +1127 | 25-26 n  44 PF 1.68 avg $ +28 tot $ +1236
+TDP
+    TDP on CPI days                                          22-24 n   4 PF 1.36 avg $ +17 tot $   +66 | 25-26 n   1 PF 9.90 avg $+128 tot $  +128
+    TDP on PPI days                                          22-24 n   3 PF 3.55 avg $+138 tot $  +415 | 25-26 n   3 PF 9.90 avg $+226 tot $  +677
+    TDP on NFP days                                          22-24 n   6 PF 3.79 avg $+128 tot $  +770 | 25-26 n   3 PF 0.70 avg $ -52 tot $  -156
+    TDP on GDP days                                          22-24 n   0 PF 9.90 avg $  +0 tot $    +0 | 25-26 n   2 PF 9.90 avg $+213 tot $  +425
+    TDP on PCE days                                          22-24 n   9 PF 1.76 avg $ +42 tot $  +375 | 25-26 n   5 PF 1.44 avg $ +34 tot $  +169
+    TDP on RETAIL days                                       22-24 n   4 PF 0.77 avg $ -19 tot $   -76 | 25-26 n   1 PF 9.90 avg $+171 tot $  +171
+    TDP on ISM_MFG days                                      22-24 n   6 PF 5.60 avg $+145 tot $  +868 | 25-26 n   2 PF 0.12 avg $-127 tot $  -253
+    TDP on ISM_SRV days                                      22-24 n   8 PF 0.88 avg $ -11 tot $   -91 | 25-26 n   5 PF 16.10 avg $+171 tot $  +853
+    TDP on JOLTS days                                        22-24 n   5 PF 0.70 avg $ -27 tot $  -135 | 25-26 n   5 PF 4.50 avg $+192 tot $  +961
+    TDP on FOMC days                                         22-24 n   8 PF 0.91 avg $ -12 tot $   -94 | 25-26 n   1 PF 0.00 avg $-172 tot $  -172
+    TDP on FOMC_MIN days                                     22-24 n   4 PF 0.30 avg $ -80 tot $  -322 | 25-26 n   3 PF 0.63 avg $ -65 tot $  -196
+    TDP on TESTIMONY days                                    22-24 n   2 PF 0.00 avg $-201 tot $  -402 | 25-26 n   0 PF 9.90 avg $  +0 tot $    +0
+    TDP all                                                  22-24 n 122 PF 1.53 avg $ +37 tot $ +4515 | 25-26 n  74 PF 1.55 avg $ +47 tot $ +3473

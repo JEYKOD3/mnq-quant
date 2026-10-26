@@ -107,3 +107,41 @@ Reading: the 1m 1R version adds lots of coin-flip trades. In 2026 that variance 
 2. The trend-filtered ORB (S4, claimed OOS PF 1.32) is PF 1.02-1.12 on 2022-24 here but 0.79-0.95 on 2025 and 0.65-0.79 on 2026.
 3. The friend's mother candle at 1R is a ~50% coin flip; costs make it lose. Seeing one clean winner live (Oct 22 pre-open) is consistent with a 50% setup.
 4. Recommendation unchanged: keep v31 + evening module; do not add any of these. Fast passes in the sim come only from variance, at the cost of a much lower overall pass rate.
+
+## Addendum: friend's mother candle with structure stops (Oct 26 2026)
+
+**User clarification:** he takes every signal, targets about 1R, and places the stop by price structure, not always at the far side of the mother bar.
+
+**Mechanical versions tested** (`scripts/y2026/mc_struct.py`):
+- **Signals:** every signal is taken. Entry is a full-body break beyond the mother bar; after an exit, scanning resumes.
+- **Stops**, each with the target at 1R of that stop:
+  - mb: other side of the mother bar (baseline)
+  - ib: other side of the last inside bar
+  - half: the mother bar's 50% level
+  - sw2 / sw3: the last pivot swing behind the entry (2/2 or 3/3 bars), clamped to 8-40 pts on 1m and 15-80 pts on 5m; the trade is skipped if the stop would be wider than the cap
+  - minsw: whichever is closer to the entry, the mother-bar side or the sw3 swing
+- **Grid:** 1m and 5m boxes × 9:30-15:45 or 9:30-11:00 × no bias, HTF 2-of-3 bias, or 9:30-open bias. That is 72 variants.
+- **Costs:** $2.37/side plus 1 tick on entries and on stop exits. A stress column adds 8 pts on stop exits, reduced to 2 pts for 1m trades with stops under 20 pts.
+- **Blocks:** design 2022-24, validate 2025, check 2026 YTD.
+
+**Result: 0 of 72 variants are profitable in all three blocks, and 0 of 72 under stress.**
+
+- **1m, every version:**
+  - Wins 45-52% of trades, against a breakeven win rate of 51-58% after costs.
+  - PF 0.67-0.93 in nearly every cell. Two cells reach 1.06-1.08, both in 2026 only and both below 1 in 2022-24 and 2025.
+  - Structure stops do not fix it. Tighter stops (ib, half) make it worse, because costs take a bigger share of each trade.
+- **5m:**
+  - The best cells are near breakeven, e.g. half-level stop with the 9:30-open bias: PF 0.89 / 0.92 / 1.07.
+  - The 2026-only bright spots (PF 1.1-1.3 with the HTF bias) all lose in 2022-24 and 2025.
+
+| Variant (best of each family by worst block) | 2022-24 PF | 2025 PF | 2026 PF | Win % 2022-24 | Breakeven win % |
+|---|---|---|---|---|---|
+| 5m all-day, half stop, 9:30-open bias | 0.89 | 0.92 | 1.07 | 50% | 53% |
+| 5m all-day, mother-bar stop, 9:30-open bias | 0.95 | 0.86 | 0.88 | 50% | 51% |
+| 5m all-day, swing 3/3 stop, 9:30-open bias | 1.01 | 0.74 | 1.03 | 50% | 50% |
+| 1m 9:30-11:00, swing 3/3 stop, 9:30-open bias | 0.82 | 0.88 | 1.08 | 49% | 54% |
+| 1m all-day, mother-bar stop, no bias | 0.78 | 0.84 | 0.79 | 49% | 55% |
+
+**No survivor, so nothing went to the eval simulator.**
+
+**Verdict:** a mechanical "about 1R from a structure stop" version wins about 49-50% of trades and loses to costs. If the friend does better, the difference lies in discretion that these rules don't capture, or in his market (forex). Only his own multi-month trade record can show that.

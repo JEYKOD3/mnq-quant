@@ -145,3 +145,17 @@ Reading: the 1m 1R version adds lots of coin-flip trades. In 2026 that variance 
 **No survivor, so nothing went to the eval simulator.**
 
 **Verdict:** a mechanical "about 1R from a structure stop" version wins about 49-50% of trades and loses to costs. If the friend does better, the difference lies in discretion that these rules don't capture, or in his market (forex). Only his own multi-month trade record can show that.
+
+## Strategic-level stops and momentum "rip" continuation (Oct 26 2026)
+
+Same protocol: design 2022-24, validate 2025, check 2026; $2.37/side + 1 tick entry/stop slip; stress +8 pt on stop exits (+2 pt under 20 pt). 912 variants in total, so about 2 to 5 false survivors are expected by chance. Script `scripts/y2026/rip_lvl.py`, eval `rip_eval.py`.
+
+**A. Mother candle, stop behind the nearest strong level** (day low/high so far, PDH/PDL/PDC, overnight high/low, OR15 high/low; min 6 pt on 1m / 12 pt on 5m, capped at 25 or 40 pt on 1m, 50 or 80 on 5m), target 0.5R / 0.75R / 1R, every signal, 1m and 5m, all day and 9:30-11:00, no bias or 9:30-open bias. 48 variants.
+- A smaller target raises the win rate as expected (0.5R wins 62-69%), but it never pays: PF 0.40-0.78 on 1m and 0.68-0.95 on 5m in the design years. 0 of 48 pass. Wider "strategic" stops were worse than the plain mother-bar stop.
+
+**B. Momentum rip continuation.** Burst bar closes in its top/bottom 25%: 1m range >= k x prior-20-bar mean, or the same minute's 20-day mean; 5m volume >= k x prior-20-bar mean, or the same slot's 20-day mean; k 2/3/4. Next-bar entry with the burst; trend filter none / 9:30 open / VWAP; stop bar extreme or 50%; exit 1R, 2R, prior-bar trail, or 15/30/60 min time stop; all day or 9:30-11:00. 864 variants.
+- Median design-years PF 0.78. Chasing range bursts on 1m loses in nearly every version (fees plus the bar's own range as the stop). 5m volume bursts vs the 20-bar mean: 0 of 216 above PF 1 in the design years.
+- 2 survivors, both "5m volume >= 4x the same slot's 20-day mean, with the 9:30 open or VWAP, stop at the burst bar, exit after 15 min": PF 1.22 / 1.24 / 1.79 and 1.17 / 1.29 / 1.82, but only about 20 trades a year (9-10 in 2026). Their neighbours (k=3, 30 or 60 min exits, 1R) fail the design years, so there is no plateau. Treat them as chance.
+- Eval (pass within 20 days, 2026 / 2025 / 2022): reference v31 + evening 24.3 / 26.5 / 32.7%; + RIP open t15 16.5 / 21.0 / 32.3%; + RIP VWAP t15 20.9 / 23.0 / 32.3%. Both lower the pass rate; no busts.
+
+**Verdict:** neither a strategic-level stop nor chasing momentum bursts adds edge on MNQ. Nothing added to the Playbook.

@@ -57,6 +57,8 @@ pfCons = input.float(0.5, "Consistency: best day max share of profit", group="Pr
 mllLine= math.min(peakEOD - pfDD, evStart)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
 dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
+stopLos = input.int(3, "STOP the day after N losing trades (0 = off)", group="Sizing")
+stopRoom = input.float(400, "STOP the day when room above max-loss line is under ($)", group="Sizing")
 
 // ---------- news calendar (yyyy-mm-dd HHMM NAME, comma separated, no spaces after commas) ----------
 calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-28 1400 FOMC,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
@@ -240,6 +242,9 @@ var float rkTD = 0.0
 var float rkPn = 0.0
 var float rkH2 = 0.0
 var float dayLoss = 0.0
+var int[] dLos = array.from(0)
+var bool dayStop = false
+var string stopWhy = ""
 var float dayPnl = 0.0
 var int budDay = -1
 if mnt >= 480 and mnt < 960 and budDay != dom
@@ -252,6 +257,9 @@ if mnt >= 480 and mnt < 960 and budDay != dom
     rkH2 := 0.0
     dayLoss := 0.0
     dayPnl := 0.0
+    array.set(dLos, 0, 0)
+    dayStop := false
+    stopWhy := ""
 perC(riskPts) => riskPts * 2 + 0.5 + 4.74
 usedNow() => rkNW + rkV4 + rkD2 + rkTD + rkPn + rkH2 + dayLoss
 sizeFor(riskPts, w) =>
@@ -259,8 +267,8 @@ sizeFor(riskPts, w) =>
     used = usedNow()
     pc = perC(riskPts)
     budget = math.min(w * frac * room, frac * room - used, dayCap - used)
-    q = budget > 0 ? math.floor(budget / pc) : 0
-    if q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
+    q = dayStop ? 0 : budget > 0 ? math.floor(budget / pc) : 0
+    if not dayStop and q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
         q := 1
     math.max(0, q)
 lossOf(q, pts) => pts < 0 ? q * (-pts * 2 + 4.74) : 0.0
@@ -272,7 +280,7 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
         rp = math.abs(e - s)
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
-        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : " · SKIP, budget full")
+        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : " · SKIP, budget full"))
         tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
         label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
@@ -302,6 +310,8 @@ logTrade(nm, side, eT, why, pts) =>
     array.push(lgS, nm + (side > 0 ? " LONG " : " SHORT ") + eT)
     array.push(lgX, why + " " + hhmm())
     array.push(lgP, pts)
+    if pts < 0
+        array.set(dLos, 0, array.get(dLos, 0) + 1)
     if array.size(lgP) > 8
         array.shift(lgD)
         array.shift(lgS)
@@ -334,6 +344,34 @@ var float nbL = na
 var int nwPos = 0
 var int nwPend = 0
 var int nwN_ = 0
+// ---------- STOP DAY: hard stop, big warning ----------
+if mnt >= 480 and mnt < 960 and budDay == dom and not dayStop
+    nLos = array.get(dLos, 0)
+    if dayLoss >= dayCap - 150
+        dayStop := true
+        stopWhy := "Daily loss budget used (" + usd(dayLoss) + " of " + usd(dayCap) + ")"
+    else if acct + dayPnl - mllLine < stopRoom
+        dayStop := true
+        stopWhy := "Only " + usd(acct + dayPnl - mllLine) + " above the max-loss line"
+    else if stopLos > 0 and nLos >= stopLos
+        dayStop := true
+        stopWhy := str.tostring(nLos) + " losing trades today"
+    else if acct - evStart + dayPnl >= pfTgt
+        dayStop := true
+        stopWhy := "Eval target reached. Protect it, no more trades"
+if mnt >= 480 and mnt < 960 and budDay == dom and dayStop[1] == false and dayStop
+    label.new(bar_index, high, "STOP", color=color.red, textcolor=color.white, style=label.style_label_down, size=size.large, tooltip="STOP DAY: " + stopWhy)
+if not (mnt >= 480 and mnt < 960) and dayStop and mnt >= 960
+    dayStop := false
+    stopWhy := ""
+bgcolor(dayStop and inRTH ? color.new(color.red, 85) : na, title="STOP day tint")
+var table stopT = table.new(position.middle_center, 1, 2, bgcolor=color.new(#2a0000, 10), border_color=color.red, border_width=3, frame_color=color.red, frame_width=3)
+if barstate.islast
+    table.clear(stopT, 0, 0, 0, 1)
+    if dayStop
+        table.cell(stopT, 0, 0, "STOP · NO MORE TRADES TODAY", text_color=color.white, text_size=size.huge)
+        table.cell(stopT, 0, 1, stopWhy + "\nClose the platform. Tomorrow is a new day.", text_color=color.new(#ffb3b3, 0), text_size=size.large)
+
 var int nwLossRow = 0
 var float nwE = na
 var float nwS = na

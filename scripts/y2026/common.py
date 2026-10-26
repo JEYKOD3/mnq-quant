@@ -213,13 +213,20 @@ def stat1(tr, a=20260101, z=20991231):
                 hold=round(sum(t['xT'] - t['eT'] for t in x) / len(x)), dd=round(maxdd(v)), last=max(t['xT'] for t in x))
 
 # ---------------- sizing + eval ----------------
-def size2(trs, cush, f=.65, dll=1100, slipx=8.0, xent=0.0):
-    """team_sim.size2 'fcfs'. slipx = extra pts on stop-type exits; xent = extra pts on every entry (stress)."""
+def size2(trs, cush, f=.65, dll=1100, slipx=8.0, xent=0.0, sd=None, prof0=0.0, target=3000, comm=COMM):
+    """team_sim.size2 'fcfs'. slipx = extra pts on stop-type exits; xent = extra pts on every entry (stress).
+    sd = stop-day rule: None (off) or N (int, 0 = only rules a/b/d). No new entry once, from trades closed before this entry:
+    (a) realized losses >= dll - 150, (b) room above the max-loss line < 400, (c) N losing trades (if N), (d) eval target reached."""
     done = []
     for t in trs:
-        rc = (t['r'] + SLIP * T) * PV + 2 * COMM
+        if sd is not None:
+            cl = [u for u in done if u['xT'] <= t['eT']]
+            rl = -sum(min(0, u['netq']) for u in cl); rp = sum(u['netq'] for u in cl); nl = sum(u['netq'] < 0 for u in cl)
+            if rl >= dll - 150 or cush + rp < 400 or (sd and nl >= sd) or prof0 + rp >= target:
+                t['q'] = 0; t['rc'] = 0; t['netq'] = 0.0; t['skip'] = 1; done.append(t); continue
+        rc = (t['r'] + SLIP * T) * PV + 2 * COMM   # sizing always uses the conservative 4.74 RT
         pts = t['pts'] - (slipx if t['why'] in STOPWHY else 0) - xent
-        pc = pts * PV - 2 * COMM
+        pc = pts * PV - 2 * comm
         used = 0
         for u in done:
             if u['q'] == 0: continue
@@ -239,26 +246,26 @@ def byday(tr, strats=None):
         if strats is None or t['strat'] in strats: g[t['d']].append(t)
     return g
 
-def eval_run(byd, start, days_list, slipx=8.0, xent=0.0, target=3000, mll_gap=2000, horizon=9999, keep=False):
+def eval_run(byd, start, days_list, slipx=8.0, xent=0.0, target=3000, mll_gap=2000, horizon=9999, keep=False, sd=None, cons=.4, lock=50100, comm=COMM, skip=None):
     """returns dict(res 'P'/'F'/'O', n days, worst dd from start, consistency-blocked days, day pnl list)"""
     bal = 50000.; peak = 50000.; best = 0.; n = 0; res = 'O'; worst = 0.; hit_target_day = None; pnl = []
     for d in days_list:
         if d < start: continue
-        n += 1; mll = min(peak - mll_gap, 50000); cush = bal - mll
-        dp = size2([dict(t) for t in byd.get(d, [])], cush, slipx=slipx, xent=xent); bal += dp; best = max(best, dp); pnl.append((d, dp))
+        n += 1; mll = min(peak - mll_gap, lock); cush = bal - mll
+        dp = size2([dict(t) for t in byd.get(d, []) if not (skip and (t['d'], t['eT'], t['strat']) in skip)], cush, slipx=slipx, xent=xent, sd=sd, prof0=bal - 50000, target=target, comm=comm); bal += dp; best = max(best, dp); pnl.append((d, dp))
         worst = min(worst, bal - 50000)
         if bal <= mll: res = 'F'; break
         peak = max(peak, bal)
         if bal - 50000 >= target and hit_target_day is None: hit_target_day = n
-        if bal - 50000 >= target and best <= .5 * (bal - 50000): res = 'P'; break
+        if bal - 50000 >= target and best <= cons * (bal - 50000): res = 'P'; break
         if n >= horizon: break
     return dict(res=res, n=n, worst=worst, tgt_n=hit_target_day, pnl=pnl if keep else None, end=bal - 50000)
 
-def rolling(tr, a, z, step=1, horizon=40, slipx=8.0, strats=None, end_days=None):
+def rolling(tr, a, z, step=1, horizon=40, slipx=8.0, strats=None, sd=None, **kw):
     byd = byday(tr, strats)
     DAYS = [d for d in D if d >= 20220301]
     sts = [d for d in DAYS if a <= d <= z][::step]; R = []
-    for s in sts: R.append(eval_run(byd, s, DAYS, slipx=slipx, horizon=horizon))
+    for s in sts: R.append(eval_run(byd, s, DAYS, slipx=slipx, horizon=horizon, sd=sd, **kw))
     n = len(R)
     return dict(n=n, p=sum(r['res'] == 'P' for r in R) / n, f=sum(r['res'] == 'F' for r in R) / n, o=sum(r['res'] == 'O' for r in R) / n,
                 med=sorted([r['n'] for r in R if r['res'] == 'P'])[len([r for r in R if r['res'] == 'P']) // 2] if any(r['res'] == 'P' for r in R) else None, R=R)

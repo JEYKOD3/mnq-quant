@@ -22,7 +22,7 @@ panelIcon = input.bool(true, "Panel as one line, hover ⓘ for details", group="
 showLog = input.bool(false, "Show last trades table", group="Chart")
 logIcon = input.bool(true, "Last trades as one ⓘ line, hover for the table", group="Chart")
 logToday = input.bool(true, "Last trades: today only (resets at the 18:00 session open)", group="Chart")
-showCk = input.bool(true, "Strategy checklist (top left, hover each strategy)", group="Chart")
+showCk = input.bool(true, "Strategy checklist (left side, hover each strategy)", group="Chart")
 showStats = input.bool(false, "Show results table (loaded bars)", group="Chart")
 emaLen = input.int(20, "EMA length (0 = off)", group="Chart")
 plot(emaLen > 0 ? ta.ema(close, emaLen) : na, "EMA", color=color.new(color.fuchsia, 40))
@@ -1027,13 +1027,13 @@ if showLog and barstate.islast
                 table.cell(lt, 2, i + 1, array.get(lgX, j), text_color=color.white, text_size=size.normal)
                 table.cell(lt, 3, i + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal)
 
-// ---------- strategy checklist (top left): one colored cell per strategy, hover for the boxes ----------
+// ---------- strategy checklist (middle left): one colored cell per strategy, hover for the boxes ----------
 ck(b) => b ? "✓ " : "✗ "
 wt(b, w) => b ? "… " : w
-var table ckT = table.new(position.top_left, 8, 1, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table ckT = table.new(position.middle_left, 1, 7, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showCk and barstate.islast
-    table.clear(ckT, 0, 0, 7, 0)
-    table.cell(ckT, 0, 0, "ⓘ CHECKLIST", text_color=color.yellow, text_size=size.normal, tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
+    table.clear(ckT, 0, 0, 0, 6)
+    table.cell(ckT, 0, 0, "ⓘ CHECKLIST", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
     live = not na(adr10) and not na(rOpen) and inRTH
     mvN = live ? (close - rOpen) / adr10 : 0.0
     fh = not na(ibH) and not na(ibL) ? ibH - ibL : 0.0
@@ -1072,5 +1072,5 @@ if showCk and barstate.islast
         it = array.get(inT, k)
         st = it ? "IN TRADE" : not gate ? "STOP" : array.get(full, k) ? "READY" : array.get(offT, k) ? "off" : array.get(part, k) ? "watch" : "wait"
         col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
-        table.cell(ckT, k + 1, 0, array.get(names, k) + " " + st, text_color=col, text_size=size.normal, tooltip=array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
+        table.cell(ckT, 0, k + 1, array.get(names, k) + " " + st, text_color=col, text_size=size.normal, text_halign=text.align_left, tooltip=array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
 

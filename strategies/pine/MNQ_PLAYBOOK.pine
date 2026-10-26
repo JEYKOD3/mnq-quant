@@ -1194,12 +1194,9 @@ if ib_on and ib_armed
     ib_bodyHi = math.max(open, close)
     ib_upOut = ib_needFull ? ib_bodyLo > ib_mbH : close > ib_mbH
     ib_dnOut = ib_needFull ? ib_bodyHi < ib_mbL : close < ib_mbL
-    box.set_right(ib_bx, bar_index)
     if ib_upOut or ib_dnOut
         ib_side = ib_upOut ? 1 : -1
         ib_armed := false
-        box.set_bgcolor(ib_bx, color.new(ib_side > 0 ? color.lime : color.red, 92))
-        box.set_border_color(ib_bx, color.new(ib_side > 0 ? color.lime : color.red, 20))
         ib_allowed = (not ib_withTrend or ib_side == ib_trend) and ib_inSess and ib_tDir == 0
         ib_e = close
         ib_s = ib_side > 0 ? ib_mbL - ib_tick : ib_mbH + ib_tick
@@ -1210,6 +1207,8 @@ if ib_on and ib_armed
             ib_ticksS = math.round(ib_r / ib_tick)
             ib_ticksT = math.round(ib_rr * ib_r / ib_tick)
             ib_tDir := ib_side
+            // draw the mother candle box only for setups that produce a signal
+            ib_bx := box.new(ib_mbBar, ib_mbH, bar_index, ib_mbL, border_color=color.new(ib_side > 0 ? color.lime : color.red, 20), border_width=1, border_style=line.style_dashed, bgcolor=color.new(ib_side > 0 ? color.lime : color.red, 93), text="mother candle", text_size=size.tiny, text_color=color.new(color.gray, 20), text_halign=text.align_left, text_valign=text.align_top)
             ib_tE := ib_e
             ib_tS := ib_s
             ib_tT := ib_t
@@ -1221,15 +1220,8 @@ if ib_on and ib_armed
             callout(ib_side > 0 ? low : high, ib_side > 0 ? 1 : -1, 1.0, ib_txt, ib_side > 0 ? color.new(color.lime, 10) : color.new(color.red, 10), color.black, size.small, ib_tip)
             ib_longSig := ib_side > 0
             ib_shortSig := ib_side < 0
-        else if ib_inSess
-            ib_why = not ib_inSess ? "outside hours" : (ib_withTrend and ib_side != ib_trend) ? "against trend" : ib_tDir != 0 ? "trade open" : ib_r > ib_maxStop ? "stop too big" : ib_r < ib_minStop ? "stop too small" : "risk too big for 1 MNQ"
-            callout(ib_side > 0 ? low : high, ib_side > 0 ? 1 : -1, 0.6, "IB skip", color.new(color.gray, 40), color.white, size.tiny, "Breakout, no trade: " + ib_why)
     else if bar_index - ib_mbBar > ib_expiry
         ib_armed := false
-        box.set_bgcolor(ib_bx, color.new(color.gray, 96))
-        box.set_border_color(ib_bx, color.new(color.gray, 50))
-    else
-        ib_insideNow := true
 
 // 3) new mother candle: this bar sits inside the previous one
 ib_isInside = high <= high[1] and low >= low[1]
@@ -1238,10 +1230,6 @@ if ib_on and ib_recent and not ib_armed and ib_isInside and not ib_longSig and n
     ib_mbH := high[1]
     ib_mbL := low[1]
     ib_mbBar := bar_index - 1
-    ib_bx := box.new(bar_index - 1, ib_mbH, bar_index, ib_mbL, border_color=color.new(color.yellow, 0), border_width=1, border_style=line.style_dashed, bgcolor=color.new(color.yellow, 94), text="MC", text_size=size.tiny, text_color=color.yellow, text_halign=text.align_left, text_valign=text.align_top)
-    ib_insideNow := true
-
-barcolor(ib_insideNow ? color.yellow : na, title="Inside bars")
 
 alertcondition(ib_longSig, "IB long", "IB breakout LONG on {{ticker}}")
 alertcondition(ib_shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

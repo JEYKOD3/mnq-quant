@@ -1,0 +1,61 @@
+{
+ "2026": {
+  "day5": {
+   "ahead +1500 or more": 0.18,
+   "passed": 0.005,
+   "up 0 to 1500": 0.417,
+   "down 0 to -1000": 0.267,
+   "down more than -1000 (slow mode)": 0.131
+  },
+  "day8": {
+   "passed": 0.034,
+   "up 0 to 1500": 0.335,
+   "down 0 to -1000": 0.248,
+   "down more than -1000 (slow mode)": 0.146,
+   "ahead +1500 or more": 0.238
+  },
+  "p60": 0.529,
+  "p40": 0.427,
+  "med": 23,
+  "busts60": 0.0
+ },
+ "2025": {
+  "day5": {
+   "up 0 to 1500": 0.521,
+   "down 0 to -1000": 0.296,
+   "down more than -1000 (slow mode)": 0.101,
+   "ahead +1500 or more": 0.082
+  },
+  "day8": {
+   "down 0 to -1000": 0.296,
+   "up 0 to 1500": 0.405,
+   "ahead +1500 or more": 0.144,
+   "down more than -1000 (slow mode)": 0.128,
+   "passed": 0.027
+  },
+  "p60": 0.482,
+  "p40": 0.447,
+  "med": 24,
+  "busts60": 0.0
+ },
+ "2022": {
+  "day5": {
+   "ahead +1500 or more": 0.115,
+   "up 0 to 1500": 0.447,
+   "down 0 to -1000": 0.295,
+   "down more than -1000 (slow mode)": 0.111,
+   "passed": 0.032
+  },
+  "day8": {
+   "ahead +1500 or more": 0.111,
+   "up 0 to 1500": 0.373,
+   "down 0 to -1000": 0.276,
+   "down more than -1000 (slow mode)": 0.143,
+   "passed": 0.097
+  },
+  "p60": 0.512,
+  "p40": 0.498,
+  "med": 19,
+  "busts60": 0.0
+ }
+}

@@ -52,3 +52,11 @@ _pf2 = plans_for
 def plans_for(mode):
     if mode == 'aggr': return plans_aggr()
     return _pf2(mode)
+
+def plans_mes():
+    return [('BASE v31 sizing', BASE), ('bud1500 f.8', V(budget=1500, f=.8)), ('bud1200 f1.0 guard', V(budget=1200, f=1.0)),
+            ('risk $900', V(riskd=900, budget=1200)), ('no Pin', V(strats={'V4+', 'D2', 'TDP', 'H2'})), ('V4+D2', V(strats={'V4+', 'D2'}))]
+_pf3 = plans_for
+def plans_for(mode):
+    if mode == 'mes': return plans_mes()
+    return _pf3(mode)

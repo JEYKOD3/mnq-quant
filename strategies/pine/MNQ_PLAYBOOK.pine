@@ -150,10 +150,19 @@ trendDir = pdc > sma20 ? 1 : -1
 var line lH = na
 var line lL = na
 var line lC = na
+var label pdHLb = na
+var label pdLLb = na
+var label pdCLb = na
 if showPD and barstate.islast and not na(pdh)
     line.delete(lH)
     line.delete(lL)
     line.delete(lC)
+    label.delete(pdHLb)
+    label.delete(pdLLb)
+    label.delete(pdCLb)
+    pdHLb := label.new(bar_index - 45, pdh, "Yday RTH high " + str.tostring(pdh, "#.00"), style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=color.new(color.green, 20), size=size.small, tooltip="Yesterday's high, 9:30-16:00 ET only")
+    pdLLb := label.new(bar_index - 45, pdl, "Yday RTH low " + str.tostring(pdl, "#.00"), style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=color.new(color.red, 20), size=size.small, tooltip="Yesterday's low, 9:30-16:00 ET only")
+    pdCLb := label.new(bar_index - 45, pdc, "Yday 4pm close " + str.tostring(pdc, "#.00"), style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=color.new(color.orange, 20), size=size.small, tooltip="Last price at 16:00 ET yesterday (RTH close). Used for the gap and trend math. Not the same as NT Look's PDC, which is the full-session close at 17:00.")
     lH := line.new(bar_index - 300, pdh, bar_index + 10, pdh, color=color.new(color.green, 30))
     lL := line.new(bar_index - 300, pdl, bar_index + 10, pdl, color=color.new(color.red, 30))
     lC := line.new(bar_index - 300, pdc, bar_index + 10, pdc, color=color.new(color.orange, 30), style=line.style_dotted)
@@ -292,7 +301,7 @@ pnlOf(q, pts) => q * (pts * 2 - 4.74)
 // ---------- drawing helpers ----------
 // entry: small tag "V4+ ▲ 4" (strategy, direction, contracts); hover for the full story. Zones: green to target, red to stop.
 // order-panel presets: nearest saved bracket for this strategy (stop in points; target = R x stop)
-pBk(nm) => nm == "NEWS" ? array.from(50.0) : nm == "H2" ? array.from(18.0, 30.0, 50.0, 75.0) : nm == "V4+" ? array.from(50.0, 80.0, 125.0, 190.0, 290.0) : nm == "D2" ? array.from(120.0, 170.0, 240.0, 340.0, 480.0) : nm == "TDP" ? array.from(85.0, 115.0, 155.0, 210.0, 300.0) : array.from(160.0, 200.0, 250.0, 320.0, 400.0)
+pBk(nm) => nm == "NEWS" ? array.from(50.0) : nm == "H2" ? array.from(30.0) : nm == "V4+" ? array.from(80.0, 125.0, 190.0) : nm == "D2" ? array.from(160.0, 240.0, 360.0) : nm == "TDP" ? array.from(100.0, 165.0) : array.from(230.0)
 pR(nm) => nm == "NEWS" ? 1.0 : nm == "H2" ? 2.0 : nm == "V4+" ? 1.25 : nm == "D2" ? 0.0 : nm == "TDP" ? 1.5 : 2.0
 presetOf(nm, rp) =>
     bk = pBk(nm)
@@ -307,10 +316,10 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
         pv = presetOf(nm, rp)
         pName = nm + " " + str.tostring(pv, "#")
-        pLine = "PRESET: " + pName + "  (SL " + str.tostring(pv * 4, "#") + " ticks · " + (pR(nm) > 0 ? "TP " + str.tostring(pv * pR(nm) * 4, "#") + " ticks" : "no TP") + ")" + (math.abs(pv - rp) > 0.5 ? "\nExact stop is " + fmt(rp) + " pts: drag the SL line onto the red dotted line if you want it exact" : "")
+        pLine = nm == "NEWS" ? "PRESET: none, type it by hand: SL 200 ticks · TP 200 ticks" : "PRESET: " + pName + "  (SL " + str.tostring(pv * 4, "#") + " ticks · " + (pR(nm) > 0 ? "TP " + str.tostring(pv * pR(nm) * 4, "#") + " ticks" : "no TP") + ")" + (math.abs(pv - rp) > 0.5 ? "\nExact stop is " + fmt(rp) + " pts: drag the SL line onto the red dotted line if you want it exact" : "")
         head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : recov ? " · SKIP, RECOVERY: risk too big for the room" : " · SKIP, budget full"))
         tip = head + "\n" + pLine + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
-        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q) + (q > 0 ? " · " + str.tostring(presetOf(nm, math.abs(e - s)), "#") : ""), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
+        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q) + (q > 0 and nm != "NEWS" ? " · " + str.tostring(presetOf(nm, math.abs(e - s)), "#") : ""), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
 // while a trade is open: thin dotted stop (red) and target (green) lines; at the exit they are replaced by one line entry -> exit
 zone(show, e, lvl, good) => show and not na(lvl) ? line.new(bar_index, lvl, bar_index + 1, lvl, color=color.new(good ? color.lime : color.red, 30), style=line.style_dotted, width=1) : line(na)

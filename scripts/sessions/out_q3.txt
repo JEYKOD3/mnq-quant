@@ -1,0 +1,127 @@
+== F/E afternoon continuation: entry time x threshold x stop (signal = 9:30 open -> entry, exit 15:55) ==
+cont 1200 thr0 stopNone                      IS n  747 win 52% avg   +6.5pt PF 1.11 tot $   +6156 dd $3593 | OOS n  448 win 54% avg  +12.1pt PF 1.21 tot $   +8733 dd $3735 | yrs +--++
+cont 1200 thr0 stop0.25                      IS n  747 win 42% avg   +3.9pt PF 1.04 tot $   +2246 dd $4968 | OOS n  448 win 45% avg   +7.5pt PF 1.12 tot $   +4568 dd $3335 | yrs +-++-
+cont 1200 thr0.2 stopNone                    IS n  503 win 53% avg   +8.3pt PF 1.16 tot $   +6009 dd $2868 | OOS n  312 win 53% avg   +2.6pt PF 1.01 tot $    +163 dd $3950 | yrs ++-+-
+cont 1200 thr0.2 stop0.25                    IS n  503 win 43% avg   +5.5pt PF 1.10 tot $   +3198 dd $3575 | OOS n  312 win 45% avg   +0.2pt PF 0.95 tot $   -1374 dd $3322 | yrs +----
+cont 1200 thr0.4 stopNone                    IS n  303 win 55% avg  +14.5pt PF 1.39 tot $   +7375 dd $1493 | OOS n  184 win 53% avg   +2.0pt PF 0.99 tot $    -136 dd $3712 | yrs ++++-
+cont 1200 thr0.4 stop0.25                    IS n  303 win 43% avg   +5.4pt PF 1.09 tot $   +1839 dd $2334 | OOS n  184 win 45% avg   +1.5pt PF 0.98 tot $    -334 dd $2627 | yrs +----
+cont 1230 thr0 stopNone                      IS n  746 win 54% avg   +2.8pt PF 1.01 tot $    +587 dd $6902 | OOS n  448 win 51% avg  +10.2pt PF 1.18 tot $   +7019 dd $6131 | yrs +--++
+cont 1230 thr0 stop0.25                      IS n  746 win 45% avg   +4.3pt PF 1.06 tot $   +2899 dd $2962 | OOS n  448 win 45% avg   +7.4pt PF 1.13 tot $   +4551 dd $4768 | yrs +--++
+cont 1230 thr0.2 stopNone                    IS n  510 win 55% avg   +8.0pt PF 1.16 tot $   +5715 dd $4118 | OOS n  320 win 53% avg  +14.0pt PF 1.29 tot $   +7456 dd $4566 | yrs ++-++
+cont 1230 thr0.2 stop0.25                    IS n  510 win 47% avg   +6.8pt PF 1.14 tot $   +4560 dd $2752 | OOS n  320 win 46% avg  +10.8pt PF 1.22 tot $   +5375 dd $4141 | yrs ++-++
+cont 1230 thr0.4 stopNone                    IS n  319 win 55% avg   +6.3pt PF 1.11 tot $   +2531 dd $2599 | OOS n  198 win 55% avg  +11.4pt PF 1.21 tot $   +3566 dd $3707 | yrs +--++
+cont 1230 thr0.4 stop0.25                    IS n  319 win 47% avg   +6.9pt PF 1.14 tot $   +2889 dd $1856 | OOS n  198 win 46% avg   +8.7pt PF 1.17 tot $   +2524 dd $2657 | yrs ++-++
+cont 1300 thr0 stopNone                      IS n  747 win 53% avg   +2.6pt PF 1.01 tot $    +413 dd $4686 | OOS n  448 win 54% avg  +12.2pt PF 1.26 tot $   +8849 dd $3842 | yrs +--++
+cont 1300 thr0 stop0.25                      IS n  747 win 47% avg   +5.9pt PF 1.12 tot $   +5221 dd $1826 | OOS n  448 win 47% avg   +7.7pt PF 1.15 tot $   +4731 dd $5644 | yrs ++-++
+cont 1300 thr0.2 stopNone                    IS n  516 win 57% avg   +9.3pt PF 1.21 tot $   +7144 dd $2839 | OOS n  315 win 54% avg  +11.2pt PF 1.23 tot $   +5584 dd $4274 | yrs ++-+-
+cont 1300 thr0.2 stop0.25                    IS n  516 win 52% avg  +10.9pt PF 1.31 tot $   +8823 dd $1960 | OOS n  315 win 47% avg   +5.6pt PF 1.09 tot $   +2031 dd $5275 | yrs ++++-
+cont 1300 thr0.4 stopNone                    IS n  323 win 57% avg   +8.8pt PF 1.19 tot $   +4170 dd $2976 | OOS n  208 win 52% avg   +9.5pt PF 1.16 tot $   +2981 dd $5888 | yrs +--+-
+cont 1300 thr0.4 stop0.25                    IS n  323 win 52% avg  +13.0pt PF 1.40 tot $   +6849 dd $1475 | OOS n  208 win 45% avg   +6.0pt PF 1.09 tot $   +1511 dd $5769 | yrs ++-+-
+cont 1330 thr0 stopNone                      IS n  747 win 53% avg   +3.8pt PF 1.05 tot $   +2169 dd $6508 | OOS n  447 win 53% avg   +9.0pt PF 1.19 tot $   +5931 dd $3075 | yrs +--++
+cont 1330 thr0 stop0.25                      IS n  747 win 49% avg   +4.5pt PF 1.08 tot $   +3176 dd $4624 | OOS n  447 win 47% avg   +5.7pt PF 1.10 tot $   +2955 dd $3038 | yrs ++-+-
+cont 1330 thr0.2 stopNone                    IS n  522 win 55% avg  +10.9pt PF 1.32 tot $   +8947 dd $3029 | OOS n  328 win 52% avg   +6.3pt PF 1.11 tot $   +2601 dd $3933 | yrs ++-+-
+cont 1330 thr0.2 stop0.25                    IS n  522 win 51% avg   +9.9pt PF 1.29 tot $   +7884 dd $2338 | OOS n  328 win 47% avg   +3.3pt PF 1.03 tot $    +615 dd $4176 | yrs ++-+-
+cont 1330 thr0.4 stopNone                    IS n  332 win 57% avg  +12.4pt PF 1.37 tot $   +6667 dd $2353 | OOS n  212 win 51% avg   +6.6pt PF 1.11 tot $   +1801 dd $4014 | yrs +--+-
+cont 1330 thr0.4 stop0.25                    IS n  332 win 52% avg  +11.1pt PF 1.34 tot $   +5764 dd $2526 | OOS n  212 win 44% avg   +1.1pt PF 0.97 tot $    -533 dd $3244 | yrs ++-+-
+cont 1400 thr0 stopNone                      IS n  746 win 51% avg   +3.2pt PF 1.03 tot $   +1267 dd $6942 | OOS n  448 win 51% avg   +9.3pt PF 1.23 tot $   +6225 dd $2530 | yrs +--++
+cont 1400 thr0 stop0.25                      IS n  746 win 47% avg   +3.3pt PF 1.04 tot $   +1371 dd $5589 | OOS n  448 win 47% avg   +5.8pt PF 1.11 tot $   +3103 dd $3108 | yrs +--++
+cont 1400 thr0.2 stopNone                    IS n  538 win 54% avg   +8.5pt PF 1.26 tot $   +6619 dd $3738 | OOS n  335 win 48% avg   +3.1pt PF 1.02 tot $    +520 dd $4556 | yrs ++-+-
+cont 1400 thr0.2 stop0.25                    IS n  538 win 50% avg   +7.4pt PF 1.23 tot $   +5457 dd $2847 | OOS n  335 win 44% avg   +1.1pt PF 0.96 tot $    -848 dd $4729 | yrs ++-+-
+cont 1400 thr0.4 stopNone                    IS n  339 win 57% avg  +10.3pt PF 1.36 tot $   +5347 dd $3688 | OOS n  212 win 48% avg   +3.0pt PF 1.02 tot $    +267 dd $4479 | yrs ++-+-
+cont 1400 thr0.4 stop0.25                    IS n  339 win 53% avg   +9.9pt PF 1.36 tot $   +5131 dd $3192 | OOS n  212 win 44% avg   +2.1pt PF 0.99 tot $    -110 dd $3932 | yrs ++-+-
+cont 1430 thr0 stopNone                      IS n  746 win 49% avg   +1.8pt PF 0.98 tot $    -814 dd $7906 | OOS n  447 win 49% avg   +7.3pt PF 1.19 tot $   +4403 dd $3424 | yrs +--++
+cont 1430 thr0 stop0.25                      IS n  746 win 47% avg   +1.6pt PF 0.97 tot $   -1152 dd $8055 | OOS n  447 win 47% avg   +2.1pt PF 0.99 tot $    -217 dd $3312 | yrs +---+
+cont 1430 thr0.2 stopNone                    IS n  550 win 51% avg   +3.3pt PF 1.04 tot $    +987 dd $6075 | OOS n  338 win 47% avg   +5.0pt PF 1.10 tot $   +1801 dd $4764 | yrs +--++
+cont 1430 thr0.2 stop0.25                    IS n  550 win 48% avg   +2.8pt PF 1.02 tot $    +463 dd $6324 | OOS n  338 win 45% avg   -1.2pt PF 0.88 tot $   -2409 dd $4670 | yrs +----
+cont 1430 thr0.4 stopNone                    IS n  366 win 51% avg   +6.2pt PF 1.18 tot $   +2834 dd $3985 | OOS n  217 win 47% avg   +7.3pt PF 1.18 tot $   +2153 dd $2877 | yrs +--++
+cont 1430 thr0.4 stop0.25                    IS n  366 win 49% avg   +3.8pt PF 1.07 tot $   +1052 dd $4573 | OOS n  217 win 44% avg   -1.4pt PF 0.88 tot $   -1627 dd $3364 | yrs +---+
+
+== afternoon continuation + location filter (price in outer part of the day range in the day direction) ==
+cont 1200 loc>=0.5                           IS n  653 win 52% avg   +7.3pt PF 1.13 tot $   +6439 dd $3519 | OOS n  390 win 53% avg   +5.2pt PF 1.06 tot $   +2231 dd $3944 | yrs +--+-
+cont 1200 loc>=0.7                           IS n  480 win 51% avg   +6.5pt PF 1.11 tot $   +4002 dd $3138 | OOS n  281 win 53% avg   +1.2pt PF 0.98 tot $    -668 dd $5049 | yrs +--+-
+cont 1200 loc>=0.8                           IS n  365 win 52% avg   +6.7pt PF 1.12 tot $   +3160 dd $3471 | OOS n  219 win 52% avg   -4.3pt PF 0.87 tot $   -2937 dd $6259 | yrs +----
+cont 1300 loc>=0.5                           IS n  646 win 54% avg   +3.2pt PF 1.02 tot $   +1128 dd $5359 | OOS n  380 win 54% avg   +9.8pt PF 1.19 tot $   +5670 dd $4226 | yrs +--+-
+cont 1300 loc>=0.7                           IS n  489 win 55% avg   +6.2pt PF 1.11 tot $   +3718 dd $3838 | OOS n  285 win 56% avg  +14.3pt PF 1.32 tot $   +6777 dd $3134 | yrs +--++
+cont 1300 loc>=0.8                           IS n  357 win 56% avg   +6.0pt PF 1.10 tot $   +2583 dd $3300 | OOS n  214 win 53% avg   +7.8pt PF 1.13 tot $   +2322 dd $4632 | yrs +--+-
+cont 1400 loc>=0.5                           IS n  639 win 52% avg   +4.0pt PF 1.06 tot $   +2104 dd $7139 | OOS n  380 win 51% avg   +5.1pt PF 1.09 tot $   +2080 dd $3300 | yrs +--+-
+cont 1400 loc>=0.7                           IS n  479 win 52% avg   +5.1pt PF 1.10 tot $   +2605 dd $5533 | OOS n  286 win 50% avg   +4.5pt PF 1.07 tot $   +1228 dd $3463 | yrs +--+-
+cont 1400 loc>=0.8                           IS n  346 win 53% avg   +7.9pt PF 1.24 tot $   +3858 dd $3348 | OOS n  205 win 49% avg   -0.5pt PF 0.91 tot $   -1187 dd $3234 | yrs +--+-
+
+== afternoon continuation by year (12:00, thr0) ==
+2022 {'n': 250, 'win': 0.58, 'avgpts': 18.644, 'avg': 32.547999999999995, 'pf': 1.3786377046281562, 'tot': 8136.999999999999, 'dd': 2220.779999999995}
+2023 {'n': 248, 'win': 0.5040322580645161, 'avgpts': 0.6582661290322581, 'avg': -3.4234677419354864, 'pf': 0.948533387647819, 'tot': -849.0200000000007, 'dd': 2373.6000000000004}
+2024 {'n': 249, 'win': 0.4819277108433735, 'avgpts': 0.09738955823293173, 'avg': -4.5452208835341406, 'pf': 0.9422982406408498, 'tot': -1131.760000000001, 'dd': 3593.140000000001}
+2025 {'n': 247, 'win': 0.5546558704453441, 'avgpts': 17.442307692307693, 'avg': 30.14461538461538, 'pf': 1.362968596137159, 'tot': 7445.719999999999, 'dd': 3734.9999999999673}
+2026 {'n': 201, 'win': 0.5174129353233831, 'avgpts': 5.573383084577115, 'avg': 6.406766169154224, 'pf': 1.059514423383545, 'tot': 1287.759999999999, 'dd': 3207.62}
+
+== trend filter (prior close vs 20d SMA of RTH closes) for night holds ==
+cont SMA20 1800-925                          IS n  747 win 48% avg   -3.8pt PF 0.86 tot $   -9205 dd $13827 | OOS n  448 win 54% avg   -3.7pt PF 0.92 tot $   -5457 dd $11905 | yrs ---+-
+rev SMA20 1800-925                           IS n  747 win 50% avg   +2.8pt PF 1.01 tot $    +630 dd $4810 | OOS n  448 win 44% avg   +2.7pt PF 1.00 tot $    +314 dd $10831 | yrs +---+
+long only when SMA up 1800-925               IS n  445 win 50% avg   -2.0pt PF 0.88 tot $   -3902 dd $7501 | OOS n  270 win 58% avg   +6.1pt PF 1.06 tot $   +2039 dd $4792 | yrs --++-
+long always 1800-925                         IS n  747 win 51% avg   +1.0pt PF 0.97 tot $   -2065 dd $8890 | OOS n  448 win 55% avg  +10.7pt PF 1.12 tot $   +7492 dd $5747 | yrs --+++
+cont SMA20 1800-300                          IS n  747 win 46% avg   -1.6pt PF 0.85 tot $   -5900 dd $7761 | OOS n  448 win 49% avg   -3.9pt PF 0.88 tot $   -5605 dd $9012 | yrs ---+-
+rev SMA20 1800-300                           IS n  747 win 48% avg   +0.6pt PF 0.93 tot $   -2676 dd $4990 | OOS n  448 win 48% avg   +2.9pt PF 1.01 tot $    +462 dd $8084 | yrs -+--+
+long only when SMA up 1800-300               IS n  445 win 48% avg   -0.8pt PF 0.84 tot $   -2785 dd $4572 | OOS n  270 win 51% avg   +4.3pt PF 1.04 tot $   +1036 dd $3843 | yrs --++-
+long always 1800-300                         IS n  747 win 50% avg   +0.3pt PF 0.92 tot $   -3138 dd $5839 | OOS n  448 win 52% avg   +8.7pt PF 1.14 tot $   +5634 dd $3488 | yrs --+++
+cont SMA20 300-925                           IS n  747 win 46% avg   -2.7pt PF 0.86 tot $   -7578 dd $11549 | OOS n  448 win 48% avg   -0.3pt PF 0.94 tot $   -2425 dd $5808 | yrs ---+-
+rev SMA20 300-925                            IS n  747 win 51% avg   +1.7pt PF 0.98 tot $    -998 dd $5740 | OOS n  448 win 49% avg   -0.7pt PF 0.94 tot $   -2718 dd $6353 | yrs +---+
+long only when SMA up 300-925                IS n  445 win 47% avg   -1.8pt PF 0.87 tot $   -3675 dd $5967 | OOS n  270 win 50% avg   +1.4pt PF 0.97 tot $    -550 dd $2265 | yrs -+-+-
+long always 300-925                          IS n  747 win 49% avg   +0.2pt PF 0.94 tot $   -3240 dd $7172 | OOS n  448 win 51% avg   +1.6pt PF 0.98 tot $    -719 dd $3851 | yrs -+++-
+cont SMA20 2000-300                          IS n  747 win 47% avg   +0.6pt PF 0.91 tot $   -2713 dd $4386 | OOS n  448 win 48% avg   -5.1pt PF 0.83 tot $   -6670 dd $6754 | yrs --+--
+rev SMA20 2000-300                           IS n  747 win 47% avg   -1.6pt PF 0.82 tot $   -5863 dd $6915 | OOS n  448 win 51% avg   +4.1pt PF 1.04 tot $   +1527 dd $3141 | yrs ----+
+long only when SMA up 2000-300               IS n  445 win 48% avg   +1.6pt PF 0.95 tot $    -696 dd $2700 | OOS n  270 win 51% avg   -1.4pt PF 0.90 tot $   -2027 dd $3206 | yrs +-+--
+long always 2000-300                         IS n  747 win 49% avg   +0.9pt PF 0.93 tot $   -2147 dd $5435 | OOS n  448 win 54% avg   +3.0pt PF 1.02 tot $    +572 dd $4350 | yrs --++-
+cont SMA20 1800-2000                         IS n  747 win 43% avg   -2.6pt PF 0.67 tot $   -7500 dd $8372 | OOS n  448 win 52% avg   +0.7pt PF 0.94 tot $   -1484 dd $6487 | yrs ---+-
+rev SMA20 1800-2000                          IS n  747 win 48% avg   +1.6pt PF 0.94 tot $   -1076 dd $2003 | OOS n  448 win 42% avg   -1.7pt PF 0.86 tot $   -3660 dd $7953 | yrs ----+
+long only when SMA up 1800-2000              IS n  445 win 43% avg   -2.9pt PF 0.60 tot $   -4654 dd $4770 | OOS n  270 win 54% avg   +5.2pt PF 1.13 tot $   +1523 dd $2142 | yrs ---++
+long always 1800-2000                        IS n  747 win 46% avg   -1.2pt PF 0.75 tot $   -5275 dd $5577 | OOS n  448 win 52% avg   +5.1pt PF 1.11 tot $   +2485 dd $3616 | yrs ----+
+
+== C fade to TWAP after midnight: k grid ==
+fade twap 0-3 k0.2 stop0.1 x4:00             IS n  187 win 43% avg   +5.4pt PF 1.19 tot $   +1140 dd $930 | OOS n  221 win 29% avg   -5.5pt PF 0.69 tot $   -3497 dd $3953 | yrs +++--
+fade twap 0-3 k0.2 stop0.1 x6:00             IS n  187 win 41% avg   +6.4pt PF 1.24 tot $   +1492 dd $911 | OOS n  221 win 26% avg   -7.6pt PF 0.64 tot $   -4422 dd $4751 | yrs ++---
+fade twap 0-3 k0.2 stop0.15 x4:00            IS n  187 win 48% avg   +4.3pt PF 1.10 tot $    +722 dd $1212 | OOS n  221 win 36% avg   -5.4pt PF 0.74 tot $   -3448 dd $4245 | yrs +-+--
+fade twap 0-3 k0.2 stop0.15 x6:00            IS n  187 win 48% avg   +5.0pt PF 1.12 tot $    +972 dd $730 | OOS n  221 win 34% avg   -6.3pt PF 0.74 tot $   -3824 dd $4687 | yrs ++---
+fade twap 0-3 k0.2 stop0.25 x4:00            IS n  187 win 53% avg   +6.5pt PF 1.22 tot $   +1545 dd $947 | OOS n  221 win 43% avg   -1.9pt PF 0.86 tot $   -1883 dd $2692 | yrs +----
+fade twap 0-3 k0.2 stop0.25 x6:00            IS n  187 win 56% avg   +6.7pt PF 1.19 tot $   +1605 dd $1134 | OOS n  221 win 45% avg   -3.8pt PF 0.84 tot $   -2728 dd $3721 | yrs ++---
+fade twap 0-3 k0.25 stop0.1 x4:00            IS n  107 win 42% avg   +8.7pt PF 1.41 tot $   +1360 dd $536 | OOS n  151 win 26% avg   -6.4pt PF 0.67 tot $   -2636 dd $3054 | yrs ++---
+fade twap 0-3 k0.25 stop0.1 x6:00            IS n  107 win 37% avg   +8.0pt PF 1.32 tot $   +1210 dd $750 | OOS n  151 win 23% avg   -6.4pt PF 0.69 tot $   -2660 dd $3129 | yrs ++---
+fade twap 0-3 k0.25 stop0.15 x4:00           IS n  107 win 49% avg   +8.7pt PF 1.36 tot $   +1354 dd $456 | OOS n  151 win 35% avg   -4.6pt PF 0.78 tot $   -2090 dd $2883 | yrs ++---
+fade twap 0-3 k0.25 stop0.15 x6:00           IS n  107 win 43% avg   +6.0pt PF 1.16 tot $    +767 dd $813 | OOS n  151 win 30% avg   -3.8pt PF 0.83 tot $   -1872 dd $3128 | yrs ++---
+fade twap 0-3 k0.25 stop0.25 x4:00           IS n  107 win 54% avg   +8.2pt PF 1.29 tot $   +1256 dd $782 | OOS n  151 win 44% avg   +0.1pt PF 0.93 tot $    -695 dd $2065 | yrs ++--+
+fade twap 0-3 k0.25 stop0.25 x6:00           IS n  107 win 50% avg   +6.9pt PF 1.18 tot $    +961 dd $1311 | OOS n  151 win 43% avg   -1.9pt PF 0.90 tot $   -1287 dd $2982 | yrs ++---
+fade twap 0-3 k0.3 stop0.1 x4:00             IS n   62 win 34% avg   +5.9pt PF 1.20 tot $    +441 dd $699 | OOS n  109 win 28% avg   +0.3pt PF 0.92 tot $    -450 dd $1563 | yrs +-++-
+fade twap 0-3 k0.3 stop0.1 x6:00             IS n   62 win 32% avg   +9.7pt PF 1.38 tot $    +903 dd $632 | OOS n  109 win 22% avg   +0.3pt PF 0.93 tot $    -442 dd $1896 | yrs ++++-
+fade twap 0-3 k0.3 stop0.15 x4:00            IS n   62 win 40% avg   +5.7pt PF 1.16 tot $    +410 dd $654 | OOS n  109 win 39% avg   +4.3pt PF 1.07 tot $    +421 dd $1441 | yrs +--++
+fade twap 0-3 k0.3 stop0.15 x6:00            IS n   62 win 39% avg   +9.9pt PF 1.32 tot $    +931 dd $813 | OOS n  109 win 33% avg   +4.9pt PF 1.07 tot $    +559 dd $1889 | yrs ++-+-
+fade twap 0-3 k0.3 stop0.25 x4:00            IS n   62 win 48% avg   +5.9pt PF 1.16 tot $    +433 dd $555 | OOS n  109 win 44% avg   +4.2pt PF 1.05 tot $    +398 dd $1711 | yrs +--++
+fade twap 0-3 k0.3 stop0.25 x6:00            IS n   62 win 47% avg   +6.7pt PF 1.15 tot $    +535 dd $1002 | OOS n  109 win 45% avg   +4.0pt PF 1.04 tot $    +366 dd $2254 | yrs ++-+-
+fade twap 0-3 k0.35 stop0.1 x4:00            IS n   34 win 41% avg  +17.8pt PF 1.91 tot $   +1049 dd $527 | OOS n   84 win 27% avg   +1.7pt PF 0.97 tot $    -111 dd $1392 | yrs ++++-
+fade twap 0-3 k0.35 stop0.1 x6:00            IS n   34 win 38% avg  +17.9pt PF 1.79 tot $   +1054 dd $436 | OOS n   84 win 23% avg   +0.2pt PF 0.92 tot $    -363 dd $1589 | yrs ++++-
+fade twap 0-3 k0.35 stop0.15 x4:00           IS n   34 win 47% avg  +17.8pt PF 1.71 tot $   +1047 dd $374 | OOS n   84 win 40% avg   +7.9pt PF 1.19 tot $    +921 dd $1111 | yrs +++++
+fade twap 0-3 k0.35 stop0.15 x6:00           IS n   34 win 44% avg  +19.4pt PF 1.74 tot $   +1157 dd $527 | OOS n   84 win 35% avg   +6.5pt PF 1.13 tot $    +697 dd $1515 | yrs ++-+-
+fade twap 0-3 k0.35 stop0.25 x4:00           IS n   34 win 50% avg  +17.3pt PF 1.65 tot $   +1015 dd $418 | OOS n   84 win 54% avg  +15.1pt PF 1.45 tot $   +2142 dd $856 | yrs ++-++
+fade twap 0-3 k0.35 stop0.25 x6:00           IS n   34 win 56% avg  +19.3pt PF 1.65 tot $   +1150 dd $684 | OOS n   84 win 46% avg  +10.4pt PF 1.21 tot $   +1343 dd $1774 | yrs ++-+-
+fade twap 0-3 k0.4 stop0.1 x4:00             IS n   20 win 40% avg  +22.9pt PF 2.24 tot $    +820 dd $260 | OOS n   58 win 31% avg   +2.6pt PF 1.01 tot $     +22 dd $704 | yrs ++++-
+fade twap 0-3 k0.4 stop0.1 x6:00             IS n   20 win 35% avg  +12.7pt PF 1.54 tot $    +414 dd $405 | OOS n   58 win 26% avg   +5.5pt PF 1.12 tot $    +359 dd $558 | yrs +--+-
+fade twap 0-3 k0.4 stop0.15 x4:00            IS n   20 win 50% avg  +26.7pt PF 2.40 tot $    +974 dd $251 | OOS n   58 win 38% avg   +5.6pt PF 1.11 tot $    +370 dd $873 | yrs ++++-
+fade twap 0-3 k0.4 stop0.15 x6:00            IS n   20 win 55% avg  +23.5pt PF 2.13 tot $    +845 dd $407 | OOS n   58 win 33% avg   +7.1pt PF 1.14 tot $    +554 dd $909 | yrs ++-++
+fade twap 0-3 k0.4 stop0.25 x4:00            IS n   20 win 50% avg  +18.7pt PF 1.64 tot $    +653 dd $370 | OOS n   58 win 50% avg  +10.1pt PF 1.25 tot $    +901 dd $754 | yrs ++-+-
+fade twap 0-3 k0.4 stop0.25 x6:00            IS n   20 win 60% avg  +18.4pt PF 1.65 tot $    +642 dd $591 | OOS n   58 win 45% avg   +7.5pt PF 1.12 tot $    +599 dd $1261 | yrs ++-+-
+
+== J prior RTH day direction reversed overnight (18:00-9:25), threshold grid ==
+rev prevRTH thr0 stopNone                    IS n  722 win 49% avg   +0.6pt PF 0.96 tot $   -2596 dd $6259 | OOS n  430 win 50% avg  +11.9pt PF 1.14 tot $   +8164 dd $4783 | yrs ++-++
+rev prevRTH thr0 stop0.3                     IS n  722 win 42% avg   +0.7pt PF 0.96 tot $   -2351 dd $4166 | OOS n  430 win 38% avg   +4.4pt PF 1.03 tot $   +1754 dd $5651 | yrs -+-++
+rev prevRTH thr0.25 stopNone                 IS n  513 win 50% avg   +3.1pt PF 1.02 tot $    +710 dd $4028 | OOS n  310 win 49% avg   +3.3pt PF 1.01 tot $    +568 dd $5692 | yrs -++-+
+rev prevRTH thr0.25 stop0.3                  IS n  513 win 42% avg   -0.1pt PF 0.94 tot $   -2551 dd $6371 | OOS n  310 win 37% avg   +1.9pt PF 0.99 tot $    -261 dd $3263 | yrs -++-+
+rev prevRTH thr0.5 stopNone                  IS n  344 win 50% avg   +2.5pt PF 1.00 tot $     +84 dd $4655 | OOS n  182 win 50% avg  +13.8pt PF 1.16 tot $   +4150 dd $3515 | yrs -++-+
+rev prevRTH thr0.5 stop0.3                   IS n  344 win 43% avg   +0.5pt PF 0.95 tot $   -1284 dd $5440 | OOS n  182 win 38% avg  +10.3pt PF 1.13 tot $   +2882 dd $2522 | yrs -++++
+rev prevRTH thr0.75 stopNone                 IS n  191 win 50% avg   +1.7pt PF 0.98 tot $    -254 dd $3203 | OOS n  100 win 51% avg  +27.9pt PF 1.39 tot $   +5109 dd $1914 | yrs --+++
+rev prevRTH thr0.75 stop0.3                  IS n  191 win 45% avg   +1.0pt PF 0.96 tot $    -509 dd $3533 | OOS n  100 win 39% avg  +12.7pt PF 1.17 tot $   +2058 dd $2354 | yrs -++++
+rev prevRTH thr1.0 stopNone                  IS n   97 win 47% avg   +1.8pt PF 0.98 tot $    -118 dd $3208 | OOS n   50 win 42% avg  +19.9pt PF 1.20 tot $   +1750 dd $2045 | yrs -++-+
+rev prevRTH thr1.0 stop0.3                   IS n   97 win 42% avg   -2.9pt PF 0.88 tot $   -1030 dd $3467 | OOS n   50 win 28% avg   +9.9pt PF 1.09 tot $    +755 dd $2411 | yrs -++-+
+
+== I Sunday: first 2h direction reversed 20:00-03:00 ==
+rev Sun 18-20 thr0 20:00-03:00               IS n  136 win 51% avg   +1.9pt PF 0.98 tot $    -133 dd $2082 | OOS n   86 win 50% avg  +12.4pt PF 1.25 tot $   +1724 dd $1638 | yrs ++--+
+rev Sun 18-20 thr0.05 20:00-03:00            IS n  106 win 51% avg   +1.3pt PF 0.95 tot $    -232 dd $1539 | OOS n   73 win 48% avg   +9.9pt PF 1.18 tot $   +1093 dd $1612 | yrs ++--+
+rev Sun 18-20 thr0.1 20:00-03:00             IS n   73 win 47% avg   -3.5pt PF 0.77 tot $    -853 dd $1879 | OOS n   59 win 47% avg  +12.1pt PF 1.22 tot $   +1144 dd $1159 | yrs +---+
+rev Sun 18-20 thr0.2 20:00-03:00             IS n   26 win 46% avg  -21.0pt PF 0.47 tot $   -1215 dd $1803 | OOS n   45 win 51% avg  +17.9pt PF 1.37 tot $   +1401 dd $1409 | yrs +---+

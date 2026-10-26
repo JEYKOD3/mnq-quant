@@ -286,8 +286,9 @@ exitTag(show, nm, side, x, pts, q, why, e, bS, bT) =>
         x1 = na(bS) ? bar_index : line.get_x1(bS)
         line.delete(bS)
         line.delete(bT)
-        line.new(x1, e, bar_index, x, color=color.new(pts >= 0 ? color.lime : color.red, 15), width=2)
-        label.new(bar_index, x, (pts >= 0 ? "✓ " : "✗ ") + fmt(pts), color=color.new(pts >= 0 ? color.teal : color.maroon, 20), textcolor=color.white, style=side > 0 ? label.style_label_down : label.style_label_up, size=size.tiny, tooltip=nm + " EXIT · " + why + "\n――――――――――――\nResult: " + (pts >= 0 ? "+" : "") + fmt(pts) + " pts × " + str.tostring(q) + " MNQ = " + usd(pnlOf(q, pts)) + "\nExit: " + fmt(x) + "  at " + hhmm())
+        if q > 0
+            line.new(x1, e, bar_index, x, color=color.new(pts >= 0 ? color.lime : color.red, 10), style=line.style_dashed, width=1)
+            label.new(bar_index, x, (pts >= 0 ? "✓ " : "✗ ") + fmt(pts), color=color.new(pts >= 0 ? color.teal : color.maroon, 20), textcolor=color.white, style=side > 0 ? label.style_label_down : label.style_label_up, size=size.tiny, tooltip=nm + " EXIT · " + why + "\n――――――――――――\nResult: " + (pts >= 0 ? "+" : "") + fmt(pts) + " pts × " + str.tostring(q) + " MNQ = " + usd(pnlOf(q, pts)) + "\nExit: " + fmt(x) + "  at " + hhmm())
     true
 
 // trade log (last 8 closed, all strategies)

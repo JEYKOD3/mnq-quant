@@ -1,6 +1,6 @@
-# MNQ Playbook (Pine v6), TradingView version 16
+# MNQ Playbook (Pine v6), TradingView version 19
 
-One-line ⓘ panel with hover details, size.normal text, opaque tables.
+One-line ⓘ panel (top) and one-line ⓘ TRADES (bottom left), hover for details. size.normal text.
 
 ```pine
 //@version=5
@@ -25,6 +25,7 @@ showOR = input.bool(true, "Opening range (9:30-9:45) lines", group="Chart")
 showPanel = input.bool(true, "Show panel", group="Chart")
 panelIcon = input.bool(true, "Panel as one line, hover ⓘ for details", group="Chart")
 showLog = input.bool(false, "Show last trades table", group="Chart")
+logIcon = input.bool(true, "Last trades as one ⓘ line, hover for the table", group="Chart")
 showStats = input.bool(false, "Show results table (loaded bars)", group="Chart")
 emaLen = input.int(20, "EMA length (0 = off)", group="Chart")
 plot(emaLen > 0 ? ta.ema(close, emaLen) : na, "EMA", color=color.new(color.fuchsia, 40))
@@ -920,20 +921,35 @@ if showStats and barstate.islast
 // ---------- last trades (optional) ----------
 var table lt = table.new(position.bottom_left, 4, 9, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showLog and barstate.islast
-    table.cell(lt, 0, 0, "Last trades", text_color=color.yellow, text_size=size.normal)
-    table.cell(lt, 1, 0, "strategy / entry", text_color=color.yellow, text_size=size.normal)
-    table.cell(lt, 2, 0, "exit", text_color=color.yellow, text_size=size.normal)
-    table.cell(lt, 3, 0, "pts (1 MNQ $)", text_color=color.yellow, text_size=size.normal)
     nL = array.size(lgP)
-    if nL == 0
-        table.cell(lt, 0, 1, "none on loaded bars", text_color=color.white, text_size=size.normal)
-    for i = 0 to 7
-        if i < nL
-            j = nL - 1 - i
-            pv = array.get(lgP, j)
-            table.cell(lt, 0, i + 1, array.get(lgD, j), text_color=color.white, text_size=size.normal)
-            table.cell(lt, 1, i + 1, array.get(lgS, j), text_color=color.white, text_size=size.normal)
-            table.cell(lt, 2, i + 1, array.get(lgX, j), text_color=color.white, text_size=size.normal)
-            table.cell(lt, 3, i + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal)
+    if logIcon
+        ttip = "LAST TRADES (1 MNQ)\n"
+        tot = 0.0
+        for i = 0 to 7
+            if i < nL
+                j = nL - 1 - i
+                pv = array.get(lgP, j)
+                tot += pv
+                ttip := ttip + "\n" + (pv >= 0 ? "✓ " : "✗ ") + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "  " + fmt(pv) + " pts (" + usd(pv * 2) + ")"
+        if nL == 0
+            ttip := ttip + "\nnone on loaded bars"
+        lastTxt = nL == 0 ? "none" : (array.get(lgP, nL - 1) >= 0 ? "✓ " : "✗ ") + array.get(lgS, nL - 1) + " " + fmt(array.get(lgP, nL - 1)) + " pts"
+        table.cell(lt, 0, 0, "ⓘ TRADES", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
+        table.cell(lt, 1, 0, "last: " + lastTxt, text_color=nL > 0 and array.get(lgP, nL - 1) < 0 ? color.red : color.lime, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
+    else
+        table.cell(lt, 0, 0, "Last trades", text_color=color.yellow, text_size=size.normal)
+        table.cell(lt, 1, 0, "strategy / entry", text_color=color.yellow, text_size=size.normal)
+        table.cell(lt, 2, 0, "exit", text_color=color.yellow, text_size=size.normal)
+        table.cell(lt, 3, 0, "pts (1 MNQ $)", text_color=color.yellow, text_size=size.normal)
+        if nL == 0
+            table.cell(lt, 0, 1, "none on loaded bars", text_color=color.white, text_size=size.normal)
+        for i = 0 to 7
+            if i < nL
+                j = nL - 1 - i
+                pv = array.get(lgP, j)
+                table.cell(lt, 0, i + 1, array.get(lgD, j), text_color=color.white, text_size=size.normal)
+                table.cell(lt, 1, i + 1, array.get(lgS, j), text_color=color.white, text_size=size.normal)
+                table.cell(lt, 2, i + 1, array.get(lgX, j), text_color=color.white, text_size=size.normal)
+                table.cell(lt, 3, i + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal)
 
 ```

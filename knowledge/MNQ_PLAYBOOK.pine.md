@@ -1,6 +1,6 @@
-# MNQ Playbook (Pine v6), TradingView version 19
+# MNQ Playbook (Pine v6), TradingView version 21
 
-One-line ⓘ panel (top) and one-line ⓘ TRADES (bottom left), hover for details. size.normal text.
+D2 0.6 ADR + 13:15 exit; all strategies flat by 15:00; Pinball 2R / 3h; STOP DAY banner; colored one-line strips; Lucid Flex 40% consistency, floor locks at 50,100.
 
 ```pine
 //@version=5
@@ -8,7 +8,7 @@ One-line ⓘ panel (top) and one-line ⓘ TRADES (bottom left), hover for detail
 // One engine, several charts: every chart runs ALL six strategies and the shared budget, so sizes and "budget left" match everywhere.
 // The "Show on this chart" input only decides which strategies draw markers and fire alerts on that chart.
 //   Chart 1  Open & News   : NEWS (8:30-9:30), V4+ (9:45-13:00), D2 (10:30)
-//   Chart 2  Trend & Swing : TDP (10:30-12:00), H2 (10:30-15:00, half size), Pinball (10:30-15:00)
+//   Chart 2  Trend & Swing : TDP (10:30-12:00), H2 (10:30-15:00, half size), Pinball (10:30-15:00). All flat by 15:00, D2 by 13:15
 // Use MNQ1! 1-minute, extended hours ON (needed for NEWS and the 8:29 price). Not an auto-trader: markers, sizes, alerts.
 // Hover any marker for the full reason, entry, stop, target, size and risk.
 indicator("MNQ Playbook v6", shorttitle="Playbook", overlay=true, max_lines_count=400, max_labels_count=400, max_boxes_count=200)
@@ -41,12 +41,14 @@ gapTh  = input.float(0.4, "V4+ gap threshold (x ADR)", group="V4+")
 dirTh  = input.float(0.4, "V4+ first-15m threshold (x OR range)", group="V4+")
 tgtR   = input.float(1.25, "V4+ target (R)", group="V4+")
 v4BE   = input.bool(true, "V4+ stop to breakeven at +1R", group="V4+")
-d2Th   = input.float(0.5, "D2 move at 10:30 (x ADR)", group="D2")
+d2Th   = input.float(0.6, "D2 move at 10:30 (x ADR)", group="D2")
+d2Flat = input.int(795, "D2 hard exit (minutes after midnight, 795 = 13:15)", group="D2")
 tdEff  = input.float(0.6, "TDP first-hour efficiency min", group="TDP")
 tdK    = input.float(0.33, "TDP pullback depth (x first-hour range)", group="TDP")
 tdStop = input.float(0.4, "TDP stop (x ADR)", group="TDP")
 tdTgt  = input.float(1.5, "TDP target (R)", group="TDP")
-pinCap = input.int(0, "Pinball time cap (min after entry, 0 = hold to 15:55)", group="Pinball")
+pinCap = input.int(180, "Pinball time cap (min after entry, 0 = off)", group="Pinball")
+pinTgt = input.float(2.0, "Pinball target (R)", group="Pinball")
 h2Th   = input.float(0.4, "H2 trend-day threshold at 10:30 (x ADR)", group="H2")
 h2Tgt  = input.float(2.0, "H2 target (R)", group="H2")
 h2Max  = input.int(3, "H2 max trades per day", group="H2")
@@ -58,10 +60,12 @@ peakEOD= input.float(50000, "Highest end-of-day balance so far ($)", group="Prop
 bestDay= input.float(0, "Best day profit so far ($)", group="Prop firm (update each morning)")
 pfTgt  = input.float(3000, "Profit target ($)", group="Prop firm (update each morning)")
 pfDD   = input.float(2000, "Trailing max loss, end of day ($)", group="Prop firm (update each morning)")
-pfCons = input.float(0.5, "Consistency: best day max share of profit", group="Prop firm (update each morning)")
-mllLine= math.min(peakEOD - pfDD, evStart)
+pfCons = input.float(0.4, "Consistency: best day max share of profit (Lucid Flex default 40%)", group="Prop firm (update each morning)")
+mllLine= math.min(peakEOD - pfDD, evStart + 100)
 frac   = input.float(0.65, "Risk = fraction of room", group="Sizing")
 dayCap = input.float(1100, "Daily budget ($): open risk + today's losses, shared by all strategies", group="Sizing")
+stopLos = input.int(3, "STOP the day after N losing trades (0 = off)", group="Sizing")
+stopRoom = input.float(400, "STOP the day when room above max-loss line is under ($)", group="Sizing")
 
 // ---------- news calendar (yyyy-mm-dd HHMM NAME, comma separated, no spaces after commas) ----------
 calStr = input.text_area("2026-09-04 0830 NFP,2026-09-10 0830 PPI,2026-09-11 0830 CPI,2026-09-16 1400 FOMC,2026-10-02 0830 NFP,2026-10-14 0830 CPI,2026-10-15 0830 PPI,2026-10-28 1400 FOMC,2026-11-03 1000 JOLTS,2026-11-06 0830 NFP,2026-11-10 0830 CPI,2026-11-13 0830 PPI,2026-12-01 1000 JOLTS,2026-12-04 0830 NFP,2026-12-09 1400 FOMC,2026-12-10 0830 CPI,2026-12-15 0830 PPI", "Economic calendar", group="News")
@@ -245,6 +249,9 @@ var float rkTD = 0.0
 var float rkPn = 0.0
 var float rkH2 = 0.0
 var float dayLoss = 0.0
+var int[] dLos = array.from(0)
+var bool dayStop = false
+var string stopWhy = ""
 var float dayPnl = 0.0
 var int budDay = -1
 if mnt >= 480 and mnt < 960 and budDay != dom
@@ -257,6 +264,9 @@ if mnt >= 480 and mnt < 960 and budDay != dom
     rkH2 := 0.0
     dayLoss := 0.0
     dayPnl := 0.0
+    array.set(dLos, 0, 0)
+    dayStop := false
+    stopWhy := ""
 perC(riskPts) => riskPts * 2 + 0.5 + 4.74
 usedNow() => rkNW + rkV4 + rkD2 + rkTD + rkPn + rkH2 + dayLoss
 sizeFor(riskPts, w) =>
@@ -264,8 +274,8 @@ sizeFor(riskPts, w) =>
     used = usedNow()
     pc = perC(riskPts)
     budget = math.min(w * frac * room, frac * room - used, dayCap - used)
-    q = budget > 0 ? math.floor(budget / pc) : 0
-    if q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
+    q = dayStop ? 0 : budget > 0 ? math.floor(budget / pc) : 0
+    if not dayStop and q < 1 and w >= 1 and pc < 0.9 * (room - used) and pc < dayCap - used
         q := 1
     math.max(0, q)
 lossOf(q, pts) => pts < 0 ? q * (-pts * 2 + 4.74) : 0.0
@@ -277,7 +287,7 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
         rp = math.abs(e - s)
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
-        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : " · SKIP, budget full")
+        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : " · SKIP, budget full"))
         tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
         label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
@@ -307,6 +317,8 @@ logTrade(nm, side, eT, why, pts) =>
     array.push(lgS, nm + (side > 0 ? " LONG " : " SHORT ") + eT)
     array.push(lgX, why + " " + hhmm())
     array.push(lgP, pts)
+    if pts < 0
+        array.set(dLos, 0, array.get(dLos, 0) + 1)
     if array.size(lgP) > 8
         array.shift(lgD)
         array.shift(lgS)
@@ -339,6 +351,34 @@ var float nbL = na
 var int nwPos = 0
 var int nwPend = 0
 var int nwN_ = 0
+// ---------- STOP DAY: hard stop, big warning ----------
+if mnt >= 480 and mnt < 960 and budDay == dom and not dayStop
+    nLos = array.get(dLos, 0)
+    if dayLoss >= dayCap - 150
+        dayStop := true
+        stopWhy := "Daily loss budget used (" + usd(dayLoss) + " of " + usd(dayCap) + ")"
+    else if acct + dayPnl - mllLine < stopRoom
+        dayStop := true
+        stopWhy := "Only " + usd(acct + dayPnl - mllLine) + " above the max-loss line"
+    else if stopLos > 0 and nLos >= stopLos
+        dayStop := true
+        stopWhy := str.tostring(nLos) + " losing trades today"
+    else if acct - evStart + dayPnl >= math.max(pfTgt, math.max(bestDay, dayPnl) / pfCons)
+        dayStop := true
+        stopWhy := "Eval passed (target and 40% rule met). Protect it, no more trades"
+if mnt >= 480 and mnt < 960 and budDay == dom and dayStop[1] == false and dayStop
+    label.new(bar_index, high, "STOP", color=color.red, textcolor=color.white, style=label.style_label_down, size=size.large, tooltip="STOP DAY: " + stopWhy)
+if not (mnt >= 480 and mnt < 960) and dayStop and mnt >= 960
+    dayStop := false
+    stopWhy := ""
+bgcolor(dayStop and inRTH ? color.new(color.red, 85) : na, title="STOP day tint")
+var table stopT = table.new(position.middle_center, 1, 2, bgcolor=color.new(#2a0000, 10), border_color=color.red, border_width=3, frame_color=color.red, frame_width=3)
+if barstate.islast
+    table.clear(stopT, 0, 0, 0, 1)
+    if dayStop
+        table.cell(stopT, 0, 0, "STOP · NO MORE TRADES TODAY", text_color=color.white, text_size=size.huge)
+        table.cell(stopT, 0, 1, stopWhy + "\nClose the platform. Tomorrow is a new day.", text_color=color.new(#ffb3b3, 0), text_size=size.large)
+
 var int nwLossRow = 0
 var float nwE = na
 var float nwS = na
@@ -471,7 +511,7 @@ if useV4 and inRTH
         grow(v4BS)
         hitS = v4Pos > 0 ? low <= v4S : high >= v4S
         hitT = v4Pos > 0 ? high >= v4T : low <= v4T
-        xP = hitS ? v4S : hitT ? v4T : mnt >= 955 ? close : na
+        xP = hitS ? v4S : hitT ? v4T : mnt >= 900 ? close : na
         if na(xP) and v4BE and not v4AtBE and (v4Pos > 0 ? high >= v4E + v4R : low <= v4E - v4R)
             v4S := v4E + v4Pos * 1.25
             v4AtBE := true
@@ -481,7 +521,7 @@ if useV4 and inRTH
                 alert("V4+ +1R: move stop to breakeven " + fmt(v4S), alert.freq_once_per_bar)
         if not na(xP)
             pts = (xP - v4E) * v4Pos
-            why = hitS ? (v4AtBE ? "breakeven" : "stop") : hitT ? "target" : "15:55"
+            why = hitS ? (v4AtBE ? "breakeven" : "stop") : hitT ? "target" : "15:00"
             addRes(1, pts)
             rkV4 := 0.0
             dayLoss += lossOf(v4Q, pts)
@@ -505,7 +545,7 @@ if useV4 and inRTH
             v4Q := q
             v4ET := hhmm()
             rkV4 := q * perC(r)
-            entryTag(g1, "V4+", pSide, v4E, v4S, v4T, q, "1.25R target · stop to breakeven at +1R · else 15:55", "Daily trend and today's bias agree (" + (pSide > 0 ? "UP" : "DOWN") + ") | Price broke the 9:30-9:45 range, then retested it | Strong candle: stop order just beyond it | Stop on the other side of the range", cV4)
+            entryTag(g1, "V4+", pSide, v4E, v4S, v4T, q, "1.25R target · stop to breakeven at +1R · else 15:00", "Daily trend and today's bias agree (" + (pSide > 0 ? "UP" : "DOWN") + ") | Price broke the 9:30-9:45 range, then retested it | Strong candle: stop order just beyond it | Stop on the other side of the range", cV4)
             v4BT := zone(g1, v4E, v4T, true)
             v4BS := zone(g1, v4E, v4S, false)
             if g1
@@ -565,15 +605,15 @@ if useD2 and inRTH
     if d2Pos != 0
         grow(d2BS)
         hit = d2Pos > 0 ? low <= d2S : high >= d2S
-        xP = hit ? d2S : mnt >= 900 ? close : na
+        xP = hit ? d2S : mnt >= d2Flat ? close : na
         if not na(xP)
             pts = (xP - d2E) * d2Pos
             addRes(2, pts)
             rkD2 := 0.0
             dayLoss += lossOf(d2Q, pts)
             dayPnl += pnlOf(d2Q, pts)
-            logTrade("D2", d2Pos, "10:30", hit ? "stop" : "15:00", pts)
-            exitTag(g1, "D2", d2Pos, xP, pts, d2Q, hit ? "stop" : "15:00 time exit", d2E, d2BS, line(na))
+            logTrade("D2", d2Pos, "10:30", hit ? "stop" : "13:15", pts)
+            exitTag(g1, "D2", d2Pos, xP, pts, d2Q, hit ? "stop" : "13:15 time exit", d2E, d2BS, line(na))
             if g1
                 alert("D2 exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             d2Pos := 0
@@ -590,10 +630,10 @@ if useD2 and inRTH
             q = sizeFor(r, d2W8)
             d2Q := q
             rkD2 := q * perC(r)
-            entryTag(g1, "D2", s, d2E, d2S, float(na), q, "15:00, or stop", "At 10:30 price is " + fmt(math.abs(mv)) + " ADR " + (s > 0 ? "above" : "below") + " the open: continuation | Stop at the opening price" + (d2W8 < 1 ? " | HALF size: against the daily trend" : ""), cD2)
+            entryTag(g1, "D2", s, d2E, d2S, float(na), q, "13:15 time exit, or stop", "At 10:30 price is " + fmt(math.abs(mv)) + " ADR " + (s > 0 ? "above" : "below") + " the open: continuation | Stop at the opening price" + (d2W8 < 1 ? " | HALF size: against the daily trend" : ""), cD2)
             d2BS := zone(g1, d2E, d2S, false)
             if g1
-                alert("D2 " + (s > 0 ? "LONG " : "SHORT ") + fmt(d2E) + " stop " + fmt(d2S) + " exit 15:00 size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
+                alert("D2 " + (s > 0 ? "LONG " : "SHORT ") + fmt(d2E) + " stop " + fmt(d2S) + " exit 13:15 size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
 
 // ===================== TDP: trend-day pullback =====================
 var int tdS = 0
@@ -619,15 +659,15 @@ if useTD and inRTH
         grow(tdBS)
         hS3 = tdPos > 0 ? low <= tdSt : high >= tdSt
         hT3 = tdPos > 0 ? high >= tdT : low <= tdT
-        x3 = hS3 ? tdSt : hT3 ? tdT : mnt >= 955 ? close : na
+        x3 = hS3 ? tdSt : hT3 ? tdT : mnt >= 900 ? close : na
         if not na(x3)
             p3 = (x3 - tdE) * tdPos
             addRes(3, p3)
             rkTD := 0.0
             dayLoss += lossOf(tdQ, p3)
             dayPnl += pnlOf(tdQ, p3)
-            logTrade("TDP", tdPos, tdET, hS3 ? "stop" : hT3 ? "target" : "15:55", p3)
-            exitTag(g2, "TDP", tdPos, x3, p3, tdQ, hS3 ? "stop" : hT3 ? "target" : "15:55", tdE, tdBS, tdBT)
+            logTrade("TDP", tdPos, tdET, hS3 ? "stop" : hT3 ? "target" : "15:00", p3)
+            exitTag(g2, "TDP", tdPos, x3, p3, tdQ, hS3 ? "stop" : hT3 ? "target" : "15:00", tdE, tdBS, tdBT)
             if g2
                 alert("TDP exit " + fmt(p3) + " pts", alert.freq_once_per_bar)
             tdPos := 0
@@ -657,7 +697,7 @@ if useTD and inRTH
             tdQ := q3
             tdET := hhmm()
             rkTD := q3 * perC(r3)
-            entryTag(g2, "TDP", tdS, tdE, tdSt, tdT, q3, "1.5R target, else 15:55", "Trend day " + (tdS > 0 ? "UP" : "DOWN") + ": first hour clean and outside the prior-day range | Pullback of 1/3 of the first-hour range from the day's " + (tdS > 0 ? "high" : "low") + " | Stop 0.4 x ADR", cTD)
+            entryTag(g2, "TDP", tdS, tdE, tdSt, tdT, q3, "1.5R target, else 15:00", "Trend day " + (tdS > 0 ? "UP" : "DOWN") + ": first hour clean and outside the prior-day range | Pullback of 1/3 of the first-hour range from the day's " + (tdS > 0 ? "high" : "low") + " | Stop 0.4 x ADR", cTD)
             tdBT := zone(g2, tdE, tdT, true)
             tdBS := zone(g2, tdE, tdSt, false)
             if g2
@@ -683,6 +723,8 @@ if useTD and inRTH
 var int pnPos = 0
 var float pnE = na
 var float pnS = na
+var float pnT = na
+var line pnBT = na
 var bool pnDone = false
 var int pnQ = 0
 var int pnT0 = 0
@@ -695,17 +737,19 @@ pinSide = rsi3 < 30 and trendDir > 0 ? 1 : rsi3 > 70 and trendDir < 0 ? -1 : 0
 if usePin and inRTH
     if pnPos != 0
         grow(pnBS)
+        grow(pnBT)
         hit = pnPos > 0 ? low <= pnS : high >= pnS
+        hitT = not hit and (pnPos > 0 ? high >= pnT : low <= pnT)
         capHit = pinCap > 0 and mnt >= pnT0 + pinCap
-        xP = hit ? pnS : (mnt >= 955 or capHit) ? close : na
+        xP = hit ? pnS : hitT ? pnT : (mnt >= 900 or capHit) ? close : na
         if not na(xP)
             pts = (xP - pnE) * pnPos
             addRes(4, pts)
             rkPn := 0.0
             dayLoss += lossOf(pnQ, pts)
             dayPnl += pnlOf(pnQ, pts)
-            logTrade("PIN", pnPos, pnET, hit ? "stop" : capHit ? "time cap" : "15:55", pts)
-            exitTag(g2, "PIN", pnPos, xP, pts, pnQ, hit ? "stop" : capHit ? "time cap" : "15:55", pnE, pnBS, line(na))
+            logTrade("PIN", pnPos, pnET, hit ? "stop" : hitT ? "target" : capHit ? "3h cap" : "15:00", pts)
+            exitTag(g2, "PIN", pnPos, xP, pts, pnQ, hit ? "stop" : hitT ? "target" : capHit ? "3h time cap" : "15:00", pnE, pnBS, pnBT)
             if g2
                 alert("PINBALL exit " + fmt(pts) + " pts", alert.freq_once_per_bar)
             pnPos := 0
@@ -718,12 +762,14 @@ if usePin and inRTH
             pnDone := true
             pnT0 := mnt
             r = math.abs(pnE - pnS)
+            pnT := pnE + pinSide * pinTgt * r
             q = sizeFor(r, 1.0)
             pnQ := q
             pnET := hhmm()
             rkPn := q * perC(r)
-            entryTag(g2, "PIN", pinSide, pnE, pnS, float(na), q, "15:55, or stop", "3-day RSI " + fmt(rsi3) + (pinSide > 0 ? " (oversold)" : " (overbought)") + " with the daily trend " + (trendDir > 0 ? "UP" : "DOWN") + " | Price broke the first-hour " + (pinSide > 0 ? "high" : "low") + " | Stop on the other side of the first hour", cPn)
+            entryTag(g2, "PIN", pinSide, pnE, pnS, pnT, q, "2R target, 3h after entry, or 15:00", "3-day RSI " + fmt(rsi3) + (pinSide > 0 ? " (oversold)" : " (overbought)") + " with the daily trend " + (trendDir > 0 ? "UP" : "DOWN") + " | Price broke the first-hour " + (pinSide > 0 ? "high" : "low") + " | Stop on the other side of the first hour", cPn)
             pnBS := zone(g2, pnE, pnS, false)
+            pnBT := zone(g2, pnE, pnT, true)
             if g2
                 alert("PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + " stop " + fmt(pnS) + " size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
             if pinSide > 0 ? low <= pnS : high >= pnS
@@ -734,7 +780,7 @@ if usePin and inRTH
                 dayLoss += lossOf(pnQ, pts)
                 dayPnl += pnlOf(pnQ, pts)
                 logTrade("PIN", pinSide, pnET, "stop", pts)
-                exitTag(g2, "PIN", pinSide, pnS, pts, pnQ, "stop (same bar)", pnE, pnBS, line(na))
+                exitTag(g2, "PIN", pinSide, pnS, pts, pnQ, "stop (same bar)", pnE, pnBS, pnBT)
 
 // ===================== H2: second-entry pullbacks on trend days (half size) =====================
 var float[] bH = array.new_float()
@@ -789,7 +835,7 @@ if useH2 and inRTH
             h2Q := q2
             h2ET := hhmm()
             rkH2 := q2 * perC(r2)
-            entryTag(g2, "H2", h2PSide, h2E, h2S, h2T, q2, "2R target, else 15:55", "Trend day: moved >= " + fmt(h2Th) + " ADR by 10:30 | 5m pullback after a new " + (h2PSide > 0 ? "high" : "low") + " | 5m close back through the prior bar (second entry) | HALF size", cH2)
+            entryTag(g2, "H2", h2PSide, h2E, h2S, h2T, q2, "2R target, else 15:00", "Trend day: moved >= " + fmt(h2Th) + " ADR by 10:30 | 5m pullback after a new " + (h2PSide > 0 ? "high" : "low") + " | 5m close back through the prior bar (second entry) | HALF size", cH2)
             h2BT := zone(g2, h2E, h2T, true)
             h2BS := zone(g2, h2E, h2S, false)
             if g2
@@ -800,15 +846,15 @@ if useH2 and inRTH
         grow(h2BS)
         hS2 = h2Pos > 0 ? low <= h2S : high >= h2S
         hT2 = h2Pos > 0 ? high >= h2T : low <= h2T
-        x2 = hS2 ? h2S : hT2 ? h2T : mnt >= 955 ? close : na
+        x2 = hS2 ? h2S : hT2 ? h2T : mnt >= 900 ? close : na
         if not na(x2)
             p2 = (x2 - h2E) * h2Pos
             addRes(5, p2)
             rkH2 := 0.0
             dayLoss += lossOf(h2Q, p2)
             dayPnl += pnlOf(h2Q, p2)
-            logTrade("H2", h2Pos, h2ET, hS2 ? "stop" : hT2 ? "target" : "15:55", p2)
-            exitTag(g2, "H2", h2Pos, x2, p2, h2Q, hS2 ? "stop" : hT2 ? "target" : "15:55", h2E, h2BS, h2BT)
+            logTrade("H2", h2Pos, h2ET, hS2 ? "stop" : hT2 ? "target" : "15:00", p2)
+            exitTag(g2, "H2", h2Pos, x2, p2, h2Q, hS2 ? "stop" : hT2 ? "target" : "15:00", h2E, h2BS, h2BT)
             if g2
                 alert("H2 exit " + fmt(p2) + " pts", alert.freq_once_per_bar)
             h2Pos := 0
@@ -880,7 +926,7 @@ openList() =>
     s := s + (pnPos != 0 ? "PIN " + str.tostring(pnQ) + " " : "")
     s := s + (h2Pos != 0 ? "H2 " + str.tostring(h2Q) + " " : "")
     s == "" ? "flat" : s + "MNQ"
-var table pn = table.new(position.top_right, 2, 10, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1, frame_color=color.new(color.gray, 50), frame_width=1)
+var table pn = table.new(position.top_right, 6, 10, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1, frame_color=color.new(color.gray, 50), frame_width=1)
 if showPanel and barstate.islast
     tc = color.white
     dim = color.new(color.silver, 0)
@@ -897,9 +943,15 @@ if showPanel and barstate.islast
     for k = 0 to 9
         tip := tip + array.get(labs, k) + ": " + array.get(vals, k) + (k < 9 ? "\n" : "")
     if panelIcon
-        quick = "Budget " + usd(math.max(0, left)) + " left · Eval " + usd(math.max(0, need - prof)) + " to go" + (openList() != "flat" ? " · OPEN " + openList() : "") + (tev != "" ? " · NEWS " + tev : "")
+        table.clear(pn, 0, 0, 5, 0)
         table.cell(pn, 0, 0, "ⓘ PLAYBOOK", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=tip)
-        table.cell(pn, 1, 0, quick, text_color=left < 200 or room < 800 ? color.orange : tc, text_size=size.normal, text_halign=text.align_left, tooltip=tip)
+        table.cell(pn, 1, 0, "Budget " + usd(math.max(0, left)) + " left", text_color=left < 200 ? color.orange : tc, text_size=size.normal, tooltip=tip)
+        table.cell(pn, 2, 0, "Today " + (dayPnl > 0 ? "+" : "") + usd(dayPnl), text_color=dayPnl > 0 ? color.lime : dayPnl < 0 ? color.red : tc, text_size=size.normal, tooltip=tip)
+        table.cell(pn, 3, 0, prof >= need ? "TARGET MET" : "Eval " + usd(need - prof) + " to go", text_color=prof >= need ? color.lime : room < 800 ? color.orange : tc, text_size=size.normal, tooltip=tip)
+        if openList() != "flat"
+            table.cell(pn, 4, 0, "OPEN " + openList(), text_color=color.aqua, text_size=size.normal, tooltip=tip)
+        if tev != ""
+            table.cell(pn, 5, 0, "NEWS " + tev, text_color=color.orange, text_size=size.normal, tooltip=tip)
     else
         for k = 0 to 9
             table.cell(pn, 0, k, array.get(labs, k), text_color=k == 0 ? color.yellow : dim, text_size=size.normal, text_halign=text.align_left)
@@ -919,23 +971,27 @@ if showStats and barstate.islast
         table.cell(tb, 2, k + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.small)
 
 // ---------- last trades (optional) ----------
-var table lt = table.new(position.bottom_left, 4, 9, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table lt = table.new(position.bottom_left, 6, 9, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showLog and barstate.islast
     nL = array.size(lgP)
     if logIcon
-        ttip = "LAST TRADES (1 MNQ)\n"
-        tot = 0.0
+        table.clear(lt, 0, 0, 5, 0)
+        ttip = "LAST TRADES (1 MNQ, newest first)\n"
         for i = 0 to 7
             if i < nL
                 j = nL - 1 - i
                 pv = array.get(lgP, j)
-                tot += pv
-                ttip := ttip + "\n" + (pv >= 0 ? "✓ " : "✗ ") + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "  " + fmt(pv) + " pts (" + usd(pv * 2) + ")"
+                ttip := ttip + "\n" + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "   " + (pv >= 0 ? "+" : "") + fmt(pv) + " pts (" + (pv >= 0 ? "+" : "") + usd(pv * 2) + ")"
         if nL == 0
             ttip := ttip + "\nnone on loaded bars"
-        lastTxt = nL == 0 ? "none" : (array.get(lgP, nL - 1) >= 0 ? "✓ " : "✗ ") + array.get(lgS, nL - 1) + " " + fmt(array.get(lgP, nL - 1)) + " pts"
         table.cell(lt, 0, 0, "ⓘ TRADES", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
-        table.cell(lt, 1, 0, "last: " + lastTxt, text_color=nL > 0 and array.get(lgP, nL - 1) < 0 ? color.red : color.lime, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
+        if nL == 0
+            table.cell(lt, 1, 0, "none yet", text_color=color.silver, text_size=size.normal, tooltip=ttip)
+        for i = 0 to 4
+            if i < nL
+                j = nL - 1 - i
+                pv = array.get(lgP, j)
+                table.cell(lt, 1 + i, 0, (pv >= 0 ? "+" : "") + fmt(pv), text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal, tooltip=array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "\n" + (pv >= 0 ? "+" : "") + fmt(pv) + " pts = " + (pv >= 0 ? "+" : "") + usd(pv * 2) + " per MNQ")
     else
         table.cell(lt, 0, 0, "Last trades", text_color=color.yellow, text_size=size.normal)
         table.cell(lt, 1, 0, "strategy / entry", text_color=color.yellow, text_size=size.normal)

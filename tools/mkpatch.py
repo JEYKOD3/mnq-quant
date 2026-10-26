@@ -1,7 +1,8 @@
 """Make a JS snippet that turns the HEAD version of the Pine script (stored in localStorage claude_pb_v6) into the working copy, sending only changed text."""
 import json, subprocess, difflib, sys
 p = 'strategies/pine/MNQ_PLAYBOOK.pine'
-old = subprocess.run(['git', 'show', 'HEAD:' + p], capture_output=True, text=True).stdout
+base = sys.argv[1] if len(sys.argv) > 1 else 'HEAD'
+old = subprocess.run(['git', 'show', base + ':' + p], capture_output=True, text=True).stdout
 new = open(p).read()
 ops = [(i1, i2, new[j1:j2]) for t, i1, i2, j1, j2 in difflib.SequenceMatcher(None, old, new, autojunk=False).get_opcodes() if t != 'equal']
 h = 0

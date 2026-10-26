@@ -287,6 +287,7 @@ def sl6(stopp=15., tgtp=15., be=8., gapmin=2.):
                     busy_until = idx_at(b, t['xT']) or len(b); break
     return out
 
+def s_any(c): return 0   # before 9:30 the open filter does not apply -> no trade for pre-open variants
 # ---------- friend's mother candle ----------
 TRIG = 'body'
 MCMODE = 'one'   # 'one' = first trade only; 'win' = keep trading the setup after losses, stop after the first win (max 4/day)
@@ -324,7 +325,7 @@ def mc_scan(b, s_win, e_win, tgtR, bf, d, name, tend=955, maxone=True):
                 if bside is not None and ((bside > 0 and dn) or (bside < 0 and up)): up = dn = False
                 if up or dn:
                     s = 1 if up else -1
-                    if m >= s_win and (bf is None or bf(m) == s):
+                    if m >= s_win and (bf is None or bf(m, c) == s):
                         eP = c + s * SLIP * T; stp = (L - T) if s > 0 else (H + T); r = abs(eP - stp)
                         if r > 0:
                             xi, xP, why, rf = walk(b, k + 1, s, eP, stp, eP + s * tgtR * r, tend)
@@ -340,7 +341,7 @@ def mc1(tgtR=1., biasf=False, s_win=570, e_win=630):
     for d in D:
         b = DB[d]
         if len(b) < 60 or b[0][0] != 570: continue
-        bf = (lambda m, d=d: bias(d, m)) if biasf else None
+        bf = (lambda m, c, d=d: bias(d, m)) if biasf == True else (lambda m, c, o0=DB[d][0][1]: (1 if c > o0 else -1) if m >= 570 else s_any(c)) if biasf == 'open' else None
         out += mc_scan(b, s_win, e_win, tgtR, bf, d, f'MC1m')
     return out
 def mc5pre(tgtR=1., biasf=False):
@@ -350,7 +351,7 @@ def mc5pre(tgtR=1., biasf=False):
         e = [x for x in ETH.get(d, []) if 480 <= x[0] < 570]; r = DB[d]
         if len(e) < 12 or not r or r[0][0] != 570: continue
         b = e + r
-        bf = (lambda m, d=d: bias(d, m)) if biasf else None
+        bf = (lambda m, c, d=d: bias(d, m)) if biasf == True else (lambda m, c, o0=DB[d][0][1]: (1 if c > o0 else -1) if m >= 570 else s_any(c)) if biasf == 'open' else None
         out += mc_scan(b, 540, 570, tgtR, bf, d, 'MC5pre')
     return out
 def mc5(tgtR=1., biasf=False):
@@ -359,7 +360,7 @@ def mc5(tgtR=1., biasf=False):
         b = DB[d]
         if len(b) < 60 or b[0][0] != 570: continue
         b5 = agg5(b)
-        bf = (lambda m, d=d: bias(d, m)) if biasf else None
+        bf = (lambda m, c, d=d: bias(d, m)) if biasf == True else (lambda m, c, o0=DB[d][0][1]: (1 if c > o0 else -1) if m >= 570 else s_any(c)) if biasf == 'open' else None
         t = mc_scan(b5, 570, 630, tgtR, bf, d, 'MC5')
         # re-walk on 1m for honest exits (skip overlaps; in 'win' mode stop after the first 1m-walk win)
         lastx = -1
@@ -427,6 +428,9 @@ FAM = {
     'MCW 5m pre-open 1R stop-after-win': wmode(lambda: mc5pre(1.)), 'MCW 5m pre-open 1R stop-after-win HTF bias': wmode(lambda: mc5pre(1., True)),
     'MCW 5m 9:30-10:30 1R stop-after-win': wmode(lambda: mc5(1.)), 'MCW 5m 9:30-10:30 1R stop-after-win HTF bias': wmode(lambda: mc5(1., True)),
     'MCW 5m 9:30-10:30 2R stop-after-win HTF bias (cmp)': wmode(lambda: mc5(2., True)),
+    'MCW 1m 9:30-10:30 1R stop-after-win OPEN bias': wmode(lambda: mc1(1., 'open')), 'MCW 1m 9:30-11:30 1R stop-after-win OPEN bias': wmode(lambda: mc1(1., 'open', 570, 690)),
+    'MCW 1m 9:30-10:30 2R stop-after-win OPEN bias (cmp)': wmode(lambda: mc1(2., 'open')),
+    'MCW 5m 9:30-10:30 1R stop-after-win OPEN bias': wmode(lambda: mc5(1., 'open')), 'MCW 5m 9:30-10:30 2R stop-after-win OPEN bias (cmp)': wmode(lambda: mc5(2., 'open')),
     'S4 trend ORB15 2R SMA200': lambda: s4(), 'S4 ORB15 1.5R': lambda: s4(rr=1.5), 'S4 ORB15 3R': lambda: s4(rr=3.),
     'S4 ORB30 2R': lambda: s4(orm=30), 'S4 ORB15 2R SMA150': lambda: s4(n=150), 'S4 ORB15 2R cap50': lambda: s4(cap=50),
 }

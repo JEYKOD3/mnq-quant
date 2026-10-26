@@ -21,10 +21,17 @@ Scripts (all in `scripts/sessions/`):
 | `q3_refine.py` | neighbourhood grids around the families that were not dead | `out_q3.txt` |
 | `q4_desc_and_final.py` | base rates (sweep frequency, sign agreement), lunch-range break, final candidate stats per year | `out_q4.txt` |
 | `q5_checks.py` | robustness of the afternoon candidate (side split, overnight filter, exit time, threshold/stop grid) | `out_q5.txt` |
+| `q6_research.py` | the six setups proposed in `knowledge/RESEARCH_OFF_HOURS_MNQ.md` (M1, M2, L3, L2, A1/L1, M3), with shifted-window baselines for L2/L3 | `out_q6.txt` |
+| `q7_selloff_grid.py` | neighbourhood grid and mirror test for the sell-off overnight long (A1) | `out_q7.txt` |
 
 ## Headline
 
-The overnight is close to efficient for simple rules after costs. Of 250 first-pass variants only one cleared the pass rule (a weekday effect, which I do not trust). The one family that holds up in both periods, in all five years, and across its parameter neighbourhood is **afternoon trend continuation (13:00 to 15:55 in the direction of the 9:30-13:00 move)**. Everything at night (Asia range sweeps, session ORBs, prior-day high/low tests, London-to-pre-market persistence, Sunday follow-through) failed in-sample, out-of-sample, or both.
+The overnight is close to efficient for simple rules after costs. Of 250 first-pass variants only one cleared the pass rule (a weekday effect, which I do not trust). Two families hold up in both periods, in every year, and across their parameter neighbourhood:
+
+1. **Sell-off overnight long (Q13, R5):** after an RTH day that closed down with a weak last hour (15:00-16:00 <= -0.15 ADR), go long at 18:05 (or 01:30) and exit 03:30. PF 1.39 IS / 1.32 OOS, every year positive, about 36 trades/year, maxDD $1,792. This is the NY Fed closing-imbalance reversal (Boyarchenko, Larsen, Whelan). The mirror (short after a strong rally hour) does not work, which matches the paper's sell-side asymmetry.
+2. **Afternoon trend continuation (Q7):** 13:00 to 15:55 in the direction of the 9:30-13:00 move. PF 1.27 IS / 1.23 OOS, about 195 trades/year, but thin in quiet years.
+
+Everything else failed in-sample, out-of-sample, or both: Asia range sweeps (ours and the research version), session ORBs, prior-day high/low tests, London-to-pre-market persistence, London Partial continuation, Sunday follow-through, last-half-hour momentum, the Zarattini noise area, and the post-lunch long.
 
 ## Q1. Is there unconditional drift in any window?
 
@@ -234,6 +241,94 @@ Result: FAILED (IS PF below 1). The fade-big-days idea is positive four years ou
 
 Result: the Tuesday-night long is the only cell in the whole 250-variant first pass that met the pass rule. With 250 variants one pass is what chance alone would produce, and there is no mechanism for it. Watchlist only (W2).
 
+## Q13. Setups proposed by the web research (`knowledge/RESEARCH_OFF_HOURS_MNQ.md`)
+
+Same engine, same costs, rules as written in the research file. 5m bars, so "exit 15:59" = close of the 15:55 bar. Late 2021 is shown in the per-year lines where it is available (all of our data is 2021+, so the "report 2021+ separately" request is the whole sample; 2021 has only 7-15 trades per test).
+
+### R1. Last-half-hour momentum (W4-M1, Baltussen form)
+
+At 15:30, R = price at 15:30 minus the prior RTH close. If |R| >= 0.15 ADR, enter in the sign of R at 15:30, stop 0.12 ADR, exit 15:59.
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| M1 thr 0.15, stop 0.12 | 589 | 41% | 0.91 | 367 | 36% | 0.68 | +---- |
+| M1 thr 0.15, no stop | 589 | 48% | 0.89 | 367 | 41% | 0.65 | +---- |
+| M1 thr 0.3, stop 0.12 | 495 | 41% | 0.89 | 299 | 36% | 0.67 | +---- |
+| M1b Gao filter (sign 9:30-10:00 = sign 15:00-15:30) | 317 | 40% | 0.86 | 190 | 37% | 0.79 | +---- |
+| M1c day range >= 1 ADR (gamma proxy) | 258 | 34% | 0.83 | 158 | 28% | 0.62 | +---- |
+
+Result: FAILED. Positive only in 2022. Since 2023 the last half hour has, if anything, reversed the day on MNQ. A 30-minute hold cannot pay 2.9 pts of costs on a gross edge this small.
+
+### R2. Afternoon noise-area breakout with VWAP trail (W4-M2, Zarattini)
+
+Per-slot sigma = mean |close(slot)/open(9:30) - 1| over the prior 14 days; bands = max/min(open, prior close) x (1 +/- sigma); checks at 14:00, 14:30, 15:00, 15:30; trail = max(upper band, RTH VWAP) on 5m closes (VWAP is a TWAP proxy, no volume in the file); re-entry allowed at a later check; exit 15:59.
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| M2 trail band + TWAP | 380 | 46% | 1.43 | 219 | 37% | 0.93 | ++--- |
+| M2 trail band only | 331 | 48% | 1.46 | 178 | 38% | 0.98 | ++-+- |
+| M2 14:00 check only | 217 | 43% | 1.01 | 125 | 42% | 1.10 | +--++ |
+
+Per year (band + TWAP): 2022 PF 2.13, 2023 1.46, 2024 0.83, 2025 0.92, 2026 0.94. Result: FAILED OOS. It worked in 2022-2023 and has been flat to negative since 2024. Our simpler S1 hold (enter 13:00, no trail) holds up better OOS than the trailed breakout.
+
+### R3. London Partial continuation (W3-L3) vs a shifted-window baseline
+
+Asia 20:00-02:00, London 02:00-08:00. Partial Up = London broke the Asia high but not the low, and the 08:00 price is above the London mid. Long at 08:05, target London high + 1 tick, 1:1 stop, exit 11:00, skip if the target is < 0.04 or > 0.25 ADR away. Mirror for Partial Down. Baseline = the identical rule with both 6h windows shifted through the session.
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| L3 as specified | 244 | 45% | 0.66 | 148 | 42% | 0.73 | --+-+ |
+| L3 without room filter | 325 | 44% | 0.65 | 201 | 43% | 0.78 | --+-- |
+| baseline, shift -2h (range from 18:00) | 281 | 52% | 0.77 | 176 | 56% | 1.22 | ----+ |
+| baseline, shift +4h (range from 00:00) | 193 | 54% | 0.90 | 99 | 57% | 1.01 | -+--+ |
+| pooled baseline (8 shifts) | 1652 | 50% | 0.82 | 974 | 50% | 0.94 | ----+ |
+
+Result: FAILED, and worse than the baseline. The real London clock wins 42-45% at 1:1 against about 50% for the shifted windows. The "NY breaks the London high 80% of the time" statistic is geometry plus a long time window; once the target has to be hit before a 1:1 stop by 11:00, there is nothing left.
+
+### R4. Asia range sweep-and-reclaim 02:00-05:00 (W3-L2) vs a shifted-window baseline
+
+Sweep >= 0.02 ADR beyond the Asia high/low, a close back inside within 3 bars, enter on the next open, stop = sweep extreme + 0.02 ADR, half at the Asia mid, half at the far side, exit 08:00, first sweep only.
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| L2 as specified | 296 | 35% | 0.68 | 146 | 31% | 0.79 | ----- |
+| L2, any trade beyond the level | 450 | 28% | 0.59 | 247 | 27% | 0.70 | ----- |
+| pooled baseline (10 shifted windows) | 3072 | 32% | 0.79 | 1859 | 31% | 0.87 | ----- |
+
+Result: FAILED. The real Asia/London clock is no better than random 6h windows, and both lose. This matches Q2.
+
+### R5. Sell-off evening / overnight long (W2-A1, W3-L1; closing-imbalance reversal)
+
+Condition on the prior RTH session: 15:00-16:00 move <= -0.15 ADR (A1 also requires the RTH day to close down). Long, exit 03:30.
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| **A1: day down too, long 18:05, stop 0.30 ADR** | **115** | **57%** | **1.39** | **58** | **50%** | **1.32** | **+++++** |
+| A1, last hour only (no day filter) | 149 | 56% | 1.48 | 84 | 45% | 1.11 | +++++ |
+| **A1b: day down too, long 01:30, stop 0.20 ADR** | **115** | **60%** | **1.45** | **58** | **47%** | **1.29** | **+++++** |
+| L1: last hour only, long 01:30, stop 0.20 | 149 | 57% | 1.08 | 84 | 49% | 1.33 | +--++ |
+| A1c: top-tercile ADR, long 18:05 | 39 | 54% | 1.43 | 33 | 55% | 1.59 | +++++ |
+| L1, top-tercile ADR, long 01:30 | 51 | 59% | 0.98 | 46 | 52% | 1.47 | ++-++ |
+| Mirror: short after 15:00-16:00 >= +0.15 ADR with day up, 18:05 | 109 | | 0.87 | 63 | | 0.43 | -+--- |
+| Mirror, 01:30 entry | 109 | | 0.87 | 63 | | 1.24 | -+-++ |
+| Unconditional long 18:00-03:00 (baseline, q3_refine.py) | 747 | 50% | 0.92 | 448 | 52% | 1.14 | --+++ |
+
+A1 per year: late 2021 n 7 PF 0.86, 2022 PF 1.41, 2023 1.64, 2024 1.20, 2025 1.03, 2026 1.64. A1b: 2021 n 7 PF 2.69, 2022 1.77, 2023 1.16, 2024 1.13, 2025 1.05, 2026 1.61.
+
+Neighbourhood (`out_q7.txt`, A1 with the day-down filter; threshold 0.10/0.15/0.20/0.25 ADR x entry 18:05/20:00/00:00/01:30 x stop x exit 03:30/06:00/09:25, 64 cells): every 18:05 and 01:30 cell is PF >= 1.19 in both periods except the 09:25 exits in IS (PF 0.99-1.12). The 20:00 entry is the weak spot (OOS PF 0.68-1.11 at 03:30/06:00 exits). The edge is in the first two hours after the reopen and again at 01:30-03:30, which matches the paper (Tokyo-open and 1:30-3:30 correction). Stopless versions score higher (PF 1.45-2.7) but carry gap risk overnight; keep the stop.
+
+Result: PASSED. It is conditional (the unconditional overnight long is PF 0.92 IS), long-only (the mirror fails), has a published mechanism, and its neighbourhood is smooth. Caveats: n is small (OOS 58 trades), and 2025 was close to flat (PF 1.03).
+
+### R6. Post-lunch long 12:00-14:00 (W4-M3)
+
+| Test | IS n | IS win | IS PF | OOS n | OOS win | OOS PF | years |
+|---|---|---|---|---|---|---|---|
+| M3 long 12:00-14:00, stop 0.20 | 747 | 44% | 0.92 | 448 | 46% | 1.05 | -+++- |
+| M3b only if 11:00-12:00 down | 329 | 44% | 0.91 | 207 | 43% | 0.88 | -+++- |
+| M3c plus 11:00-12:00 short leg | 1494 | 41% | 0.82 | 896 | 43% | 0.98 | ---+- |
+
+Result: FAILED. 2022 lost $4,702 (PF 0.70); 2023-2025 slightly positive; 2026 negative. The SPY lunch effect does not survive costs on MNQ. The midday window only works directionally (S1), not as a fixed long.
+
 ## What failed (summary)
 
 - Asia range sweep fade and break at London: PF 0.58-0.97.
@@ -245,12 +340,29 @@ Result: the Tuesday-night long is the only cell in the whole 250-variant first p
 - Midday reversal of the morning: negative everywhere. Lunch-range breakouts: OOS PF 0.72-0.78.
 - Sunday follow-through or fade after 20:00: unstable between halves.
 - Post-close 16:00-16:55: negative both ways.
+- Research setups: last-half-hour momentum (OOS PF 0.62-0.79), Zarattini noise area (IS 1.43, OOS 0.93), London Partial continuation (PF 0.66/0.73, below its own random-window baseline), Asia sweep-and-reclaim 02:00-05:00 (PF 0.68/0.79, same as baseline), post-lunch long (0.92/1.05), and the short mirror of the sell-off reversal.
 
 ## Ranked shortlist
 
-Only S1 and S1A are recommended for build. W1-W3 are listed because the brief asked for 3-6 names. They are not tradable as they stand; keep them on paper.
+Ranked by robustness, not by dollars. S2, S2b, S1 and S1A are recommended for build. W1-W3 are not tradable as they stand; keep them on paper.
 
-### S1. Afternoon trend continuation (recommended)
+### S2. Sell-off evening long (recommended, rank 1)
+
+- Condition (known at 16:00): prior RTH session closed below its 9:30 open, and the 15:00-16:00 move was <= -0.15 x ADR.
+- Entry: long at the 18:05 bar open (the first 5m bar after the reopen closes).
+- Stop: 0.30 x ADR below entry. Target: none. Time exit: 03:30 ET.
+- Expected trades/year: about 36.
+- Net results (1 MNQ, after costs): IS n 115, win 57%, +11.3 pt, PF 1.39, maxDD $758. OOS n 58, win 50%, +17.4 pt, PF 1.32, maxDD $1,573. 2022-2026 all positive (PF 1.41, 1.64, 1.20, 1.03, 1.64). Whole period n 173, PF 1.35, +$22.0/trade, maxDD $1,792.
+- Source and mechanism: NY Fed SR917 closing-imbalance reversal. Long-only by design (the short mirror fails).
+
+### S2b. Sell-off overnight long, 01:30 entry (recommended, alternative to S2)
+
+- Same condition. Long at 01:30, stop 0.20 x ADR, exit 03:30.
+- About 36 trades/year. IS n 115, win 60%, +8.3 pt, PF 1.45, maxDD $383. OOS n 58, win 47%, +10.3 pt, PF 1.29, maxDD $806. Every year positive. Whole period PF 1.37, +$13.2/trade, maxDD $1,040.
+- Less money per trade than S2 but half the drawdown and a 2-hour hold. Choose S2 or S2b, not both (same signal, same night).
+
+
+### S1. Afternoon trend continuation (recommended, rank 2)
 
 - Window: 13:00-15:55 ET, every RTH day (half days skipped automatically by the data check).
 - Signal: at the close of the 12:55 5m bar, move M = price - 9:30 open. Trade only if |M| >= 0.15 x ADR (ADR = mean of the prior 10 RTH ranges).
@@ -262,7 +374,7 @@ Only S1 and S1A are recommended for build. W1-W3 are listed because the brief as
 - Net results (1 MNQ, after costs): IS n 573, win 55%, +10.5 pt/trade, PF 1.27, maxDD $1,624. OOS n 350, win 53%, +11.1 pt/trade, PF 1.23, maxDD $3,178. Every year positive: 2022 PF 1.59, 2023 1.11, 2024 1.02, 2025 1.46, 2026 1.02. Whole period +$15,483, maxDD $3,178, average +$16.8/trade.
 - Caveats: thin in quiet years (2023, 2024, 2026 near breakeven). 26% of trades stop out. The threshold/stop pair was picked from a 15-cell grid whose neighbours are all OOS PF 1.08-1.23, so expect live PF closer to 1.15 than 1.25.
 
-### S1A. Afternoon continuation, overnight in agreement (recommended, lower frequency)
+### S1A. Afternoon continuation, overnight in agreement (recommended, rank 3, lower frequency)
 
 - Same as S1, plus a filter: the overnight move (18:00 open -> 9:30) has the same sign as M.
 - Expected trades/year: about 94.
@@ -283,6 +395,12 @@ Only S1 and S1A are recommended for build. W1-W3 are listed because the brief as
 
 - If the prior RTH open->close move is at least 0.75 ADR, enter against it at 18:00, stop 0.3 ADR, exit 09:25.
 - About 61 trades/year. IS n 191, PF 0.96; OOS n 100, PF 1.17; years -++++ (2022 lost $2,775). Fails IS.
+
+## Notes for building S2
+
+- Signal is fixed at 16:00: `lastHour = close(15:55 bar) - open(15:00 bar)`, `day = close(15:55 bar) - open(9:30 bar)`, both in points, ADR = mean of the prior 10 RTH ranges. If `lastHour <= -0.15*ADR and day < 0`, arm a long for the 18:05 bar open (S2) or 01:30 (S2b).
+- It does not overlap any current strategy (all of them are flat by 15:55 and none trade the night). It does hold through the Tokyo open and, for S2, through the low-liquidity 18:00-20:00 period: check prop-firm rules on overnight holding before an eval.
+- Next tests worth running: add the closing 15:50-16:00 bar to the imbalance proxy, and check real MOC imbalance data if it becomes available.
 
 ## Notes for building S1
 

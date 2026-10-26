@@ -1,0 +1,67 @@
+== R1 / M1 last-half-hour momentum: 15:30 entry, sign of prior close -> 15:30, exit 15:59 (close of 15:55 bar) ==
+M1 thr0.15 stop0.12                          IS n  589 win 41% avg   +0.9pt PF 0.91 tot $   -1722 dd $3974 | OOS n  367 win 36% avg   -4.9pt PF 0.68 tot $   -5322 dd $5777 | yrs +----
+M1 thr0.15 stopNone                          IS n  589 win 48% avg   +0.4pt PF 0.89 tot $   -2291 dd $5516 | OOS n  367 win 41% avg   -7.1pt PF 0.65 tot $   -6938 dd $7245 | yrs +----
+M1 thr0.3 stop0.12                           IS n  495 win 41% avg   +0.7pt PF 0.89 tot $   -1691 dd $3305 | OOS n  299 win 36% avg   -5.1pt PF 0.67 tot $   -4441 dd $4969 | yrs +----
+M1 thr0.3 stopNone                           IS n  495 win 47% avg   -0.1pt PF 0.87 tot $   -2433 dd $5194 | OOS n  299 win 41% avg   -7.2pt PF 0.66 tot $   -5708 dd $5905 | yrs +----
+M1b Gao filter thr0.15 stop0.12              IS n  317 win 40% avg   +0.0pt PF 0.86 tot $   -1495 dd $2878 | OOS n  190 win 37% avg   -1.9pt PF 0.79 tot $   -1620 dd $2622 | yrs +---+
+M1c day range >= 1 ADR thr0.15 stop0.12      IS n  258 win 34% avg   -0.6pt PF 0.83 tot $   -1539 dd $2434 | OOS n  158 win 28% avg   -7.3pt PF 0.62 tot $   -3046 dd $3650 | yrs +----
+M1 thr0 (always) stop0.12                    IS n  724 win 40% avg   +0.3pt PF 0.87 tot $   -2963 dd $5163 | OOS n  432 win 37% avg   -3.3pt PF 0.74 tot $   -4899 dd $5565 | yrs +----
+
+== R2 / M2 Zarattini noise area 14:00-16:00, trail max(upper, RTH TWAP), checks 14:00/14:30/15:00/15:30 ==
+M2 trail band+TWAP                           IS n  380 win 46% avg   +9.9pt PF 1.43 tot $   +5726 dd $2060 | OOS n  219 win 37% avg   +0.5pt PF 0.93 tot $    -800 dd $3616 | yrs ++---
+    2021: n15 PF 0.54 $-389  2022: n126 PF 2.13 $+5091  2023: n123 PF 1.46 $+1540  2024: n131 PF 0.83 $-906  2025: n115 PF 0.92 $-443  2026: n104 PF 0.94 $-357
+M2 trail band only                           IS n  331 win 48% avg  +11.3pt PF 1.46 tot $   +5927 dd $2005 | OOS n  178 win 38% avg   +1.7pt PF 0.98 tot $    -236 dd $3470 | yrs ++-+-
+M2 only 14:00 check                          IS n  217 win 43% avg   +2.5pt PF 1.01 tot $     +72 dd $2430 | OOS n  125 win 42% avg   +5.3pt PF 1.10 tot $    +736 dd $1945 | yrs +--++
+
+== R3 / L3 London partial up/down continuation, entry 08:05, 1:1 to London extreme, exit 11:00 ==
+L3 as specified (range 20:00-02:00, London 02:00-08:00) IS n  244 win 45% avg   -3.2pt PF 0.66 tot $   -2715 dd $3556 | OOS n  148 win 42% avg   -4.4pt PF 0.73 tot $   -2003 dd $2294 | yrs --+-+
+    2021: n12 PF 0.52 $-190  2022: n96 PF 0.48 $-2233  2023: n83 PF 0.64 $-757  2024: n65 PF 1.17 $+275  2025: n77 PF 0.51 $-2007  2026: n71 PF 1.00 $+4
+L3 no room filter                            IS n  325 win 44% avg   -3.0pt PF 0.65 tot $   -3462 dd $4260 | OOS n  201 win 43% avg   -3.2pt PF 0.78 tot $   -2231 dd $2396 | yrs --+--
+  baseline: identical rule on 6h+6h windows shifted through the session (same geometry, other clocks)
+   shift -2h (range starts 18:00)            IS n  281 win 52% avg   -0.8pt PF 0.77 tot $   -1794 dd $2054 | OOS n  176 win 56% avg   +6.2pt PF 1.22 tot $   +1336 dd $961 | yrs ----+
+   shift -1h (range starts 19:00)            IS n  273 win 53% avg   +1.1pt PF 0.91 tot $    -700 dd $1642 | OOS n  147 win 54% avg   +3.4pt PF 1.05 tot $    +304 dd $829 | yrs +-+-+
+   shift +1h (range starts 21:00)            IS n  222 win 50% avg   +0.2pt PF 0.86 tot $    -961 dd $1663 | OOS n  132 win 45% avg   -2.8pt PF 0.79 tot $   -1368 dd $2153 | yrs --+--
+   shift +2h (range starts 22:00)            IS n  177 win 43% avg   -5.7pt PF 0.63 tot $   -2841 dd $3202 | OOS n  101 win 45% avg   -0.4pt PF 0.89 tot $    -552 dd $1350 | yrs ----+
+   shift +3h (range starts 23:00)            IS n  150 win 41% avg   -6.3pt PF 0.60 tot $   -2592 dd $2651 | OOS n  102 win 53% avg   +0.5pt PF 0.92 tot $    -384 dd $1053 | yrs ----+
+   shift +4h (range starts 00:00)            IS n  193 win 54% avg   +0.6pt PF 0.90 tot $    -685 dd $1332 | OOS n   99 win 57% avg   +2.6pt PF 1.01 tot $     +39 dd $825 | yrs -+--+
+   shift +5h (range starts 01:00)            IS n  181 win 51% avg   +2.9pt PF 1.03 tot $    +197 dd $1254 | OOS n  100 win 45% avg   -3.7pt PF 0.73 tot $   -1205 dd $1709 | yrs +----
+   shift +6h (range starts 02:00)            IS n  175 win 53% avg   +0.2pt PF 0.87 tot $    -750 dd $1408 | OOS n  117 win 45% avg   -0.1pt PF 0.89 tot $    -579 dd $1706 | yrs --+-+
+   pooled baseline                           IS n 1652 win 50% avg   -0.7pt PF 0.82 tot $  -10125 dd $10970 | OOS n  974 win 50% avg   +1.1pt PF 0.94 tot $   -2409 dd $6413 | yrs ----+
+
+== R4 / L2 Asia range sweep (>= 0.02 ADR) and reclaim within 3 bars, 02:00-05:00, T1 mid / T2 far side, exit 08:00 ==
+L2 as specified                              IS n  296 win 35% avg   -1.7pt PF 0.68 tot $   -2411 dd $2526 | OOS n  146 win 31% avg   -2.4pt PF 0.79 tot $   -1388 dd $2795 | yrs -----
+    2021: n13 PF 0.96 $-13  2022: n89 PF 0.55 $-1326  2023: n102 PF 0.83 $-344  2024: n105 PF 0.71 $-741  2025: n80 PF 0.88 $-386  2026: n66 PF 0.70 $-1002
+L2 ext 0 (any trade beyond)                  IS n  450 win 28% avg   -2.4pt PF 0.59 tot $   -4277 dd $4481 | OOS n  247 win 27% avg   -3.4pt PF 0.70 tot $   -2826 dd $3533 | yrs -----
+   shift -2h (range starts 18:00)            IS n  193 win 37% avg   +1.8pt PF 0.95 tot $    -216 dd $629 | OOS n  110 win 29% avg   +6.7pt PF 1.24 tot $    +959 dd $726 | yrs ----+
+   shift -1h (range starts 19:00)            IS n  250 win 37% avg   -0.3pt PF 0.79 tot $   -1355 dd $1818 | OOS n  141 win 33% avg   +3.2pt PF 1.04 tot $    +221 dd $1877 | yrs ----+
+   shift +1h (range starts 21:00)            IS n  326 win 33% avg   -1.3pt PF 0.71 tot $   -2398 dd $3171 | OOS n  182 win 30% avg   -3.4pt PF 0.75 tot $   -2086 dd $2796 | yrs -----
+   shift +2h (range starts 22:00)            IS n  248 win 31% avg   -2.0pt PF 0.70 tot $   -2169 dd $2261 | OOS n  166 win 31% avg   +2.2pt PF 0.99 tot $     -62 dd $1090 | yrs ---+-
+   shift +3h (range starts 23:00)            IS n  222 win 28% avg   -0.3pt PF 0.82 tot $   -1199 dd $1917 | OOS n  155 win 25% avg   -3.9pt PF 0.72 tot $   -1931 dd $2537 | yrs +----
+   shift +4h (range starts 00:00)            IS n  283 win 30% avg   -1.1pt PF 0.76 tot $   -1962 dd $2146 | OOS n  161 win 27% avg   -4.7pt PF 0.71 tot $   -2285 dd $2838 | yrs -----
+   shift +5h (range starts 01:00)            IS n  338 win 31% avg   -2.1pt PF 0.75 tot $   -3052 dd $3333 | OOS n  228 win 30% avg   -3.0pt PF 0.79 tot $   -2445 dd $2468 | yrs -----
+   shift +6h (range starts 02:00)            IS n  395 win 31% avg   -4.3pt PF 0.66 tot $   -5252 dd $5839 | OOS n  226 win 34% avg   +3.5pt PF 1.05 tot $    +527 dd $1883 | yrs ---++
+   shift +7h (range starts 03:00)            IS n  417 win 30% avg   -1.6pt PF 0.82 tot $   -3313 dd $4817 | OOS n  242 win 35% avg   -1.6pt PF 0.87 tot $   -1928 dd $3479 | yrs --+--
+   shift +8h (range starts 04:00)            IS n  400 win 33% avg   +0.9pt PF 0.93 tot $   -1182 dd $2456 | OOS n  248 win 29% avg   -3.5pt PF 0.82 tot $   -2920 dd $4821 | yrs -+---
+   pooled baseline                           IS n 3072 win 32% avg   -1.2pt PF 0.79 tot $  -22100 dd $23498 | OOS n 1859 win 31% avg   -0.8pt PF 0.87 tot $  -11949 dd $13393 | yrs -----
+
+== R5 / A1, L1 after a weak 15:00-16:00 hour (<= -0.15 ADR), long overnight, exit 03:30 (per-year incl. late 2021) ==
+A1 day down too, long 18:05 stop0.30         IS n  115 win 57% avg  +11.3pt PF 1.39 tot $   +2061 dd $758 | OOS n   58 win 50% avg  +17.4pt PF 1.32 tot $   +1748 dd $1573 | yrs +++++
+    2021: n7 PF 0.86 $-40  2022: n46 PF 1.41 $+1163  2023: n34 PF 1.64 $+592  2024: n35 PF 1.20 $+306  2025: n32 PF 1.03 $+92  2026: n26 PF 1.64 $+1656
+A1 last hour only, long 18:05 stop0.30       IS n  149 win 56% avg  +12.5pt PF 1.48 tot $   +3012 dd $758 | OOS n   84 win 45% avg   +7.8pt PF 1.11 tot $    +908 dd $2248 | yrs +++++
+    2021: n8 PF 0.51 $-234  2022: n54 PF 1.37 $+1224  2023: n45 PF 1.49 $+624  2024: n50 PF 1.66 $+1163  2025: n49 PF 1.01 $+37  2026: n35 PF 1.23 $+871
+A1b day down too, long 01:30 stop0.20        IS n  115 win 60% avg   +8.3pt PF 1.45 tot $   +1357 dd $383 | OOS n   58 win 47% avg  +10.3pt PF 1.29 tot $    +918 dd $806 | yrs +++++
+    2021: n7 PF 2.69 $+106  2022: n46 PF 1.77 $+1139  2023: n34 PF 1.16 $+110  2024: n35 PF 1.13 $+108  2025: n32 PF 1.05 $+96  2026: n26 PF 1.61 $+822
+L1 last hour only, long 01:30 stop0.20       IS n  149 win 57% avg   +3.6pt PF 1.08 tot $    +364 dd $773 | OOS n   84 win 49% avg  +10.4pt PF 1.33 tot $   +1346 dd $647 | yrs +--++
+    2021: n8 PF 2.88 $+118  2022: n54 PF 1.33 $+683  2023: n45 PF 0.84 $-170  2024: n50 PF 0.90 $-149  2025: n49 PF 1.17 $+383  2026: n35 PF 1.52 $+963
+A1c top-tercile ADR, long 18:05 stop0.30     IS n   39 win 54% avg  +15.5pt PF 1.43 tot $   +1025 dd $859 | OOS n   33 win 55% avg  +31.1pt PF 1.59 tot $   +1897 dd $1665 | yrs +++++
+    2021: n7 PF 0.86 $-40  2022: n21 PF 1.46 $+682  2023: n3 PF 3.88 $+186  2024: n15 PF 1.19 $+157  2025: n18 PF 1.09 $+153  2026: n15 PF 2.20 $+1743
+L1 top-tercile ADR, long 01:30 stop0.20      IS n   51 win 59% avg   +2.0pt PF 0.98 tot $     -41 dd $527 | OOS n   46 win 52% avg  +14.5pt PF 1.47 tot $   +1114 dd $490 | yrs ++-++
+    2021: n8 PF 2.88 $+118  2022: n24 PF 1.27 $+306  2023: n4 PF 2.92 $+92  2024: n23 PF 0.55 $-439  2025: n27 PF 1.74 $+946  2026: n19 PF 1.16 $+168
+    2021 only: {'n': 7, 'win': 0.7142857142857143, 'avgpts': -0.5089285714285714, 'avg': -5.7578571428571435, 'pf': 0.8588785210342956, 'tot': -40.30500000000001, 'dd': 157.03000000000088}
+
+== R6 / M3 post-lunch long 12:00-14:00, stop 0.20 ADR ==
+M3 long 12:00-14:00                          IS n  747 win 44% avg   +0.3pt PF 0.92 tot $   -3147 dd $4989 | OOS n  448 win 46% avg   +3.9pt PF 1.05 tot $   +1380 dd $3090 | yrs -+++-
+    2021: n39 PF 0.76 $-448  2022: n250 PF 0.70 $-4702  2023: n248 PF 1.06 $+589  2024: n249 PF 1.08 $+966  2025: n247 PF 1.21 $+3030  2026: n201 PF 0.89 $-1650
+M3b only if 11:00-12:00 down                 IS n  329 win 44% avg   +0.1pt PF 0.91 tot $   -1515 dd $2940 | OOS n  207 win 43% avg   -2.0pt PF 0.88 tot $   -1797 dd $3408 | yrs -+++-
+    2021: n20 PF 0.70 $-313  2022: n115 PF 0.65 $-2483  2023: n100 PF 1.10 $+398  2024: n114 PF 1.10 $+571  2025: n111 PF 1.14 $+1058  2026: n96 PF 0.63 $-2855
+M3c plus 11:00-12:00 short leg               IS n 1494 win 41% avg   -2.1pt PF 0.82 tot $  -13336 dd $13818 | OOS n  896 win 43% avg   +1.6pt PF 0.98 tot $   -1314 dd $5976 | yrs ---+-

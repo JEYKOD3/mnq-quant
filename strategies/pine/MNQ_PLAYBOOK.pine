@@ -875,7 +875,7 @@ openList() =>
     s := s + (pnPos != 0 ? "PIN " + str.tostring(pnQ) + " " : "")
     s := s + (h2Pos != 0 ? "H2 " + str.tostring(h2Q) + " " : "")
     s == "" ? "flat" : s + "MNQ"
-var table pn = table.new(position.top_right, 2, 10, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1, frame_color=color.new(color.gray, 50), frame_width=1)
+var table pn = table.new(position.top_right, 6, 10, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1, frame_color=color.new(color.gray, 50), frame_width=1)
 if showPanel and barstate.islast
     tc = color.white
     dim = color.new(color.silver, 0)
@@ -892,9 +892,15 @@ if showPanel and barstate.islast
     for k = 0 to 9
         tip := tip + array.get(labs, k) + ": " + array.get(vals, k) + (k < 9 ? "\n" : "")
     if panelIcon
-        quick = "Budget " + usd(math.max(0, left)) + " left · Eval " + usd(math.max(0, need - prof)) + " to go" + (openList() != "flat" ? " · OPEN " + openList() : "") + (tev != "" ? " · NEWS " + tev : "")
+        table.clear(pn, 0, 0, 5, 0)
         table.cell(pn, 0, 0, "ⓘ PLAYBOOK", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=tip)
-        table.cell(pn, 1, 0, quick, text_color=left < 200 or room < 800 ? color.orange : tc, text_size=size.normal, text_halign=text.align_left, tooltip=tip)
+        table.cell(pn, 1, 0, "Budget " + usd(math.max(0, left)) + " left", text_color=left < 200 ? color.orange : tc, text_size=size.normal, tooltip=tip)
+        table.cell(pn, 2, 0, "Today " + (dayPnl > 0 ? "+" : "") + usd(dayPnl), text_color=dayPnl > 0 ? color.lime : dayPnl < 0 ? color.red : tc, text_size=size.normal, tooltip=tip)
+        table.cell(pn, 3, 0, prof >= need ? "TARGET MET" : "Eval " + usd(need - prof) + " to go", text_color=prof >= need ? color.lime : room < 800 ? color.orange : tc, text_size=size.normal, tooltip=tip)
+        if openList() != "flat"
+            table.cell(pn, 4, 0, "OPEN " + openList(), text_color=color.aqua, text_size=size.normal, tooltip=tip)
+        if tev != ""
+            table.cell(pn, 5, 0, "NEWS " + tev, text_color=color.orange, text_size=size.normal, tooltip=tip)
     else
         for k = 0 to 9
             table.cell(pn, 0, k, array.get(labs, k), text_color=k == 0 ? color.yellow : dim, text_size=size.normal, text_halign=text.align_left)
@@ -914,23 +920,27 @@ if showStats and barstate.islast
         table.cell(tb, 2, k + 1, fmt(pv) + " (" + usd(pv * 2) + ")", text_color=pv >= 0 ? color.lime : color.red, text_size=size.small)
 
 // ---------- last trades (optional) ----------
-var table lt = table.new(position.bottom_left, 4, 9, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
+var table lt = table.new(position.bottom_left, 6, 9, bgcolor=color.new(#131722, 0), border_color=color.new(color.gray, 70), border_width=1)
 if showLog and barstate.islast
     nL = array.size(lgP)
     if logIcon
-        ttip = "LAST TRADES (1 MNQ)\n"
-        tot = 0.0
+        table.clear(lt, 0, 0, 5, 0)
+        ttip = "LAST TRADES (1 MNQ, newest first)\n"
         for i = 0 to 7
             if i < nL
                 j = nL - 1 - i
                 pv = array.get(lgP, j)
-                tot += pv
-                ttip := ttip + "\n" + (pv >= 0 ? "✓ " : "✗ ") + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "  " + fmt(pv) + " pts (" + usd(pv * 2) + ")"
+                ttip := ttip + "\n" + array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "   " + (pv >= 0 ? "+" : "") + fmt(pv) + " pts (" + (pv >= 0 ? "+" : "") + usd(pv * 2) + ")"
         if nL == 0
             ttip := ttip + "\nnone on loaded bars"
-        lastTxt = nL == 0 ? "none" : (array.get(lgP, nL - 1) >= 0 ? "✓ " : "✗ ") + array.get(lgS, nL - 1) + " " + fmt(array.get(lgP, nL - 1)) + " pts"
         table.cell(lt, 0, 0, "ⓘ TRADES", text_color=color.yellow, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
-        table.cell(lt, 1, 0, "last: " + lastTxt, text_color=nL > 0 and array.get(lgP, nL - 1) < 0 ? color.red : color.lime, text_size=size.normal, text_halign=text.align_left, tooltip=ttip)
+        if nL == 0
+            table.cell(lt, 1, 0, "none yet", text_color=color.silver, text_size=size.normal, tooltip=ttip)
+        for i = 0 to 4
+            if i < nL
+                j = nL - 1 - i
+                pv = array.get(lgP, j)
+                table.cell(lt, 1 + i, 0, (pv >= 0 ? "+" : "") + fmt(pv), text_color=pv >= 0 ? color.lime : color.red, text_size=size.normal, tooltip=array.get(lgD, j) + "  " + array.get(lgS, j) + "  →  " + array.get(lgX, j) + "\n" + (pv >= 0 ? "+" : "") + fmt(pv) + " pts = " + (pv >= 0 ? "+" : "") + usd(pv * 2) + " per MNQ")
     else
         table.cell(lt, 0, 0, "Last trades", text_color=color.yellow, text_size=size.normal)
         table.cell(lt, 1, 0, "strategy / entry", text_color=color.yellow, text_size=size.normal)

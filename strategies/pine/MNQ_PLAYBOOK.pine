@@ -79,7 +79,7 @@ cPn = color.rgb(255, 120, 0)
 cH2 = color.rgb(0, 188, 212)
 
 fmt(x) => str.tostring(x, "#.##")
-usd(x) => "$" + str.tostring(math.round(x), "#,###")
+usd(x) => (x < 0 ? "-$" : "$") + str.tostring(math.abs(math.round(x)), "#,###")
 hhmm() => str.format_time(time, "HH:mm", tz)
 
 // ---------- RTH daily context (prior completed day, no repaint) ----------
@@ -266,10 +266,13 @@ pnlOf(q, pts) => q * (pts * 2 - 4.74)
 
 // ---------- drawing helpers ----------
 // entry: small tag "V4+ ▲ 4" (strategy, direction, contracts); hover for the full story. Zones: green to target, red to stop.
-entryTag(show, nm, side, e, s, t, q, why, col) =>
+entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
     if show
-        tip = nm + (side > 0 ? " LONG " : " SHORT ") + fmt(e) + " at " + hhmm() + "\nWhy: " + why + "\nStop " + fmt(s) + " (" + fmt(math.abs(e - s)) + " pts)   Target " + (na(t) ? "time exit" : fmt(t)) + "\nSize " + str.tostring(q) + " MNQ, risk " + usd(q * perC(math.abs(e - s))) + "\nBudget left after this: " + usd(dayCap - usedNow())
-        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=q > 0 ? tip : tip + "\nNO CONTRACTS: daily budget already in use. Skip this signal.")
+        rp = math.abs(e - s)
+        tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
+        head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : " · SKIP, budget full")
+        tip = head + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
+        label.new(bar_index, side > 0 ? low : high, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q), color=q > 0 ? col : color.new(col, 60), textcolor=color.white, style=side > 0 ? label.style_label_up : label.style_label_down, size=size.small, tooltip=tip)
     true
 zone(show, e, lvl, good) => show and not na(lvl) ? box.new(bar_index, math.max(e, lvl), bar_index + 1, math.min(e, lvl), border_color=color.new(good ? color.green : color.red, 70), bgcolor=color.new(good ? color.green : color.red, 88)) : na
 grow(b) =>
@@ -278,7 +281,7 @@ grow(b) =>
     true
 exitTag(show, nm, side, x, pts, q, why) =>
     if show
-        label.new(bar_index, x, (pts >= 0 ? "✓ " : "✗ ") + fmt(pts), color=color.new(pts >= 0 ? color.teal : color.maroon, 20), textcolor=color.white, style=side > 0 ? label.style_label_down : label.style_label_up, size=size.tiny, tooltip=nm + " exit (" + why + ") at " + hhmm() + ": " + fmt(pts) + " pts x " + str.tostring(q) + " MNQ = " + usd(pnlOf(q, pts)))
+        label.new(bar_index, x, (pts >= 0 ? "✓ " : "✗ ") + fmt(pts), color=color.new(pts >= 0 ? color.teal : color.maroon, 20), textcolor=color.white, style=side > 0 ? label.style_label_down : label.style_label_up, size=size.tiny, tooltip=nm + " EXIT · " + why + "\n――――――――――――\nResult: " + (pts >= 0 ? "+" : "") + fmt(pts) + " pts × " + str.tostring(q) + " MNQ = " + usd(pnlOf(q, pts)) + "\nExit: " + fmt(x) + "  at " + hhmm())
     true
 
 // trade log (last 8 closed, all strategies)
@@ -381,7 +384,7 @@ if useNW and news830 and mnt >= 360 and mnt < 640
             nwQ := q
             nwET := hhmm()
             rkNW := q * perC(nwStop)
-            entryTag(g1, "NEWS", nwPend, nwE, nwS, nwT, q, "news spike away from the 8:29 price (" + fmt(nwF) + "), 5m candle back toward it; " + fmt(dist) + " pts of room", cNW)
+            entryTag(g1, "NEWS", nwPend, nwE, nwS, nwT, q, "target, stop or 10:30", "CPI/PPI/NFP day: price spiked away from the 8:29 price (" + fmt(nwF) + ") | 5m candle back toward it (displacement or break of structure) | " + fmt(dist) + " pts of room to the 8:29 price", cNW)
             nwBT := zone(g1, nwE, nwT, true)
             nwBS := zone(g1, nwE, nwS, false)
             if g1
@@ -489,7 +492,7 @@ if useV4 and inRTH
             v4Q := q
             v4ET := hhmm()
             rkV4 := q * perC(r)
-            entryTag(g1, "V4+", pSide, v4E, v4S, v4T, q, "today's bias (gap or first 15 min) agrees with the daily trend; price broke the 9:30-9:45 range, came back to retest it, then a strong candle -> stop order above it. Stop: other side of the range. Target 1.25R, breakeven at +1R", cV4)
+            entryTag(g1, "V4+", pSide, v4E, v4S, v4T, q, "1.25R target · stop to breakeven at +1R · else 15:55", "Daily trend and today's bias agree (" + (pSide > 0 ? "UP" : "DOWN") + ") | Price broke the 9:30-9:45 range, then retested it | Strong candle: stop order just beyond it | Stop on the other side of the range", cV4)
             v4BT := zone(g1, v4E, v4T, true)
             v4BS := zone(g1, v4E, v4S, false)
             if g1
@@ -574,7 +577,7 @@ if useD2 and inRTH
             q = sizeFor(r, d2W8)
             d2Q := q
             rkD2 := q * perC(r)
-            entryTag(g1, "D2", s, d2E, d2S, float(na), q, "price is " + fmt(math.abs(mv)) + " ADR from the open at 10:30 -> continuation. Stop: the opening price. Exit 15:00" + (d2W8 < 1 ? ". HALF size: against the daily trend" : ""), cD2)
+            entryTag(g1, "D2", s, d2E, d2S, float(na), q, "15:00, or stop", "At 10:30 price is " + fmt(math.abs(mv)) + " ADR " + (s > 0 ? "above" : "below") + " the open: continuation | Stop at the opening price" + (d2W8 < 1 ? " | HALF size: against the daily trend" : ""), cD2)
             d2BS := zone(g1, d2E, d2S, false)
             if g1
                 alert("D2 " + (s > 0 ? "LONG " : "SHORT ") + fmt(d2E) + " stop " + fmt(d2S) + " exit 15:00 size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
@@ -641,7 +644,7 @@ if useTD and inRTH
             tdQ := q3
             tdET := hhmm()
             rkTD := q3 * perC(r3)
-            entryTag(g2, "TDP", tdS, tdE, tdSt, tdT, q3, "trend day: first hour clean and outside the prior-day range; pullback of 1/3 of the first-hour range from the day's " + (tdS > 0 ? "high" : "low") + ". Stop 0.4 ADR, target 1.5R", cTD)
+            entryTag(g2, "TDP", tdS, tdE, tdSt, tdT, q3, "1.5R target, else 15:55", "Trend day " + (tdS > 0 ? "UP" : "DOWN") + ": first hour clean and outside the prior-day range | Pullback of 1/3 of the first-hour range from the day's " + (tdS > 0 ? "high" : "low") + " | Stop 0.4 x ADR", cTD)
             tdBT := zone(g2, tdE, tdT, true)
             tdBS := zone(g2, tdE, tdSt, false)
             if g2
@@ -706,7 +709,7 @@ if usePin and inRTH
             pnQ := q
             pnET := hhmm()
             rkPn := q * perC(r)
-            entryTag(g2, "PIN", pinSide, pnE, pnS, float(na), q, "3-day RSI " + fmt(rsi3) + (pinSide > 0 ? " oversold" : " overbought") + " while the daily trend is " + (trendDir > 0 ? "UP" : "DOWN") + "; price broke the first-hour " + (pinSide > 0 ? "high" : "low") + ". Stop: other side of the first hour. Hold to 15:55", cPn)
+            entryTag(g2, "PIN", pinSide, pnE, pnS, float(na), q, "15:55, or stop", "3-day RSI " + fmt(rsi3) + (pinSide > 0 ? " (oversold)" : " (overbought)") + " with the daily trend " + (trendDir > 0 ? "UP" : "DOWN") + " | Price broke the first-hour " + (pinSide > 0 ? "high" : "low") + " | Stop on the other side of the first hour", cPn)
             pnBS := zone(g2, pnE, pnS, false)
             if g2
                 alert("PINBALL " + (pinSide > 0 ? "LONG " : "SHORT ") + fmt(pnE) + " stop " + fmt(pnS) + " size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
@@ -773,7 +776,7 @@ if useH2 and inRTH
             h2Q := q2
             h2ET := hhmm()
             rkH2 := q2 * perC(r2)
-            entryTag(g2, "H2", h2PSide, h2E, h2S, h2T, q2, "trend day (moved >= " + fmt(h2Th) + " ADR by 10:30); 5m pullback after a new " + (h2PSide > 0 ? "high" : "low") + ", then a 5m close back through the prior bar (second entry). Half size, target 2R", cH2)
+            entryTag(g2, "H2", h2PSide, h2E, h2S, h2T, q2, "2R target, else 15:55", "Trend day: moved >= " + fmt(h2Th) + " ADR by 10:30 | 5m pullback after a new " + (h2PSide > 0 ? "high" : "low") + " | 5m close back through the prior bar (second entry) | HALF size", cH2)
             h2BT := zone(g2, h2E, h2T, true)
             h2BS := zone(g2, h2E, h2S, false)
             if g2

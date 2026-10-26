@@ -1,0 +1,354 @@
+{
+ "NEWS": [
+  {
+   "rule": "skip pdr>=1.1",
+   "gainR": {
+    "IS": 4.07,
+    "VAL": -1.57,
+    "OOS": 0.43
+   },
+   "skipped": {
+    "IS": 13,
+    "VAL": 2,
+    "OOS": 4
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip onr<0.821",
+   "gainR": {
+    "IS": 3.07,
+    "VAL": 1.43,
+    "OOS": -1.57
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 5,
+    "OOS": 2
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip eT<545",
+   "gainR": {
+    "IS": 3.07,
+    "VAL": -1.93,
+    "OOS": 2.43
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 7,
+    "OOS": 6
+   },
+   "validated": false
+  }
+ ],
+ "V4+": [
+  {
+   "rule": "skip fhr>=0.598",
+   "gainR": {
+    "IS": 3.65,
+    "VAL": -0.24,
+    "OOS": -1.44
+   },
+   "skipped": {
+    "IS": 15,
+    "VAL": 1,
+    "OOS": 4
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip fhr>=0.46",
+   "gainR": {
+    "IS": 1.86,
+    "VAL": -0.17,
+    "OOS": -4.09
+   },
+   "skipped": {
+    "IS": 29,
+    "VAL": 2,
+    "OOS": 8
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip gap<0.188",
+   "gainR": {
+    "IS": -0.01,
+    "VAL": -6.38,
+    "OOS": -1.35
+   },
+   "skipped": {
+    "IS": 49,
+    "VAL": 10,
+    "OOS": 5
+   },
+   "validated": false
+  }
+ ],
+ "D2": [
+  {
+   "rule": "skip news==1",
+   "gainR": {
+    "IS": 0.89,
+    "VAL": -1.01,
+    "OOS": -2.44
+   },
+   "skipped": {
+    "IS": 8,
+    "VAL": 2,
+    "OOS": 5
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip pdr<0.871",
+   "gainR": {
+    "IS": -0.0,
+    "VAL": -0.65,
+    "OOS": 1.61
+   },
+   "skipped": {
+    "IS": 21,
+    "VAL": 6,
+    "OOS": 11
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip eT<630",
+   "gainR": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "skipped": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "validated": false
+  }
+ ],
+ "TDP": [
+  {
+   "rule": "skip eT>=660",
+   "gainR": {
+    "IS": 2.48,
+    "VAL": -0.7,
+    "OOS": 2.99
+   },
+   "skipped": {
+    "IS": 42,
+    "VAL": 12,
+    "OOS": 9
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip gap<0.154",
+   "gainR": {
+    "IS": 1.05,
+    "VAL": -2.98,
+    "OOS": -1.8
+   },
+   "skipped": {
+    "IS": 40,
+    "VAL": 11,
+    "OOS": 11
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip fhr>=0.697",
+   "gainR": {
+    "IS": 0.36,
+    "VAL": -1.71,
+    "OOS": 1.37
+   },
+   "skipped": {
+    "IS": 41,
+    "VAL": 15,
+    "OOS": 20
+   },
+   "validated": false
+  }
+ ],
+ "Pinball": [
+  {
+   "rule": "skip pdr>=1.19",
+   "gainR": {
+    "IS": 0.31,
+    "VAL": -2.03,
+    "OOS": 0.21
+   },
+   "skipped": {
+    "IS": 20,
+    "VAL": 4,
+    "OOS": 3
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip eT<631",
+   "gainR": {
+    "IS": -2.77,
+    "VAL": 0.04,
+    "OOS": -0.78
+   },
+   "skipped": {
+    "IS": 17,
+    "VAL": 1,
+    "OOS": 2
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip gap>=0.475",
+   "gainR": {
+    "IS": -3.18,
+    "VAL": -2.75,
+    "OOS": -1.68
+   },
+   "skipped": {
+    "IS": 20,
+    "VAL": 5,
+    "OOS": 6
+   },
+   "validated": false
+  }
+ ],
+ "H2": [
+  {
+   "rule": "skip news==1",
+   "gainR": {
+    "IS": 9.1,
+    "VAL": -1.82,
+    "OOS": -2.31
+   },
+   "skipped": {
+    "IS": 19,
+    "VAL": 2,
+    "OOS": 6
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip pdr<0.828",
+   "gainR": {
+    "IS": 6.77,
+    "VAL": -3.44,
+    "OOS": 1.0
+   },
+   "skipped": {
+    "IS": 32,
+    "VAL": 4,
+    "OOS": 1
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip eT<665",
+   "gainR": {
+    "IS": 5.87,
+    "VAL": 2.41,
+    "OOS": 0.82
+   },
+   "skipped": {
+    "IS": 30,
+    "VAL": 9,
+    "OOS": 6
+   },
+   "validated": true
+  }
+ ],
+ "SGP": [
+  {
+   "rule": "skip pdr<0.672",
+   "gainR": {
+    "IS": 1.69,
+    "VAL": -4.24,
+    "OOS": -1.45
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 7,
+    "OOS": 2
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip gap<0.131",
+   "gainR": {
+    "IS": 0.51,
+    "VAL": -1.55,
+    "OOS": 0.14
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 2,
+    "OOS": 2
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip adrReg<0.964",
+   "gainR": {
+    "IS": 0.44,
+    "VAL": -3.17,
+    "OOS": 1.28
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 8,
+    "OOS": 8
+   },
+   "validated": false
+  }
+ ],
+ "WCC": [
+  {
+   "rule": "skip eT<1.08e+03",
+   "gainR": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "skipped": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip eT<1.08e+03",
+   "gainR": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "skipped": {
+    "IS": 0,
+    "VAL": 0,
+    "OOS": 0
+   },
+   "validated": false
+  },
+  {
+   "rule": "skip news==1",
+   "gainR": {
+    "IS": -0.52,
+    "VAL": 0.71,
+    "OOS": -3.53
+   },
+   "skipped": {
+    "IS": 12,
+    "VAL": 7,
+    "OOS": 3
+   },
+   "validated": false
+  }
+ ]
+}

@@ -161,7 +161,6 @@ for op in (1800, 2000, 2100, 300, 600, 800, 1200, 1400):
     for orm in (15, 30):
         for dur in (120, 240):
             if op in (1200, 1400) and dur == 240: dur = 115 if op == 1400 else 230
-            ff = (lambda d: no_news(d)) if op == 800 else None
             T(f'B ORB {op:04d}', f"break OR{orm} hold{dur} 1R", lambda op=op, orm=orm, dur=dur: orb(op, orm, dur, 'break', 1.0))
             T(f'B ORB {op:04d}', f"break OR{orm} hold{dur} no tgt", lambda op=op, orm=orm, dur=dur: orb(op, orm, dur, 'break', 0))
             T(f'B ORB {op:04d}', f"fade failed break OR{orm} hold{dur}", lambda op=op, orm=orm, dur=dur: orb(op, orm, dur, 'fade'))

@@ -1362,8 +1362,8 @@ ib_tf2    = input.timeframe("60", "Trend timeframe 2", group=ib_gT)
 ib_tf3    = input.timeframe("240", "Trend timeframe 3", group=ib_gT)
 ib_emaLen = input.int(21, "EMA length", group=ib_gT)
 ib_showTrend = input.bool(true, "Show trend banner", group=ib_gT)
-ib_bPos = input.string("Bottom left", "Trend banner position", options=["Bottom left", "Bottom center", "Bottom right", "Top right", "Top center"], group=ib_gT)
-ib_compact = input.bool(true, "Compact banner (phone friendly: one short line, details on tap/hover)", group=ib_gT)
+ib_bPos = input.string("Top right", "Trend banner position", options=["Bottom left", "Bottom center", "Bottom right", "Top right", "Top center"], group=ib_gT)
+ib_compact = input.bool(false, "Compact banner (phone friendly: one short line, details on tap/hover)", group=ib_gT)
 
 ib_pv   = syminfo.pointvalue
 ib_tick = syminfo.mintick

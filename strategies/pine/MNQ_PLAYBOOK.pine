@@ -6,7 +6,7 @@
 //   Chart 2  Trend & Swing : TDP (10:30-12:00), H2 (10:30-15:00, half size), Pinball (10:30-15:00). All flat by 15:00, D2 by 13:15
 // Use MNQ1! 1-minute, extended hours ON (needed for NEWS and the 8:29 price). Not an auto-trader: markers, sizes, alerts.
 // Hover any marker for the full reason, entry, stop, target, size and risk.
-indicator("MNQ Playbook v6", shorttitle="Playbook", overlay=true, max_lines_count=400, max_labels_count=400, max_boxes_count=200)
+indicator("MNQ Playbook v6", shorttitle="Playbook", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=300)
 
 // ---------- chart group ----------
 G_ALL = "All strategies"
@@ -29,12 +29,18 @@ emaLen = input.int(20, "EMA length (0 = off)", group="Chart")
 plot(emaLen > 0 ? ta.ema(close, emaLen) : na, "EMA", color=color.rgb(255, 0, 255), linewidth=1)
 
 // ---------- strategy switches (switching one OFF removes it from the shared budget on this chart) ----------
-useNW  = input.bool(true, "NEWS 8:30 reversion to the 8:29 price (CPI/PPI/NFP)", group="Strategies")
-useV4  = input.bool(true, "V4+ opening-range retest with the daily trend", group="Strategies")
-useD2  = input.bool(true, "D2 10:30 continuation", group="Strategies")
-useTD  = input.bool(true, "TDP trend-day pullback", group="Strategies")
-usePin = input.bool(true, "Momentum Pinball", group="Strategies")
-useH2  = input.bool(true, "H2 trend-day pullbacks (half size)", group="Strategies")
+useNW  = input.bool(false, "NEWS 8:30 reversion to the 8:29 price (CPI/PPI/NFP)", group="Strategies")
+useV4  = input.bool(false, "V4+ opening-range retest with the daily trend", group="Strategies")
+useD2  = input.bool(false, "D2 10:30 continuation", group="Strategies")
+useTD  = input.bool(false, "TDP trend-day pullback", group="Strategies")
+usePin = input.bool(false, "Momentum Pinball", group="Strategies")
+useH2  = input.bool(false, "H2 trend-day pullbacks (half size)", group="Strategies")
+useORB = input.bool(true, "ORB retest: 9:30-9:45 range, 5m close outside, retest, strong candle away", group="Strategies")
+useIB  = input.bool(true, "Inside Bar signals (helper, any time of day)", group="Strategies")
+orbQty = input.int(1, "ORB contracts (fixed)", minval=1, group="ORB")
+orbTgt = input.float(2.0, "ORB target (R)", step=0.25, group="ORB")
+orbLock = input.bool(true, "ORB: lock +1R once price reaches 1R", group="ORB")
+orbEnd = input.int(780, "ORB last entry (minutes after midnight, 780 = 13:00)", group="ORB")
 gapTh  = input.float(0.4, "V4+ gap threshold (x ADR)", group="V4+")
 dirTh  = input.float(0.4, "V4+ first-15m threshold (x OR range)", group="V4+")
 tgtR   = input.float(1.25, "V4+ target (R)", group="V4+")
@@ -87,6 +93,7 @@ cD2 = color.rgb(33, 150, 243)
 cTD = color.rgb(233, 30, 99)
 cPn = color.rgb(255, 120, 0)
 cH2 = color.rgb(0, 188, 212)
+cOB = color.rgb(255, 214, 0)
 
 fmt(x) => str.tostring(x, "#.##")
 // tags sit away from the candle with an arrow pointing at it
@@ -297,6 +304,7 @@ var float rkD2 = 0.0
 var float rkTD = 0.0
 var float rkPn = 0.0
 var float rkH2 = 0.0
+var float rkOB = 0.0
 var float dayLoss = 0.0
 var int[] dLos = array.from(0)
 var bool dayStop = false
@@ -312,13 +320,14 @@ if mnt >= 480 and mnt < 960 and budDay != dom
     rkTD := 0.0
     rkPn := 0.0
     rkH2 := 0.0
+    rkOB := 0.0
     dayLoss := 0.0
     dayPnl := 0.0
     array.set(dLos, 0, 0)
     dayStop := false
     stopWhy := ""
 perC(riskPts) => riskPts * 2 + 0.5 + 4.74
-usedNow() => rkNW + rkV4 + rkD2 + rkTD + rkPn + rkH2 + dayLoss
+usedNow() => rkNW + rkV4 + rkD2 + rkTD + rkPn + rkH2 + rkOB + dayLoss
 sizeFor(riskPts, w) =>
     room = acct - mllLine
     used = usedNow()
@@ -355,10 +364,10 @@ entryTag(show, nm, side, e, s, t, q, exitRule, why, col) =>
         tgtLine = na(t) ? "Target: none, time exit" : "Target: " + fmt(t) + "  (" + fmt(math.abs(t - e)) + " pts · +" + usd(q * (math.abs(t - e) * 2 - 4.74)) + ")"
         pv = presetOf(nm, rp)
         pName = nm + " " + str.tostring(pv, "#")
-        pLine = nm == "NEWS" ? "PRESET: none, type it by hand: SL 200 ticks · TP 200 ticks" : "PRESET: " + pName + "  (SL " + str.tostring(pv * 4, "#") + " ticks · " + (pR(nm) > 0 ? "TP " + str.tostring(pv * pR(nm) * 4, "#") + " ticks" : "no TP") + ")" + (math.abs(pv - rp) > 0.5 ? "\nExact stop is " + fmt(rp) + " pts: drag the SL line onto the red dotted line if you want it exact" : "")
+        pLine = nm == "NEWS" ? "PRESET: none, type it by hand: SL 200 ticks · TP 200 ticks" : nm == "ORB" ? "BRACKET (type it): SL " + str.tostring(math.round(rp / tick)) + " ticks · TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks" : "PRESET: " + pName + "  (SL " + str.tostring(pv * 4, "#") + " ticks · " + (pR(nm) > 0 ? "TP " + str.tostring(pv * pR(nm) * 4, "#") + " ticks" : "no TP") + ")" + (math.abs(pv - rp) > 0.5 ? "\nExact stop is " + fmt(rp) + " pts: drag the SL line onto the red dotted line if you want it exact" : "")
         head = nm + (side > 0 ? " LONG" : " SHORT") + " · " + str.tostring(q) + " MNQ" + (q > 0 ? "" : (dayStop ? " · SKIP, STOP DAY" : recov ? " · SKIP, RECOVERY: risk too big for the room" : " · SKIP, budget full"))
         tip = head + "\n" + pLine + "\n――――――――――――\nEntry: " + fmt(e) + "  at " + hhmm() + "\nStop: " + fmt(s) + "  (" + fmt(rp) + " pts · risk " + usd(q * perC(rp)) + ")\n" + tgtLine + "\nBracket: SL " + str.tostring(math.round(rp / tick)) + " ticks · " + (na(t) ? "no TP (time exit)" : "TP " + str.tostring(math.round(math.abs(t - e) / tick)) + " ticks") + "\nExit: " + exitRule + "\nBudget left today: " + usd(math.max(0, dayCap - usedNow())) + "\n――――――――――――\nWhy\n• " + str.replace_all(why, " | ", "\n• ")
-        callout(side > 0 ? low : high, side > 0 ? 1 : -1, 1.0, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q) + (q > 0 and nm != "NEWS" ? " · " + str.tostring(presetOf(nm, math.abs(e - s)), "#") : ""), q > 0 ? col : color.new(col, 60), color.white, size.small, tip)
+        callout(side > 0 ? low : high, side > 0 ? 1 : -1, 1.0, nm + (side > 0 ? " ▲ " : " ▼ ") + str.tostring(q) + (q > 0 and nm != "NEWS" and nm != "ORB" ? " · " + str.tostring(presetOf(nm, math.abs(e - s)), "#") : ""), q > 0 ? col : color.new(col, 60), color.white, size.small, tip)
     true
 // while a trade is open: thin dotted stop (red) and target (green) lines; at the exit they are replaced by one line entry -> exit
 zone(show, e, lvl, good) => show and not na(lvl) ? line.new(bar_index, lvl, bar_index + 1, lvl, color=color.new(good ? color.lime : color.red, 30), style=line.style_dotted, width=1) : line(na)
@@ -401,9 +410,9 @@ logTrade(nm, side, eT, why, pts) =>
     true
 
 // results counters
-var float[] sPts = array.new_float(6, 0.0)
-var int[] sN = array.new_int(6, 0)
-var int[] sW = array.new_int(6, 0)
+var float[] sPts = array.new_float(7, 0.0)
+var int[] sN = array.new_int(7, 0)
+var int[] sW = array.new_int(7, 0)
 addRes(k, pts) =>
     array.set(sPts, k, array.get(sPts, k) + pts)
     array.set(sN, k, array.get(sN, k) + 1)
@@ -677,6 +686,127 @@ if useV4 and inRTH
                 pStp := stp0
                 pSide := dr
                 pBar := bar_index
+
+// ===================== ORB retest: 9:30-9:45 range (tested 5y on MNQ 1m: PF 1.19, every year > 1.0, 1 trade a day max) =====================
+// 1) a 5m candle CLOSES outside the range = armed on that side (a 5m close back inside cancels it)
+// 2) price comes back to the range edge (within 10% of the range width) = retest
+// 3) a strong 5m candle away from the range (body >= half the candle, right colour) = entry at its close
+// Stop 1 tick beyond the OTHER side of the range. Target 2R. Once +1R is reached, stop locks +1R. Last entry 13:00, flat 15:55.
+var float o5O = na
+var float o5H = na
+var float o5L = na
+var int obArm = 0
+var bool obTouch = false
+var bool obDone = false
+var int obPos = 0
+var float obE = na
+var float obS = na
+var float obT = na
+var float obR = na
+var int obQ = 0
+var bool obLock = false
+var string obET = ""
+var line obBT = na
+var line obBS = na
+var label obLbl = na
+obSay(txt, col, tip) =>
+    y = obArm > 0 ? orH : orL
+    if na(obLbl)
+        label.new(bar_index + 2, y, txt, color=color.new(col, 25), textcolor=color.black, style=label.style_label_left, size=size.small, tooltip=tip)
+    else
+        label.set_xy(obLbl, bar_index + 2, y)
+        label.set_text(obLbl, txt)
+        label.set_color(obLbl, color.new(col, 25))
+        label.set_tooltip(obLbl, tip)
+        obLbl
+if newDay
+    obArm := 0
+    obTouch := false
+    obDone := false
+    obPos := 0
+    o5O := na
+    obLbl := na
+if useORB and inRTH and mnt >= 585
+    // manage the open ORB trade
+    if obPos != 0
+        grow(obBT)
+        grow(obBS)
+        hitS = obPos > 0 ? low <= obS : high >= obS
+        hitT = obPos > 0 ? high >= obT : low <= obT
+        xP = hitS ? obS : hitT ? obT : mnt >= 955 ? close : na
+        if not na(xP)
+            pts = (xP - obE) * obPos
+            why = hitS ? (obLock ? "lock +1R" : "stop") : hitT ? "target" : "15:55"
+            addRes(6, pts)
+            rkOB := 0.0
+            dayLoss += lossOf(obQ, pts)
+            dayPnl += pnlOf(obQ, pts)
+            logTrade("ORB", obPos, obET, why, pts)
+            exitTag(g1, "ORB", obPos, xP, pts, obQ, why, obE, obBS, obBT)
+            if g1
+                alert("ORB exit " + why + " " + fmt(pts) + " pts", alert.freq_once_per_bar)
+            obPos := 0
+        else if orbLock and not obLock and (obPos > 0 ? high >= obE + obR : low <= obE - obR)
+            obLock := true
+            obS := obE + obPos * obR
+            rkOB := 0.0
+            if g1 and not na(obBS)
+                line.set_y1(obBS, obS)
+                line.set_y2(obBS, obS)
+                line.set_color(obBS, color.new(color.lime, 30))
+                label.new(bar_index, obS, "+1R lock", color=color.new(color.gray, 30), textcolor=color.white, style=label.style_label_left, size=size.tiny, tooltip="ORB reached +1R: move your stop to " + fmt(obS) + " (+1R locked). Target stays " + fmt(obT) + ".")
+                alert("ORB +1R: move stop to " + fmt(obS), alert.freq_once_per_bar)
+    // build the 5m candle from 1m bars
+    if mi % 5 == 0 or na(o5O)
+        o5O := open
+        o5H := high
+        o5L := low
+    else
+        o5H := math.max(o5H, high)
+        o5L := math.min(o5L, low)
+    if (mi + 1) % 5 == 0 and obPos == 0 and not obDone and mnt - 4 < orbEnd and not na(orH)
+        W = orH - orL
+        c5 = close
+        if obArm == 0
+            if c5 > orH or c5 < orL
+                obArm := c5 > orH ? 1 : -1
+                obTouch := false
+                if g1
+                    obLbl := obSay("ORB " + (obArm > 0 ? "▲" : "▼") + " armed · wait for retest", cOB, "5m closed " + (obArm > 0 ? "above the range high " + fmt(orH) : "below the range low " + fmt(orL)) + ".\nNext: price comes back to " + fmt(obArm > 0 ? orH : orL) + " (within " + fmt(0.1 * W) + " pts), then a strong 5m candle " + (obArm > 0 ? "up" : "down") + " = entry.\nA 5m close back inside the range cancels it.")
+        else
+            if obArm > 0 ? c5 < orH : c5 > orL
+                if g1
+                    obLbl := obSay("ORB · back inside, cancelled", color.gray, "A 5m candle closed back inside the 9:30-9:45 range. No trade until a new 5m close outside.")
+                obArm := 0
+                obTouch := false
+            else
+                if obArm > 0 ? o5L <= orH + 0.1 * W : o5H >= orL - 0.1 * W
+                    if not obTouch and g1
+                        obLbl := obSay("ORB " + (obArm > 0 ? "▲" : "▼") + " retest ✓ · wait for strong 5m", cOB, "Price retested the range edge " + fmt(obArm > 0 ? orH : orL) + ".\nEntry on the close of a strong 5m candle " + (obArm > 0 ? "UP (green, body at least half the candle)" : "DOWN (red, body at least half the candle)") + ".")
+                    obTouch := true
+                rg = o5H - o5L
+                strong = rg > 0 and math.abs(c5 - o5O) >= 0.5 * rg and (obArm > 0 ? c5 > o5O : c5 < o5O)
+                if obTouch and strong
+                    side = obArm
+                    obE := c5
+                    obS := side > 0 ? orL - tick : orH + tick
+                    obR := math.abs(obE - obS)
+                    obT := obE + side * orbTgt * obR
+                    obPos := side
+                    obDone := true
+                    obLock := false
+                    obArm := 0
+                    q = dayStop ? 0 : orbQty
+                    obQ := q
+                    obET := hhmm()
+                    rkOB := q * perC(obR)
+                    if not na(obLbl)
+                        label.delete(obLbl)
+                    entryTag(g1, "ORB", side, obE, obS, obT, q, str.tostring(orbTgt) + "R target · lock +1R at 1R · else 15:55", "5m close outside the 9:30-9:45 range (" + fmt(orL) + " - " + fmt(orH) + ") | Retest of the range edge | Strong 5m candle away from the range | Stop on the other side of the range", cOB)
+                    obBT := zone(g1, obE, obT, true)
+                    obBS := zone(g1, obE, obS, false)
+                    if g1
+                        alert("ORB " + (side > 0 ? "LONG " : "SHORT ") + fmt(obE) + " stop " + fmt(obS) + " target " + fmt(obT) + " size " + str.tostring(q) + " MNQ", alert.freq_once_per_bar)
 
 // ===================== D2: 10:30 continuation =====================
 var int d2Pos = 0
@@ -1099,9 +1229,9 @@ if showLog and barstate.islast
 // ---------- strategy checklist (middle left): one colored cell per strategy, hover for the boxes ----------
 ck(b) => b ? "✓ " : "✗ "
 wt(b, w) => b ? "… " : w
-var table ckT = table.new(position.top_left, 7, 5, border_color=color.new(color.gray, 70), border_width=0)
+var table ckT = table.new(position.top_left, 8, 5, border_color=color.new(color.gray, 70), border_width=0)
 if showCk and barstate.islast
-    table.clear(ckT, 0, 0, 6, 4)
+    table.clear(ckT, 0, 0, 7, 4)
     for r = 0 to 3
         table.cell(ckT, 0, r, " ", text_size=size.normal, bgcolor=color.new(color.black, 100))
     table.cell(ckT, 0, 4, ckOpen ? "ⓘ CHECKLIST" : "ⓘ", text_color=color.yellow, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip="Each box is one strategy. Green = all boxes ticked or in a trade. Orange = some boxes ticked, watch it. Grey = not today or done. Hover a box for its checklist.\n✓ met · ✗ not met · … waiting for its time")
@@ -1133,14 +1263,279 @@ if showCk and barstate.islast
     pTip = "Momentum Pinball\n" + ck(pinSide != 0) + "3-day RSI " + (na(rsi3) ? "n/a" : str.tostring(math.round(rsi3))) + (pinSide > 0 ? " oversold" : pinSide < 0 ? " overbought" : " (needs < 30 in an UP trend or > 70 in a DOWN trend)") + "\n" + wt(mnt < 630, ck(mnt >= 630 and mnt <= 900)) + "Window 10:30-15:00\n· Trigger: price breaks the first-hour " + (pinSide > 0 ? "high" : pinSide < 0 ? "low" : "high/low")
     // H2
     hTip = "H2 trend-day second entry (half size)\n" + wt(mnt < 629, ck(tdDir != 0)) + "Trend day: moved " + str.tostring(h2Th) + " ADR by 10:30\n" + wt(mnt < 629, ck(tdDir != 0 and tdDir == trendDir)) + "Same direction as the daily trend\n" + ck(h2N_ < h2Max) + "Fewer than " + str.tostring(h2Max) + " H2 trades today\n· Trigger: 5m pullback, second push back with the trend"
-    names = array.from("NEWS", "V4+", "D2", "TDP", "PIN", "H2")
-    tips = array.from(nTip, vTip, dTip, tTip, pTip, hTip)
-    inT = array.from(nwPos != 0, v4Pos != 0, d2Pos != 0, tdPos != 0, pnPos != 0, h2Pos != 0)
-    full = array.from(nOk, v1 and v2 and v3 and saw, d1 and d2c and mnt <= 629, tdS != 0 and not tdDone and mnt < 720, pinSide != 0 and not pnDone and mnt >= 630 and mnt <= 900, tdDir != 0 and tdDir == trendDir and h2N_ < h2Max and mnt >= 630 and mnt <= 900)
-    part = array.from(n1, v1 and not v4Done and mnt <= 780, d1 and math.abs(mvN) >= d2Th * 0.6 and mnt <= 629, effN >= tdEff * 0.7 and mnt <= 629, pinSide != 0 and not pnDone, tdDir != 0 and h2N_ < h2Max)
-    offT = array.from(not news830 or mnt >= 640, v4Done or mnt > 780 or (biasSet and not v1), d2Done or (mnt > 629 and d2Pos == 0) or cpiOrFomc, tdDone or (mnt > 629 and tdS == 0) or mnt >= 720, pinSide == 0 or pnDone or mnt > 900, (mnt > 629 and tdDir == 0) or h2N_ >= h2Max or mnt > 900)
-    for k = 0 to 5
-        it = array.get(inT, k)
-        st = it ? "IN TRADE" : not gate ? "STOP" : array.get(full, k) ? "READY" : array.get(offT, k) ? "off" : array.get(part, k) ? "watch" : "wait"
-        col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
-        table.cell(ckT, k + 1, 4, array.get(names, k) + (ckOpen ? " " + st : ""), text_color=col, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip=st + ": " + array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
+    // ORB
+    oTip = "ORB retest (9:30-9:45 range: " + fmt(orL) + " - " + fmt(orH) + ")\n" + wt(mnt < 585, ck(mnt >= 585 and mnt < orbEnd)) + "Window 9:45-13:00\n" + ck(obArm != 0 or obDone) + "5m close outside the range" + (obArm > 0 ? " (UP)" : obArm < 0 ? " (DOWN)" : "") + "\n" + ck(obTouch or obDone) + "Retest of the range edge\n· Trigger: strong 5m candle away from the range\n· Stop: other side of the range · Target " + str.tostring(orbTgt) + "R · lock +1R at 1R"
+    names = array.from("NEWS", "V4+", "D2", "TDP", "PIN", "H2", "ORB")
+    tips = array.from(nTip, vTip, dTip, tTip, pTip, hTip, oTip)
+    inT = array.from(nwPos != 0, v4Pos != 0, d2Pos != 0, tdPos != 0, pnPos != 0, h2Pos != 0, obPos != 0)
+    full = array.from(nOk, v1 and v2 and v3 and saw, d1 and d2c and mnt <= 629, tdS != 0 and not tdDone and mnt < 720, pinSide != 0 and not pnDone and mnt >= 630 and mnt <= 900, tdDir != 0 and tdDir == trendDir and h2N_ < h2Max and mnt >= 630 and mnt <= 900, obArm != 0 and obTouch and not obDone and mnt < orbEnd)
+    part = array.from(n1, v1 and not v4Done and mnt <= 780, d1 and math.abs(mvN) >= d2Th * 0.6 and mnt <= 629, effN >= tdEff * 0.7 and mnt <= 629, pinSide != 0 and not pnDone, tdDir != 0 and h2N_ < h2Max, obArm != 0 and not obDone)
+    offT = array.from(not news830 or mnt >= 640, v4Done or mnt > 780 or (biasSet and not v1), d2Done or (mnt > 629 and d2Pos == 0) or cpiOrFomc, tdDone or (mnt > 629 and tdS == 0) or mnt >= 720, pinSide == 0 or pnDone or mnt > 900, (mnt > 629 and tdDir == 0) or h2N_ >= h2Max or mnt > 900, obDone or mnt >= orbEnd)
+    en = array.from(useNW, useV4, useD2, useTD, usePin, useH2, useORB)
+    cc = 1
+    for k = 0 to 6
+        if array.get(en, k)
+            it = array.get(inT, k)
+            st = it ? "IN TRADE" : not gate ? "STOP" : array.get(full, k) ? "READY" : array.get(offT, k) ? "off" : array.get(part, k) ? "watch" : "wait"
+            col = it ? color.aqua : st == "READY" ? color.lime : st == "watch" ? color.orange : st == "STOP" ? color.red : color.gray
+            table.cell(ckT, cc, 4, array.get(names, k) + (ckOpen ? " " + st : ""), text_color=col, text_size=size.normal, bgcolor=color.new(#131722, 0), tooltip=st + ": " + array.get(tips, k) + (gate ? "" : "\n\nSTOP DAY: no new trades"))
+            cc += 1
+
+// =====================================================================================
+// INSIDE BAR (merged from the MNQ Inside Bar indicator: TradingView Basic allows 1 saved script)
+// =====================================================================================
+// MNQ Inside Bar (Oct 27 2026). Separate from the Playbook.
+// Mother candle + inside candle(s), full-body breakout in the 2-of-3 higher-timeframe trend direction,
+// stop on the other side of the mother candle, size from a fixed $ risk. One trade at a time.
+// Exit: target 1.5R; once price reaches 1R the stop is locked at +1R (so a trade that reaches 1R banks 1R to 1.5R).
+// Live tag tooltip updates every bar (P/L, best R so far, stop, nearby key levels) and flashes on each new event.
+// Finished tags stay on the chart, faded, with the result: +1.5R / +1R (locked) / -1R (stop).
+
+// ---------- inputs ----------
+ib_gS = "Inside Bar"
+ib_riskUsd   = input.float(200, "Risk per trade ($)", group=ib_gS)
+ib_maxQty    = input.int(10, "Max contracts", group=ib_gS)
+ib_rr        = input.float(1.5, "Max target (R)", step=0.25, group=ib_gS)
+ib_lockAt    = input.float(1.0, "Lock profit at this R once reached (0 = off)", step=0.25, group=ib_gS)
+ib_partPct   = input.int(0, "Contracts to take off at the lock level (%)", minval=0, maxval=100, step=25, group=ib_gS)
+ib_needFull  = input.bool(true, "Full candle body must close outside the mother candle", group=ib_gS)
+ib_withTrend = input.bool(true, "Only take breakouts in the trend direction", group=ib_gS)
+ib_sessIn    = input.session("1800-1700", "Signal hours (New York time)", group=ib_gS)
+ib_minStop   = input.float(5, "Min stop (pts)", group=ib_gS)
+ib_maxStop   = input.float(80, "Max stop (pts)", group=ib_gS)
+ib_expiry    = input.int(30, "Setup expires after N bars", group=ib_gS)
+ib_showSkip  = input.bool(true, "Show skipped breakouts (gray, hover for reason)", group=ib_gS)
+ib_daysBack  = input.int(3, "Draw signals for the last N days", minval=1, maxval=10, group=ib_gS)
+ib_lvlNear   = input.float(0.35, "Warn when a key level is within this many R", step=0.05, group=ib_gS)
+ib_tagDist   = input.float(1.5, "Tag distance from candles (x ATR)", step=0.25, group=ib_gS)
+ib_gT = "Inside Bar trend (2 of 3 must agree)"
+ib_tf1    = input.timeframe("15", "Trend timeframe 1", group=ib_gT)
+ib_tf2    = input.timeframe("60", "Trend timeframe 2", group=ib_gT)
+ib_tf3    = input.timeframe("240", "Trend timeframe 3", group=ib_gT)
+ib_emaLen = input.int(21, "EMA length", group=ib_gT)
+ib_showTrend = input.bool(true, "Show trend banner (top right)", group=ib_gT)
+
+ib_pv   = syminfo.pointvalue
+ib_tick = syminfo.mintick
+ib_tz   = "America/New_York"
+ib_fmtP(ib_x) => str.tostring(ib_x, format.mintick)
+ib_fmtR(ib_x) => str.tostring(ib_x, "+0.0#;-0.0#") + "R"
+
+// ---------- trend: close vs EMA on 3 higher timeframes, previous closed bar (no repaint) ----------
+ib_fDir() => close > ta.ema(close, ib_emaLen) ? 1 : -1
+ib_d1 = request.security(syminfo.tickerid, ib_tf1, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_d2 = request.security(syminfo.tickerid, ib_tf2, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_d3 = request.security(syminfo.tickerid, ib_tf3, ib_fDir()[1], lookahead=barmerge.lookahead_on)
+ib_trend = ib_d1 + ib_d2 + ib_d3 > 0 ? 1 : -1
+
+ib_arrowTxt(ib_d) => ib_d > 0 ? "▲" : "▼"
+ib_dirCol(ib_d) => ib_d > 0 ? color.lime : color.red
+var table ib_tt = table.new(position.top_right, 2, 1, bgcolor=color.new(color.black, 20), border_width=0)
+if ib_showTrend and barstate.islast
+    ib_agree = math.abs(ib_d1 + ib_d2 + ib_d3) == 3 ? "3/3" : "2/3"
+    table.cell(ib_tt, 0, 0, "TREND " + ib_arrowTxt(ib_trend) + (ib_trend > 0 ? " UP " : " DOWN ") + ib_agree + (ib_trend > 0 ? " · LONGS ONLY" : " · SHORTS ONLY"), text_color=color.black, bgcolor=color.new(ib_dirCol(ib_trend), ib_agree == "3/3" ? 0 : 35), text_size=size.normal, tooltip="Close vs EMA21 on the last closed 15m / 60m / 240m candle. 2 of 3 must agree.\n3/3 = strong trend, 2/3 = weaker, be pickier.\nDo not take trades against this direction.")
+    table.cell(ib_tt, 1, 0, ib_tf1 + ib_arrowTxt(ib_d1) + " " + ib_tf2 + ib_arrowTxt(ib_d2) + " " + ib_tf3 + ib_arrowTxt(ib_d3), text_color=color.new(color.white, 20), text_size=size.small)
+
+// ---------- key levels: prior session (18:00-17:00) high/low/close + current session high/low ----------
+var float ib_pH = na
+var float ib_pL = na
+var float ib_pC = na
+var float ib_cH = na
+var float ib_cL = na
+ib_newS = hour(time, ib_tz) == 18 and hour(time[1], ib_tz) != 18
+if ib_newS
+    ib_pH := ib_cH
+    ib_pL := ib_cL
+    ib_pC := close[1]
+    ib_cH := high
+    ib_cL := low
+else
+    ib_cH := na(ib_cH) ? high : math.max(ib_cH, high)
+    ib_cL := na(ib_cL) ? low : math.min(ib_cL, low)
+ib_sessHi = ib_cH[1]
+ib_sessLo = ib_cL[1]
+
+// nearest key level between price and the target, in the trade direction
+ib_levelAhead(int ib_d, float ib_px, float ib_tgt) =>
+    string ib_nm = ""
+    float ib_best = na
+    ib_vals = array.from(ib_pH, ib_pL, ib_pC, ib_sessHi, ib_sessLo)
+    ib_names = array.from("PDH", "PDL", "PDC", "session high", "session low")
+    for ib_k = 0 to 4
+        ib_v = array.get(ib_vals, ib_k)
+        if not na(ib_v) and (ib_v - ib_px) * ib_d > 0 and (ib_v - ib_tgt) * ib_d < 0
+            if na(ib_best) or math.abs(ib_v - ib_px) < math.abs(ib_best - ib_px)
+                ib_best := ib_v
+                ib_nm := array.get(ib_names, ib_k)
+    [ib_nm, ib_best]
+
+// ---------- state ----------
+ib_inSess = not na(time(timeframe.period, ib_sessIn, ib_tz))
+ib_recent = time > timenow - ib_daysBack * 86400000
+ib_atr14 = ta.atr(14)
+ib_tagY(int ib_d) => ib_d > 0 ? ta.lowest(low, 3) - ib_atr14 * ib_tagDist : ta.highest(high, 3) + ib_atr14 * ib_tagDist
+ib_font0 = font.family_monospace
+
+var bool  ib_armed = false
+var float ib_mbH = na
+var float ib_mbL = na
+var int   ib_mbBar = 0
+var int   ib_tDir = 0
+var float ib_tS = na
+var float ib_tT = na
+var float ib_tE = na
+var float ib_tR = na
+var int   ib_tQ = 0
+var bool  ib_locked = false
+var float ib_mfe = 0.0
+var box   ib_bx = na
+var line  ib_lE = na
+var line  ib_lS = na
+var line  ib_lT = na
+var line  ib_l1 = na
+var label ib_lb = na
+var line  ib_lC = na
+varip int    ib_flash = 0
+varip string ib_lastEvt = ""
+
+ib_yUp = ib_tagY(1)
+ib_yDn = ib_tagY(-1)
+ib_longSig = false
+ib_shortSig = false
+string ib_evt = ""
+
+ib_q1Of(int ib_q) => math.min(ib_q, math.round(ib_q * ib_partPct / 100.0))
+ib_planTxt(int ib_q) =>
+    ib_q1 = ib_q1Of(ib_q)
+    ib_q2 = ib_q - ib_q1
+    "\nPLAN (" + str.tostring(ib_q) + " MNQ): at " + ib_fmtR(ib_lockAt) + " (" + ib_fmtP(ib_tE + ib_tDir * ib_lockAt * ib_tR) + ") " + (ib_q1 > 0 ? "close " + str.tostring(ib_q1) + ", " : "") + "move stop to " + ib_fmtR(ib_lockAt) + " on " + (ib_q1 > 0 ? "the other " + str.tostring(ib_q2) : "all " + str.tostring(ib_q)) + "\n                at " + ib_fmtR(ib_rr) + " (" + ib_fmtP(ib_tT) + ") close " + str.tostring(ib_q2)
+ib_liveTip(string ib_state, string ib_warn) =>
+    ib_nowR = (close - ib_tE) * ib_tDir / ib_tR
+    (ib_tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(ib_tQ) + " MNQ | " + ib_state + "\nNow " + ib_fmtP(close) + "  " + ib_fmtR(ib_nowR) + "  ($" + str.tostring(math.round((close - ib_tE) * ib_tDir * ib_tQ * ib_pv)) + ")\nBest so far " + ib_fmtR(ib_mfe) + "\nEntry " + ib_fmtP(ib_tE) + "\nStop " + ib_fmtP(ib_tS) + (ib_locked ? "  (locked at " + ib_fmtR(ib_lockAt) + ")" : "  (-1R)") + "\nTarget " + ib_fmtP(ib_tT) + "  (" + ib_fmtR(ib_rr) + ")" + ib_planTxt(ib_tQ) + (ib_warn != "" ? "\n⚠ " + ib_warn : "")
+
+ib_finish(float ib_res0, string ib_why) =>
+    ib_q1 = ib_q1Of(ib_tQ)
+    ib_res = ib_locked and ib_q1 > 0 ? (ib_q1 * ib_lockAt + (ib_tQ - ib_q1) * ib_res0) / ib_tQ : ib_res0
+    ib_c = ib_res > 0 ? color.lime : color.red
+    line.delete(ib_lE)
+    line.delete(ib_lS)
+    line.delete(ib_lT)
+    line.delete(ib_l1)
+    box.set_right(ib_bx, bar_index)
+    box.set_bgcolor(ib_bx, color.new(ib_c, 95))
+    box.set_border_color(ib_bx, color.new(ib_c, 75))
+    label.set_text(ib_lb, ib_arrowTxt(ib_tDir) + " " + str.tostring(ib_tQ) + "  " + ib_fmtR(ib_res))
+    label.set_color(ib_lb, color.new(ib_c, 65))
+    label.set_textcolor(ib_lb, color.new(color.white, 10))
+    label.set_size(ib_lb, size.small)
+    line.set_color(ib_lC, color.new(ib_c, 75))
+    label.set_tooltip(ib_lb, (ib_tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(ib_tQ) + " MNQ | CLOSED: " + ib_why + "\nResult " + ib_fmtR(ib_res) + "  ($" + str.tostring(math.round(ib_res * ib_tR * ib_tQ * ib_pv)) + ")\nBest reached " + ib_fmtR(ib_mfe) + "\nEntry " + ib_fmtP(ib_tE) + "  Exit " + ib_fmtP(ib_tE + ib_tDir * ib_res0 * ib_tR) + (ib_locked and ib_q1 > 0 ? "\n" + str.tostring(ib_q1) + " closed at " + ib_fmtR(ib_lockAt) + ", " + str.tostring(ib_tQ - ib_q1) + " at " + ib_fmtR(ib_res0) : ""))
+
+// ---------- 1) manage the open signal ----------
+if ib_tDir != 0
+    ib_hitS = ib_tDir > 0 ? low <= ib_tS : high >= ib_tS
+    ib_hitT = ib_tDir > 0 ? high >= ib_tT : low <= ib_tT
+    if ib_hitS
+        ib_res = (ib_tS - ib_tE) * ib_tDir / ib_tR
+        ib_finish(ib_res, ib_locked ? "profit lock hit" : "stopped out")
+        ib_evt := "IB closed " + ib_fmtR(ib_res) + (ib_locked ? " (lock)" : " (stop)")
+        ib_tDir := 0
+    else if ib_hitT
+        ib_finish(ib_rr, "target hit")
+        ib_evt := "IB target hit " + ib_fmtR(ib_rr)
+        ib_tDir := 0
+    else
+        ib_fav = (ib_tDir > 0 ? high - ib_tE : ib_tE - low) / ib_tR
+        ib_mfe := math.max(ib_mfe, ib_fav)
+        if ib_lockAt > 0 and not ib_locked and ib_fav >= ib_lockAt
+            ib_locked := true
+            ib_tS := ib_tE + ib_tDir * ib_lockAt * ib_tR
+            line.set_y1(ib_lS, ib_tS)
+            line.set_y2(ib_lS, ib_tS)
+            line.set_color(ib_lS, color.new(color.lime, 20))
+            line.delete(ib_l1)
+            ib_l1 := na
+            ib_evt := "IB reached " + ib_fmtR(ib_lockAt) + ": stop locked at " + ib_fmtP(ib_tS)
+        [ib_nm, ib_lv] = ib_levelAhead(ib_tDir, close, ib_tT)
+        ib_warn = ""
+        if ib_nm != "" and math.abs(ib_lv - close) / ib_tR <= ib_lvlNear
+            ib_warn := ib_nm + " " + ib_fmtP(ib_lv) + " is " + str.tostring(math.abs(ib_lv - close) / ib_tR, "0.0#") + "R ahead: possible " + (ib_tDir > 0 ? "resistance" : "support")
+            if ib_evt == ""
+                ib_evt := "IB: " + ib_nm + " ahead at " + ib_fmtP(ib_lv)
+        ib_backIn = close < ib_mbH and close > ib_mbL
+        if ib_backIn
+            ib_warn := (ib_warn != "" ? ib_warn + "\n⚠ " : "") + "Closed back inside the mother candle: setup weakening"
+            if ib_evt == ""
+                ib_evt := "IB: closed back inside the box"
+        ib_state = ib_locked ? "LOCKED " + ib_fmtR(ib_lockAt) : ib_backIn ? "WEAK" : "LIVE"
+        box.set_right(ib_bx, bar_index)
+        line.set_x2(ib_lE, bar_index)
+        line.set_x2(ib_lS, bar_index)
+        line.set_x2(ib_lT, bar_index)
+        line.set_x2(ib_l1, bar_index)
+        label.set_tooltip(ib_lb, ib_liveTip(ib_state, ib_warn))
+        label.set_color(ib_lb, color.new(ib_backIn ? color.orange : ib_tDir > 0 ? color.lime : color.red, 0))
+
+// ---------- 2) breakout of the armed mother candle ----------
+if ib_armed
+    ib_bodyLo = math.min(open, close)
+    ib_bodyHi = math.max(open, close)
+    ib_upOut = ib_needFull ? ib_bodyLo > ib_mbH : close > ib_mbH
+    ib_dnOut = ib_needFull ? ib_bodyHi < ib_mbL : close < ib_mbL
+    if ib_upOut or ib_dnOut
+        ib_side = ib_upOut ? 1 : -1
+        ib_armed := false
+        ib_e = close
+        ib_s = ib_side > 0 ? ib_mbL - ib_tick : ib_mbH + ib_tick
+        ib_r = math.abs(ib_e - ib_s)
+        ib_q = math.min(ib_maxQty, math.floor(ib_riskUsd / (ib_r * ib_pv)))
+        ib_ok = useIB and (not ib_withTrend or ib_side == ib_trend) and ib_inSess and ib_tDir == 0 and ib_r >= ib_minStop and ib_r <= ib_maxStop and ib_q >= 1
+        if ib_ok
+            ib_t = ib_e + ib_side * ib_rr * ib_r
+            ib_tDir := ib_side
+            ib_tS := ib_s
+            ib_tT := ib_t
+            ib_tE := ib_e
+            ib_tR := ib_r
+            ib_tQ := ib_q
+            ib_locked := false
+            ib_mfe := 0.0
+            ib_c = ib_side > 0 ? color.lime : color.red
+            ib_bx := box.new(ib_mbBar, ib_mbH, bar_index, ib_mbL, border_color=color.new(ib_c, 30), border_width=1, border_style=line.style_dashed, bgcolor=color.new(ib_c, 88))
+            ib_lE := line.new(bar_index, ib_e, bar_index + 1, ib_e, color=color.new(color.white, 40), width=1)
+            ib_lS := line.new(bar_index, ib_s, bar_index + 1, ib_s, color=color.new(color.red, 20), style=line.style_dashed, width=1)
+            ib_lT := line.new(bar_index, ib_t, bar_index + 1, ib_t, color=color.new(color.lime, 20), style=line.style_dashed, width=1)
+            ib_l1 := ib_lockAt > 0 ? line.new(bar_index, ib_e + ib_side * ib_lockAt * ib_r, bar_index + 1, ib_e + ib_side * ib_lockAt * ib_r, color=color.new(color.lime, 55), style=line.style_dotted, width=1) : na
+            ib_ly = ib_side > 0 ? ib_yUp : ib_yDn
+            ib_lC := line.new(bar_index, ib_side > 0 ? low : high, bar_index, ib_ly, color=color.new(ib_c, 50), style=line.style_dotted, width=1)
+            ib_lb := label.new(bar_index, ib_ly, ib_arrowTxt(ib_side) + " " + str.tostring(ib_q), style=ib_side > 0 ? label.style_label_up : label.style_label_down, color=color.new(ib_c, 0), textcolor=color.black, size=size.normal, text_font_family=ib_font0)
+            label.set_tooltip(ib_lb, ib_liveTip("NEW", "") + "\nOrder panel: Stop loss " + str.tostring(math.round(ib_r / ib_tick)) + " ticks, Take profit " + str.tostring(math.round(ib_rr * ib_r / ib_tick)) + " ticks\nTrend " + (ib_trend > 0 ? "UP" : "DOWN") + " (" + ib_tf1 + "/" + ib_tf2 + "/" + ib_tf3 + ")")
+            ib_evt := "IB " + (ib_side > 0 ? "LONG " : "SHORT ") + str.tostring(ib_q) + " at " + ib_fmtP(ib_e) + ", stop " + ib_fmtP(ib_s) + ", target " + ib_fmtP(ib_t)
+            ib_longSig := ib_side > 0
+            ib_shortSig := ib_side < 0
+        else if useIB and ib_showSkip and ib_inSess
+            ib_why = (ib_withTrend and ib_side != ib_trend) ? "against the trend (" + ib_tf1 + ib_arrowTxt(ib_d1) + " " + ib_tf2 + ib_arrowTxt(ib_d2) + " " + ib_tf3 + ib_arrowTxt(ib_d3) + ")" : ib_tDir != 0 ? "another IB trade is still open" : ib_r > ib_maxStop ? "stop too big (" + ib_fmtP(ib_r) + " pts > " + str.tostring(ib_maxStop) + ")" : ib_r < ib_minStop ? "stop too small (" + ib_fmtP(ib_r) + " pts)" : "risk too big for 1 MNQ at $" + str.tostring(ib_riskUsd)
+            ib_sy = ib_side > 0 ? ib_yUp : ib_yDn
+            label.new(bar_index, ib_sy, ib_side > 0 ? "▲" : "▼", style=label.style_none, textcolor=color.new(color.gray, 25), size=size.normal, text_font_family=ib_font0, tooltip="IB " + (ib_side > 0 ? "LONG" : "SHORT") + " breakout SKIPPED: " + ib_why + "\nMother candle " + ib_fmtP(ib_mbH) + " / " + ib_fmtP(ib_mbL) + ", breakout close " + ib_fmtP(ib_e) + ", stop would be " + ib_fmtP(ib_r) + " pts")
+    else if bar_index - ib_mbBar > ib_expiry
+        ib_armed := false
+
+// ---------- 3) new mother candle: this bar sits inside the previous one ----------
+ib_isInside = high <= high[1] and low >= low[1]
+if useIB and ib_recent and not ib_armed and ib_tDir == 0 and ib_isInside and not ib_longSig and not ib_shortSig
+    ib_armed := true
+    ib_mbH := high[1]
+    ib_mbL := low[1]
+    ib_mbBar := bar_index - 1
+
+// ---------- 4) live events: flash the tag and fire an alert ----------
+if barstate.isrealtime and ib_evt != "" and ib_evt != ib_lastEvt
+    ib_lastEvt := ib_evt
+    ib_flash := 10
+    alert(ib_evt + " (" + syminfo.ticker + ")", alert.freq_once_per_bar)
+if barstate.isrealtime and ib_flash > 0 and ib_tDir != 0
+    ib_flash -= 1
+    label.set_color(ib_lb, ib_flash % 2 == 0 ? color.new(color.yellow, 0) : color.new(ib_tDir > 0 ? color.lime : color.red, 0))
+
+alertcondition(ib_longSig, "IB long", "IB breakout LONG on {{ticker}}")
+alertcondition(ib_shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

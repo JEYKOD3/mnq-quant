@@ -344,6 +344,50 @@ if showSess and time > timenow - 3 * 86400000
     if atLocal("America/New_York", 16, 0)
         sessMark("NY close", "16:00 New York: stock market closes. Futures trade until 17:00", color.orange)
 
+// ---------- session opening ranges (first 15 min of each session), reference boxes. Only the NY 9:30 ORB has a tested edge and gives signals ----------
+showGxOR = input.bool(true, "Globex ORB 18:00-18:15 (5y test: no edge, PF 1.01, reference only)", group="Session ORBs")
+showAsOR = input.bool(true, "Asia ORB Tokyo 9:00-9:15 local (5y test: weak edge, PF 1.09)", group="Session ORBs")
+showLnOR = input.bool(true, "London ORB 8:00-8:15 local (5y test: no edge, PF 1.04)", group="Session ORBs")
+orbHours = input.int(4, "Extend session ORB lines for (hours)", minval=1, maxval=12, group="Session ORBs")
+sessORB(bool start, bool show, string nm, color col, string tip) =>
+    var box bx = na
+    var line lh = na
+    var line ll = na
+    var label lb = na
+    var float hi = na
+    var float lo = na
+    var int t0 = na
+    var bool forming = false
+    if show and time > timenow - 3 * 86400000
+        if start
+            hi := high
+            lo := low
+            t0 := time
+            forming := true
+            bx := box.new(bar_index, high, bar_index, low, border_color=color.new(col, 55), border_width=1, bgcolor=color.new(col, 90))
+            lh := na
+            ll := na
+        else if forming
+            if time - t0 < 15 * 60000
+                hi := math.max(hi, high)
+                lo := math.min(lo, low)
+                box.set_right(bx, bar_index)
+                box.set_top(bx, hi)
+                box.set_bottom(bx, lo)
+            else
+                forming := false
+                lh := line.new(bar_index, hi, bar_index, hi, color=color.new(col, 50), style=line.style_dashed, width=1)
+                ll := line.new(bar_index, lo, bar_index, lo, color=color.new(col, 50), style=line.style_dashed, width=1)
+                lb := label.new(bar_index, hi, nm, style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=color.new(col, 20), size=size.tiny, tooltip=tip + "\nHigh " + str.tostring(hi, "#.00") + " · Low " + str.tostring(lo, "#.00") + " · " + str.tostring(hi - lo, "#.00") + " pts")
+        if not forming and not na(lh) and time - t0 < orbHours * 3600000
+            line.set_x2(lh, bar_index)
+            line.set_x2(ll, bar_index)
+            label.set_x(lb, bar_index)
+    true
+sessORB(atLocal("America/New_York", 18, 0), showGxOR, "Globex ORB", color.gray, "Globex opening range 18:00-18:15 ET. Reference only: the ORB retest had no edge here in 5 years (PF 1.01).")
+sessORB(atLocal("Asia/Tokyo", 9, 0), showAsOR, "Asia ORB", color.teal, "Tokyo opening range, first 15 min. Weak edge in 5 years (PF 1.09): reference, trade only with the trend banner.")
+sessORB(atLocal("Europe/London", 8, 0), showLnOR, "London ORB", color.blue, "London opening range, first 15 min. No real edge in 5 years (PF 1.04): reference only.")
+
 // ---------- shared daily budget (resets at 8:00 ET, or at the first bar after it) ----------
 var float rkNW = 0.0
 var float rkV4 = 0.0

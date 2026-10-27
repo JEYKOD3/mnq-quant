@@ -1,18 +1,18 @@
 //@version=5
 // MNQ Inside Bar (Oct 27 2026). Separate from the Playbook.
 // Mother candle + inside candle(s), full-body breakout in the 2-of-3 higher-timeframe trend direction,
-// stop on the other side of the mother candle, target 1R, size from a fixed $ risk. One trade at a time.
-// Clean display: only signals that are still valid stay on the chart.
-//   - a candle closes back inside the mother box before the target: gray 'exit' mark (early-exit point), box kept
-//   - stopped out: everything is erased, a tiny gray x remains
-//   - target hit: a small +1R marker remains on a faded box
+// stop on the other side of the mother candle, size from a fixed $ risk. One trade at a time.
+// Exit: target 1.5R; once price reaches 1R the stop is locked at +1R (so a trade that reaches 1R banks 1R to 1.5R).
+// Live tag tooltip updates every bar (P/L, best R so far, stop, nearby key levels) and flashes on each new event.
+// Finished tags stay on the chart, faded, with the result: +1.5R / +1R (locked) / -1R (stop).
 indicator("MNQ Inside Bar", shorttitle="IB", overlay=true, max_boxes_count=100, max_lines_count=200, max_labels_count=200)
 
 // ---------- inputs ----------
 gS = "Signals"
 riskUsd   = input.float(200, "Risk per trade ($)", group=gS)
 maxQty    = input.int(10, "Max contracts", group=gS)
-rr        = input.float(1.0, "Target (R)", step=0.25, group=gS)
+rr        = input.float(1.5, "Max target (R)", step=0.25, group=gS)
+lockAt    = input.float(1.0, "Lock profit at this R once reached (0 = off)", step=0.25, group=gS)
 needFull  = input.bool(true, "Full candle body must close outside the mother candle", group=gS)
 withTrend = input.bool(true, "Only take breakouts in the trend direction", group=gS)
 sessIn    = input.session("1800-1700", "Signal hours (New York time)", group=gS)
@@ -21,6 +21,7 @@ maxStop   = input.float(80, "Max stop (pts)", group=gS)
 expiry    = input.int(30, "Setup expires after N bars", group=gS)
 showSkip  = input.bool(true, "Show skipped breakouts (gray, hover for reason)", group=gS)
 daysBack  = input.int(3, "Draw signals for the last N days", minval=1, maxval=10, group=gS)
+lvlNear   = input.float(0.35, "Warn when a key level is within this many R", step=0.05, group=gS)
 gT = "Trend (2 of 3 must agree)"
 tf1    = input.timeframe("15", "Trend timeframe 1", group=gT)
 tf2    = input.timeframe("60", "Trend timeframe 2", group=gT)
@@ -30,7 +31,9 @@ showTrend = input.bool(true, "Show trend box (bottom right)", group=gT)
 
 pv   = syminfo.pointvalue
 tick = syminfo.mintick
+tz   = "America/New_York"
 fmtP(x) => str.tostring(x, format.mintick)
+fmtR(x) => str.tostring(x, "+0.0#;-0.0#") + "R"
 
 // ---------- trend: close vs EMA on 3 higher timeframes, previous closed bar (no repaint) ----------
 fDir() => close > ta.ema(close, emaLen) ? 1 : -1
@@ -46,8 +49,41 @@ if showTrend and barstate.islast
     table.cell(tt, 0, 0, "IB " + tf1 + arrowTxt(d1) + " " + tf2 + arrowTxt(d2) + " " + tf3 + arrowTxt(d3), text_color=color.new(color.white, 20), text_size=size.tiny)
     table.cell(tt, 1, 0, trend > 0 ? "LONGS" : "SHORTS", text_color=dirCol(trend), text_size=size.tiny)
 
+// ---------- key levels: prior session (18:00-17:00) high/low/close + current session high/low ----------
+var float pH = na
+var float pL = na
+var float pC = na
+var float cH = na
+var float cL = na
+newS = hour(time, tz) == 18 and hour(time[1], tz) != 18
+if newS
+    pH := cH
+    pL := cL
+    pC := close[1]
+    cH := high
+    cL := low
+else
+    cH := na(cH) ? high : math.max(cH, high)
+    cL := na(cL) ? low : math.min(cL, low)
+sessHi = cH[1]
+sessLo = cL[1]
+
+// nearest key level between price and the target, in the trade direction
+levelAhead(int d, float px, float tgt) =>
+    string nm = ""
+    float best = na
+    vals = array.from(pH, pL, pC, sessHi, sessLo)
+    names = array.from("PDH", "PDL", "PDC", "session high", "session low")
+    for k = 0 to 4
+        v = array.get(vals, k)
+        if not na(v) and (v - px) * d > 0 and (v - tgt) * d < 0
+            if na(best) or math.abs(v - px) < math.abs(best - px)
+                best := v
+                nm := array.get(names, k)
+    [nm, best]
+
 // ---------- state ----------
-inSess = not na(time(timeframe.period, sessIn, "America/New_York"))
+inSess = not na(time(timeframe.period, sessIn, tz))
 recent = time > timenow - daysBack * 86400000
 gap = ta.atr(14) * 2.0
 
@@ -59,56 +95,86 @@ var int   tDir = 0
 var float tS = na
 var float tT = na
 var float tE = na
+var float tR = na
+var int   tQ = 0
+var bool  locked = false
+var float mfe = 0.0
 var box   bx = na
 var line  lE = na
 var line  lS = na
 var line  lT = na
-var line  lA = na
+var line  l1 = na
 var label lb = na
-
-clearAll() =>
-    box.delete(bx)
-    line.delete(lE)
-    line.delete(lS)
-    line.delete(lT)
-    line.delete(lA)
-    label.delete(lb)
+varip int    flash = 0
+varip string lastEvt = ""
 
 longSig = false
 shortSig = false
+string evt = ""
+
+liveTip(string state, string warn) =>
+    nowR = (close - tE) * tDir / tR
+    (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | " + state + "\nNow " + fmtP(close) + "  " + fmtR(nowR) + "  ($" + str.tostring(math.round((close - tE) * tDir * tQ * pv)) + ")\nBest so far " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "\nStop " + fmtP(tS) + (locked ? "  (locked at " + fmtR(lockAt) + ")" : "  (-1R)") + "\nTarget " + fmtP(tT) + "  (" + fmtR(rr) + ")" + (lockAt > 0 and not locked ? "\nAt " + fmtP(tE + tDir * lockAt * tR) + " (" + fmtR(lockAt) + ") move the stop to lock " + fmtR(lockAt) : "") + (warn != "" ? "\n⚠ " + warn : "")
+
+finish(float res, string why) =>
+    c = res > 0 ? color.lime : color.red
+    line.delete(lE)
+    line.delete(lS)
+    line.delete(lT)
+    line.delete(l1)
+    box.set_right(bx, bar_index)
+    box.set_bgcolor(bx, color.new(c, 95))
+    box.set_border_color(bx, color.new(c, 75))
+    label.set_text(lb, arrowTxt(tDir) + " " + str.tostring(tQ) + "  " + fmtR(res))
+    label.set_color(lb, color.new(c, 65))
+    label.set_textcolor(lb, color.new(color.white, 10))
+    label.set_size(lb, size.tiny)
+    label.set_tooltip(lb, (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | CLOSED: " + why + "\nResult " + fmtR(res) + "  ($" + str.tostring(math.round(res * tR * tQ * pv)) + ")\nBest reached " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "  Exit " + fmtP(tE + tDir * res * tR))
 
 // ---------- 1) manage the open signal ----------
 if tDir != 0
     hitS = tDir > 0 ? low <= tS : high >= tS
     hitT = tDir > 0 ? high >= tT : low <= tT
-    backIn = close < mbH and close > mbL
-    if hitT and not hitS
-        line.delete(lE)
-        line.delete(lS)
-        line.delete(lT)
-        box.set_right(bx, bar_index)
-        box.set_bgcolor(bx, color.new(tDir > 0 ? color.lime : color.red, 95))
-        box.set_border_color(bx, color.new(tDir > 0 ? color.lime : color.red, 70))
-        label.new(bar_index, tDir > 0 ? high : low, "+" + str.tostring(rr) + "R", style=tDir > 0 ? label.style_label_down : label.style_label_up, color=color.new(color.green, 30), textcolor=color.white, size=size.tiny)
+    if hitS
+        res = (tS - tE) * tDir / tR
+        finish(res, locked ? "profit lock hit" : "stopped out")
+        evt := "IB closed " + fmtR(res) + (locked ? " (lock)" : " (stop)")
         tDir := 0
-    else if hitS
-        clearAll()
-        label.new(bar_index, tDir > 0 ? low : high, "×", style=label.style_none, textcolor=color.new(color.gray, 30), size=size.tiny, tooltip="Inside bar trade stopped out")
-        tDir := 0
-    else if backIn
-        line.delete(lE)
-        line.delete(lS)
-        line.delete(lT)
-        box.set_right(bx, bar_index)
-        box.set_bgcolor(bx, color.new(color.gray, 92))
-        box.set_border_color(bx, color.new(color.gray, 60))
-        label.new(bar_index, tDir > 0 ? low : high, "exit", style=tDir > 0 ? label.style_label_up : label.style_label_down, color=color.new(color.gray, 40), textcolor=color.white, size=size.tiny, tooltip="Closed back inside the mother candle at " + fmtP(close) + " (" + fmtP((close - tE) * tDir) + " pts vs entry)\nEarly-exit point. The bracket stop and target are still live if you stayed in.")
+    else if hitT
+        finish(rr, "target hit")
+        evt := "IB target hit " + fmtR(rr)
         tDir := 0
     else
+        fav = (tDir > 0 ? high - tE : tE - low) / tR
+        mfe := math.max(mfe, fav)
+        if lockAt > 0 and not locked and fav >= lockAt
+            locked := true
+            tS := tE + tDir * lockAt * tR
+            line.set_y1(lS, tS)
+            line.set_y2(lS, tS)
+            line.set_color(lS, color.new(color.lime, 20))
+            line.delete(l1)
+            l1 := na
+            evt := "IB reached " + fmtR(lockAt) + ": stop locked at " + fmtP(tS)
+        [nm, lv] = levelAhead(tDir, close, tT)
+        warn = ""
+        if nm != "" and math.abs(lv - close) / tR <= lvlNear
+            warn := nm + " " + fmtP(lv) + " is " + str.tostring(math.abs(lv - close) / tR, "0.0#") + "R ahead: possible " + (tDir > 0 ? "resistance" : "support")
+            if evt == ""
+                evt := "IB: " + nm + " ahead at " + fmtP(lv)
+        backIn = close < mbH and close > mbL
+        if backIn
+            warn := (warn != "" ? warn + "\n⚠ " : "") + "Closed back inside the mother candle: setup weakening"
+            if evt == ""
+                evt := "IB: closed back inside the box"
+        state = locked ? "LOCKED " + fmtR(lockAt) : backIn ? "WEAK" : "LIVE"
         box.set_right(bx, bar_index)
         line.set_x2(lE, bar_index)
         line.set_x2(lS, bar_index)
         line.set_x2(lT, bar_index)
+        line.set_x2(l1, bar_index)
+        label.set_tooltip(lb, liveTip(state, warn))
+        label.set_color(lb, color.new(backIn ? color.orange : tDir > 0 ? color.lime : color.red, 0))
 
 // ---------- 2) breakout of the armed mother candle ----------
 if armed
@@ -126,21 +192,24 @@ if armed
         ok = (not withTrend or side == trend) and inSess and tDir == 0 and r >= minStop and r <= maxStop and q >= 1
         if ok
             t = e + side * rr * r
-            ticksS = math.round(r / tick)
-            ticksT = math.round(rr * r / tick)
             tDir := side
             tS := s
             tT := t
             tE := e
+            tR := r
+            tQ := q
+            locked := false
+            mfe := 0.0
             c = side > 0 ? color.lime : color.red
             bx := box.new(mbBar, mbH, bar_index, mbL, border_color=color.new(c, 30), border_width=1, border_style=line.style_dashed, bgcolor=color.new(c, 88))
             lE := line.new(bar_index, e, bar_index + 1, e, color=color.new(color.white, 40), width=1)
             lS := line.new(bar_index, s, bar_index + 1, s, color=color.new(color.red, 20), style=line.style_dashed, width=1)
             lT := line.new(bar_index, t, bar_index + 1, t, color=color.new(color.lime, 20), style=line.style_dashed, width=1)
+            l1 := lockAt > 0 ? line.new(bar_index, e + side * lockAt * r, bar_index + 1, e + side * lockAt * r, color=color.new(color.lime, 55), style=line.style_dotted, width=1) : na
             ly = side > 0 ? low - gap * 0.25 : high + gap * 0.25
-            txt = (side > 0 ? "▲ " : "▼ ") + str.tostring(q)
-            tip = (side > 0 ? "BUY " : "SELL ") + str.tostring(q) + " MNQ at market\nEntry " + fmtP(e) + "\nStop " + fmtP(s) + " (" + fmtP(r) + " pts, risk $" + str.tostring(math.round(q * r * pv)) + ")\nTarget " + fmtP(t) + " (" + str.tostring(rr) + "R)\nOrder panel: Stop loss " + str.tostring(ticksS) + " ticks, Take profit " + str.tostring(ticksT) + " ticks\nTrend " + (trend > 0 ? "UP" : "DOWN") + " (" + tf1 + "/" + tf2 + "/" + tf3 + ")\nErased if a candle closes back inside the box."
-            lb := label.new(bar_index, ly, txt, style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.small, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " " + str.tostring(q) + " MNQ\nSL " + str.tostring(ticksS) + " ticks · TP " + str.tostring(ticksT) + " ticks\n" + tip)
+            lb := label.new(bar_index, ly, arrowTxt(side) + " " + str.tostring(q), style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.small)
+            label.set_tooltip(lb, liveTip("NEW", "") + "\nOrder panel: Stop loss " + str.tostring(math.round(r / tick)) + " ticks, Take profit " + str.tostring(math.round(rr * r / tick)) + " ticks\nTrend " + (trend > 0 ? "UP" : "DOWN") + " (" + tf1 + "/" + tf2 + "/" + tf3 + ")")
+            evt := "IB " + (side > 0 ? "LONG " : "SHORT ") + str.tostring(q) + " at " + fmtP(e) + ", stop " + fmtP(s) + ", target " + fmtP(t)
             longSig := side > 0
             shortSig := side < 0
         else if showSkip and inSess
@@ -157,6 +226,15 @@ if recent and not armed and tDir == 0 and isInside and not longSig and not short
     mbH := high[1]
     mbL := low[1]
     mbBar := bar_index - 1
+
+// ---------- 4) live events: flash the tag and fire an alert ----------
+if barstate.isrealtime and evt != "" and evt != lastEvt
+    lastEvt := evt
+    flash := 10
+    alert(evt + " (" + syminfo.ticker + ")", alert.freq_once_per_bar)
+if barstate.isrealtime and flash > 0 and tDir != 0
+    flash -= 1
+    label.set_color(lb, flash % 2 == 0 ? color.new(color.yellow, 0) : color.new(tDir > 0 ? color.lime : color.red, 0))
 
 alertcondition(longSig, "IB long", "IB breakout LONG on {{ticker}}")
 alertcondition(shortSig, "IB short", "IB breakout SHORT on {{ticker}}")

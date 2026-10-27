@@ -1433,7 +1433,26 @@ ib_atrB = ta.atr(14)
 ib_slope = (ib_e21 - ib_e21[10]) / math.max(ib_atrB, syminfo.mintick)
 ib_vw = ta.vwap(hlc3)
 ib_xN = math.sum(ta.cross(close, ib_e21) ? 1 : 0, 30)
-ib_now = ib_xN >= 5 and math.abs(ib_slope) < 1.0 ? 0 : ib_slope > 1.0 ? 1 : ib_slope < -1.0 ? -1 : 2
+// swing structure on this chart: pivots with 5 bars each side (on 1m = 5-minute swings). Last two highs and lows.
+ib_pvH = ta.pivothigh(high, 5, 5)
+ib_pvL = ta.pivotlow(low, 5, 5)
+var float ib_swh0 = na
+var float ib_swh1 = na
+var float ib_swl0 = na
+var float ib_swl1 = na
+if not na(ib_pvH)
+    ib_swh0 := ib_swh1
+    ib_swh1 := ib_pvH
+if not na(ib_pvL)
+    ib_swl0 := ib_swl1
+    ib_swl1 := ib_pvL
+ib_hh = ib_swh1 > ib_swh0
+ib_hl = ib_swl1 > ib_swl0
+ib_struct = not na(ib_swh0) and not na(ib_swl0) ? (ib_hh and ib_hl ? 1 : not ib_hh and not ib_hl ? -1 : 0) : 0
+ib_structTxt = ib_struct > 0 ? "higher highs + higher lows ▲" : ib_struct < 0 ? "lower highs + lower lows ▼" : (ib_hh ? "higher high, lower low" : "lower high, higher low") + " (mixed)"
+ib_nowS = ib_xN >= 5 and math.abs(ib_slope) < 1.0 ? 0 : ib_slope > 1.0 ? 1 : ib_slope < -1.0 ? -1 : 2
+// structure wins when it agrees with VWAP or the slope is not against it
+ib_now = ib_struct < 0 and (close < ib_vw or ib_slope <= 0) ? -1 : ib_struct > 0 and (close > ib_vw or ib_slope >= 0) ? 1 : ib_nowS
 // regime: 1 strong up, 2 up weak, 3 up pullback, 4 turning down, -1 strong down, -2 down weak, -3 down bounce, -4 turning up, 0 sideways
 ib_reg = ib_now == 0 ? 0 : ib_trend > 0 ? (ib_now == 1 ? 1 : ib_now == 2 ? 2 : close > ib_vw ? 3 : 4) : (ib_now == -1 ? -1 : ib_now == 2 ? -2 : close < ib_vw ? -3 : -4)
 ib_regTxt(r) => r == 1 ? "▲ UP · STRONG" : r == 2 ? "▲ UP · WEAK" : r == 3 ? "▲ UP · PULLBACK" : r == 4 ? "⚠ UP TREND BREAKING DOWN" : r == -1 ? "▼ DOWN · STRONG" : r == -2 ? "▼ DOWN · WEAK" : r == -3 ? "▼ DOWN · BOUNCE" : r == -4 ? "⚠ DOWN TREND BREAKING UP" : "◆ SIDEWAYS / CHOP"
@@ -1444,10 +1463,10 @@ ib_short(r) => r == 1 ? "▲ STRONG" : r == 2 ? "▲ weak" : r == 3 ? "▲ pullb
 var table ib_tt = table.new(ib_posOf(ib_bPos), 1, 2, bgcolor=color.new(color.black, 20), border_width=0)
 if ib_showTrend and barstate.islast
     ib_agree = math.abs(ib_d1 + ib_d2 + ib_d3) == 3 ? "3/3" : "2/3"
-    ib_tip = "WHAT THE NUMBERS MEAN\n15 = 15-minute chart, 60 = 1-hour chart, 240 = 4-hour chart.\n▲ = that chart's last closed candle is above its 21-candle average (EMA21), ▼ = below.\nBias = what 2 or 3 of them say (" + ib_agree + " agree).\n\nNOW = the last 10-30 minutes on this chart:\nslope of the 21-bar average " + str.tostring(ib_slope, "+0.0;-0.0") + " ATR (above +1 = rising, below -1 = falling),\nprice " + (close > ib_vw ? "above" : "below") + " VWAP " + str.tostring(ib_vw, "#.00") + ",\n" + str.tostring(ib_xN) + " crosses of the average in 30 bars (5+ = chop).\n\nSTRONG = bias and the last 30 min agree. WEAK = bias, but the last 30 min are flat.\nPULLBACK / BOUNCE = last 30 min against the bias, price still on the bias side of VWAP.\nBREAKING = last 30 min against the bias AND price crossed VWAP: possible reversal."
+    ib_tip = "WHAT THE NUMBERS MEAN\n15 = 15-minute chart, 60 = 1-hour chart, 240 = 4-hour chart.\n▲ = that chart's last closed candle is above its 21-candle average (EMA21), ▼ = below.\nBias = what 2 or 3 of them say (" + ib_agree + " agree).\n\nNOW = the last 10-30 minutes on this chart:\nslope of the 21-bar average " + str.tostring(ib_slope, "+0.0;-0.0") + " ATR (above +1 = rising, below -1 = falling),\nprice " + (close > ib_vw ? "above" : "below") + " VWAP " + str.tostring(ib_vw, "#.00") + ",\n" + str.tostring(ib_xN) + " crosses of the average in 30 bars (5+ = chop),\nswings: " + ib_structTxt + " (last highs " + str.tostring(ib_swh0, "#.00") + " → " + str.tostring(ib_swh1, "#.00") + ", lows " + str.tostring(ib_swl0, "#.00") + " → " + str.tostring(ib_swl1, "#.00") + ").\n\nSTRONG = bias and the last 30 min agree. WEAK = bias, but the last 30 min are flat.\nPULLBACK / BOUNCE = last 30 min against the bias, price still on the bias side of VWAP.\nBREAKING = last 30 min against the bias AND price crossed VWAP: possible reversal."
     table.cell(ib_tt, 0, 0, ib_compact ? ib_short(ib_reg) : ib_regTxt(ib_reg) + " · " + ib_regDo(ib_reg), text_color=color.black, bgcolor=ib_regCol(ib_reg), text_size=ib_compact ? size.small : size.normal, tooltip=ib_regTxt(ib_reg) + ": " + ib_regDo(ib_reg) + "\n\n" + ib_tip)
     if not ib_compact
-        table.cell(ib_tt, 0, 1, "bias " + (ib_trend > 0 ? "▲" : "▼") + " " + ib_agree + " (15m" + ib_arrowTxt(ib_d1) + " 1h" + ib_arrowTxt(ib_d2) + " 4h" + ib_arrowTxt(ib_d3) + ") · last 30m " + (ib_now == 1 ? "▲" : ib_now == -1 ? "▼" : ib_now == 0 ? "◆ chop" : "flat"), text_color=color.new(color.white, 15), text_size=size.small, tooltip=ib_tip)
+        table.cell(ib_tt, 0, 1, "bias " + (ib_trend > 0 ? "▲" : "▼") + " " + ib_agree + " (15m" + ib_arrowTxt(ib_d1) + " 1h" + ib_arrowTxt(ib_d2) + " 4h" + ib_arrowTxt(ib_d3) + ") · now " + (ib_now == 1 ? "▲" : ib_now == -1 ? "▼" : ib_now == 0 ? "◆ chop" : "flat") + " · swings " + (ib_struct > 0 ? "HH/HL ▲" : ib_struct < 0 ? "LH/LL ▼" : "mixed"), text_color=color.new(color.white, 15), text_size=size.small, tooltip=ib_tip)
 
 // ---------- key levels: prior session (18:00-17:00) high/low/close + current session high/low ----------
 var float ib_pH = na

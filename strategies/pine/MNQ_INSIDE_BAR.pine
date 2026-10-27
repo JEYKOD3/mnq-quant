@@ -3,7 +3,7 @@
 // Mother candle + inside candle(s), full-body breakout in the 2-of-3 higher-timeframe trend direction,
 // stop on the other side of the mother candle, target 1R, size from a fixed $ risk. One trade at a time.
 // Clean display: only signals that are still valid stay on the chart.
-//   - failed signal (a candle closes back inside the mother box before the target): everything is erased
+//   - a candle closes back inside the mother box before the target: gray 'exit' mark (early-exit point), box kept
 //   - stopped out: everything is erased, a tiny gray x remains
 //   - target hit: a small +1R marker remains on a faded box
 indicator("MNQ Inside Bar", shorttitle="IB", overlay=true, max_boxes_count=100, max_lines_count=200, max_labels_count=200)
@@ -58,6 +58,7 @@ var int   mbBar = 0
 var int   tDir = 0
 var float tS = na
 var float tT = na
+var float tE = na
 var box   bx = na
 var line  lE = na
 var line  lS = na
@@ -95,7 +96,13 @@ if tDir != 0
         label.new(bar_index, tDir > 0 ? low : high, "×", style=label.style_none, textcolor=color.new(color.gray, 30), size=size.tiny, tooltip="Inside bar trade stopped out")
         tDir := 0
     else if backIn
-        clearAll()
+        line.delete(lE)
+        line.delete(lS)
+        line.delete(lT)
+        box.set_right(bx, bar_index)
+        box.set_bgcolor(bx, color.new(color.gray, 92))
+        box.set_border_color(bx, color.new(color.gray, 60))
+        label.new(bar_index, tDir > 0 ? low : high, "exit", style=tDir > 0 ? label.style_label_up : label.style_label_down, color=color.new(color.gray, 40), textcolor=color.white, size=size.tiny, tooltip="Closed back inside the mother candle at " + fmtP(close) + " (" + fmtP((close - tE) * tDir) + " pts vs entry)\nEarly-exit point. The bracket stop and target are still live if you stayed in.")
         tDir := 0
     else
         box.set_right(bx, bar_index)
@@ -124,6 +131,7 @@ if armed
             tDir := side
             tS := s
             tT := t
+            tE := e
             c = side > 0 ? color.lime : color.red
             bx := box.new(mbBar, mbH, bar_index, mbL, border_color=color.new(c, 30), border_width=1, border_style=line.style_dashed, bgcolor=color.new(c, 88))
             lE := line.new(bar_index, e, bar_index + 1, e, color=color.new(color.white, 40), width=1)

@@ -317,20 +317,29 @@ if showOR and inRTH and mnt >= 585
     line.set_x2(orLl, bar_index)
     label.set_x(orLb, bar_index)
 
-// ---------- session markers: Globex open 18:00, London 03:00, NY open 09:30, NY close 16:00 (last 3 days) ----------
-showSess = input.bool(true, "Session markers (18:00 Globex, 03:00 London, 09:30 NY open, 16:00 close)", group="Chart")
-sessMark(nm, tip) =>
-    line.new(bar_index, low, bar_index, high, extend=extend.both, color=color.new(color.gray, 75), style=line.style_dotted, width=1)
-    label.new(bar_index, high, nm, style=label.style_label_down, color=color.new(color.black, 100), textcolor=color.new(color.gray, 25), size=size.tiny, tooltip=tip)
-if showSess and time > timenow - 3 * 86400000 and mnt != nz(mnt[1], -1)
-    if mnt == 1080
-        sessMark("Globex", "18:00 ET: futures session opens (new trading day for the prop firm)")
-    else if mnt == 180
-        sessMark("London", "03:00 ET: London open, volume picks up")
-    else if mnt == 570
-        sessMark("NY open", "09:30 ET: stock market opens. ORB range forms until 9:45")
-    else if mnt == 960
-        sessMark("NY close", "16:00 ET: stock market closes. Futures keep trading until 17:00")
+// ---------- session markers (last 3 days): world opens + New York open AND close. Each in its own local time, so daylight saving is automatic ----------
+showSess = input.bool(true, "Session markers (Globex, Sydney, Tokyo, Hong Kong, Frankfurt, London, NY open + close)", group="Chart")
+sessMark(nm, tip, col) =>
+    line.new(bar_index, low, bar_index, high, extend=extend.both, color=color.new(col, 78), style=line.style_dotted, width=1)
+    label.new(bar_index, high, nm, style=label.style_label_down, color=color.new(color.black, 100), textcolor=color.new(col, 20), size=size.tiny, tooltip=tip)
+atLocal(string z, int hh, int mm) => hour(time, z) == hh and minute(time, z) == mm and not (hour(time[1], z) == hh and minute(time[1], z) == mm)
+if showSess and time > timenow - 3 * 86400000
+    if atLocal("America/New_York", 18, 0)
+        sessMark("Globex", "18:00 New York: futures session opens (new prop-firm day)", color.gray)
+    if atLocal("Australia/Sydney", 10, 0)
+        sessMark("Sydney", "Sydney (ASX) opens 10:00 local", color.teal)
+    if atLocal("Asia/Tokyo", 9, 0)
+        sessMark("Tokyo", "Tokyo opens 9:00 local: start of the Asia session", color.teal)
+    if atLocal("Asia/Hong_Kong", 9, 30)
+        sessMark("HK", "Hong Kong / Shanghai open 9:30 local", color.teal)
+    if atLocal("Europe/Berlin", 9, 0)
+        sessMark("Frankfurt", "Frankfurt (Xetra) opens 9:00 local", color.blue)
+    if atLocal("Europe/London", 8, 0)
+        sessMark("London", "London opens 8:00 local: Europe volume picks up", color.blue)
+    if atLocal("America/New_York", 9, 30)
+        sessMark("NY open", "9:30 New York: stock market opens. ORB range forms until 9:45", color.orange)
+    if atLocal("America/New_York", 16, 0)
+        sessMark("NY close", "16:00 New York: stock market closes. Futures trade until 17:00", color.orange)
 
 // ---------- shared daily budget (resets at 8:00 ET, or at the first bar after it) ----------
 var float rkNW = 0.0

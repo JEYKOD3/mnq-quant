@@ -130,7 +130,7 @@ if armed
             lS := line.new(bar_index, s, bar_index + 1, s, color=color.new(color.red, 20), style=line.style_dashed, width=1)
             lT := line.new(bar_index, t, bar_index + 1, t, color=color.new(color.lime, 20), style=line.style_dashed, width=1)
             ly = side > 0 ? low - gap * 0.25 : high + gap * 0.25
-            txt = str.tostring(q)
+            txt = (side > 0 ? "▲ " : "▼ ") + str.tostring(q)
             tip = (side > 0 ? "BUY " : "SELL ") + str.tostring(q) + " MNQ at market\nEntry " + fmtP(e) + "\nStop " + fmtP(s) + " (" + fmtP(r) + " pts, risk $" + str.tostring(math.round(q * r * pv)) + ")\nTarget " + fmtP(t) + " (" + str.tostring(rr) + "R)\nOrder panel: Stop loss " + str.tostring(ticksS) + " ticks, Take profit " + str.tostring(ticksT) + " ticks\nTrend " + (trend > 0 ? "UP" : "DOWN") + " (" + tf1 + "/" + tf2 + "/" + tf3 + ")\nErased if a candle closes back inside the box."
             lb := label.new(bar_index, ly, txt, style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.small, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " " + str.tostring(q) + " MNQ\nSL " + str.tostring(ticksS) + " ticks · TP " + str.tostring(ticksT) + " ticks\n" + tip)
             longSig := side > 0

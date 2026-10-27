@@ -22,6 +22,7 @@ expiry    = input.int(30, "Setup expires after N bars", group=gS)
 showSkip  = input.bool(true, "Show skipped breakouts (gray, hover for reason)", group=gS)
 daysBack  = input.int(3, "Draw signals for the last N days", minval=1, maxval=10, group=gS)
 lvlNear   = input.float(0.35, "Warn when a key level is within this many R", step=0.05, group=gS)
+tagDist   = input.float(1.5, "Tag distance from candles (x ATR)", step=0.25, group=gS)
 gT = "Trend (2 of 3 must agree)"
 tf1    = input.timeframe("15", "Trend timeframe 1", group=gT)
 tf2    = input.timeframe("60", "Trend timeframe 2", group=gT)
@@ -85,7 +86,9 @@ levelAhead(int d, float px, float tgt) =>
 // ---------- state ----------
 inSess = not na(time(timeframe.period, sessIn, tz))
 recent = time > timenow - daysBack * 86400000
-gap = ta.atr(14) * 2.0
+atr14 = ta.atr(14)
+tagY(int d) => d > 0 ? ta.lowest(low, 3) - atr14 * tagDist : ta.highest(high, 3) + atr14 * tagDist
+font0 = font.family_monospace
 
 var bool  armed = false
 var float mbH = na
@@ -105,9 +108,12 @@ var line  lS = na
 var line  lT = na
 var line  l1 = na
 var label lb = na
+var line  lC = na
 varip int    flash = 0
 varip string lastEvt = ""
 
+yUp = tagY(1)
+yDn = tagY(-1)
 longSig = false
 shortSig = false
 string evt = ""
@@ -128,7 +134,8 @@ finish(float res, string why) =>
     label.set_text(lb, arrowTxt(tDir) + " " + str.tostring(tQ) + "  " + fmtR(res))
     label.set_color(lb, color.new(c, 65))
     label.set_textcolor(lb, color.new(color.white, 10))
-    label.set_size(lb, size.tiny)
+    label.set_size(lb, size.small)
+    line.set_color(lC, color.new(c, 75))
     label.set_tooltip(lb, (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | CLOSED: " + why + "\nResult " + fmtR(res) + "  ($" + str.tostring(math.round(res * tR * tQ * pv)) + ")\nBest reached " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "  Exit " + fmtP(tE + tDir * res * tR))
 
 // ---------- 1) manage the open signal ----------
@@ -206,16 +213,17 @@ if armed
             lS := line.new(bar_index, s, bar_index + 1, s, color=color.new(color.red, 20), style=line.style_dashed, width=1)
             lT := line.new(bar_index, t, bar_index + 1, t, color=color.new(color.lime, 20), style=line.style_dashed, width=1)
             l1 := lockAt > 0 ? line.new(bar_index, e + side * lockAt * r, bar_index + 1, e + side * lockAt * r, color=color.new(color.lime, 55), style=line.style_dotted, width=1) : na
-            ly = side > 0 ? low - gap * 0.25 : high + gap * 0.25
-            lb := label.new(bar_index, ly, arrowTxt(side) + " " + str.tostring(q), style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.small)
+            ly = side > 0 ? yUp : yDn
+            lC := line.new(bar_index, side > 0 ? low : high, bar_index, ly, color=color.new(c, 50), style=line.style_dotted, width=1)
+            lb := label.new(bar_index, ly, arrowTxt(side) + " " + str.tostring(q), style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.normal, text_font_family=font0)
             label.set_tooltip(lb, liveTip("NEW", "") + "\nOrder panel: Stop loss " + str.tostring(math.round(r / tick)) + " ticks, Take profit " + str.tostring(math.round(rr * r / tick)) + " ticks\nTrend " + (trend > 0 ? "UP" : "DOWN") + " (" + tf1 + "/" + tf2 + "/" + tf3 + ")")
             evt := "IB " + (side > 0 ? "LONG " : "SHORT ") + str.tostring(q) + " at " + fmtP(e) + ", stop " + fmtP(s) + ", target " + fmtP(t)
             longSig := side > 0
             shortSig := side < 0
         else if showSkip and inSess
             why = (withTrend and side != trend) ? "against the trend (" + tf1 + arrowTxt(d1) + " " + tf2 + arrowTxt(d2) + " " + tf3 + arrowTxt(d3) + ")" : tDir != 0 ? "another IB trade is still open" : r > maxStop ? "stop too big (" + fmtP(r) + " pts > " + str.tostring(maxStop) + ")" : r < minStop ? "stop too small (" + fmtP(r) + " pts)" : "risk too big for 1 MNQ at $" + str.tostring(riskUsd)
-            sy = side > 0 ? low - gap * 0.25 : high + gap * 0.25
-            label.new(bar_index, sy, side > 0 ? "▲" : "▼", style=label.style_none, textcolor=color.new(color.gray, 25), size=size.small, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " breakout SKIPPED: " + why + "\nMother candle " + fmtP(mbH) + " / " + fmtP(mbL) + ", breakout close " + fmtP(e) + ", stop would be " + fmtP(r) + " pts")
+            sy = side > 0 ? yUp : yDn
+            label.new(bar_index, sy, side > 0 ? "▲" : "▼", style=label.style_none, textcolor=color.new(color.gray, 25), size=size.normal, text_font_family=font0, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " breakout SKIPPED: " + why + "\nMother candle " + fmtP(mbH) + " / " + fmtP(mbL) + ", breakout close " + fmtP(e) + ", stop would be " + fmtP(r) + " pts")
     else if bar_index - mbBar > expiry
         armed := false
 

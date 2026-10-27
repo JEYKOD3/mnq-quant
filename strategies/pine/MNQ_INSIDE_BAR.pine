@@ -13,6 +13,7 @@ riskUsd   = input.float(200, "Risk per trade ($)", group=gS)
 maxQty    = input.int(10, "Max contracts", group=gS)
 rr        = input.float(1.5, "Max target (R)", step=0.25, group=gS)
 lockAt    = input.float(1.0, "Lock profit at this R once reached (0 = off)", step=0.25, group=gS)
+partPct   = input.int(0, "Contracts to take off at the lock level (%)", minval=0, maxval=100, step=25, group=gS)
 needFull  = input.bool(true, "Full candle body must close outside the mother candle", group=gS)
 withTrend = input.bool(true, "Only take breakouts in the trend direction", group=gS)
 sessIn    = input.session("1800-1700", "Signal hours (New York time)", group=gS)
@@ -118,11 +119,18 @@ longSig = false
 shortSig = false
 string evt = ""
 
+q1Of(int q) => math.min(q, math.round(q * partPct / 100.0))
+planTxt(int q) =>
+    q1 = q1Of(q)
+    q2 = q - q1
+    "\nPLAN (" + str.tostring(q) + " MNQ): at " + fmtR(lockAt) + " (" + fmtP(tE + tDir * lockAt * tR) + ") " + (q1 > 0 ? "close " + str.tostring(q1) + ", " : "") + "move stop to " + fmtR(lockAt) + " on " + (q1 > 0 ? "the other " + str.tostring(q2) : "all " + str.tostring(q)) + "\n                at " + fmtR(rr) + " (" + fmtP(tT) + ") close " + str.tostring(q2)
 liveTip(string state, string warn) =>
     nowR = (close - tE) * tDir / tR
-    (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | " + state + "\nNow " + fmtP(close) + "  " + fmtR(nowR) + "  ($" + str.tostring(math.round((close - tE) * tDir * tQ * pv)) + ")\nBest so far " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "\nStop " + fmtP(tS) + (locked ? "  (locked at " + fmtR(lockAt) + ")" : "  (-1R)") + "\nTarget " + fmtP(tT) + "  (" + fmtR(rr) + ")" + (lockAt > 0 and not locked ? "\nAt " + fmtP(tE + tDir * lockAt * tR) + " (" + fmtR(lockAt) + ") move the stop to lock " + fmtR(lockAt) : "") + (warn != "" ? "\n⚠ " + warn : "")
+    (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | " + state + "\nNow " + fmtP(close) + "  " + fmtR(nowR) + "  ($" + str.tostring(math.round((close - tE) * tDir * tQ * pv)) + ")\nBest so far " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "\nStop " + fmtP(tS) + (locked ? "  (locked at " + fmtR(lockAt) + ")" : "  (-1R)") + "\nTarget " + fmtP(tT) + "  (" + fmtR(rr) + ")" + planTxt(tQ) + (warn != "" ? "\n⚠ " + warn : "")
 
-finish(float res, string why) =>
+finish(float res0, string why) =>
+    q1 = q1Of(tQ)
+    res = locked and q1 > 0 ? (q1 * lockAt + (tQ - q1) * res0) / tQ : res0
     c = res > 0 ? color.lime : color.red
     line.delete(lE)
     line.delete(lS)
@@ -136,7 +144,7 @@ finish(float res, string why) =>
     label.set_textcolor(lb, color.new(color.white, 10))
     label.set_size(lb, size.small)
     line.set_color(lC, color.new(c, 75))
-    label.set_tooltip(lb, (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | CLOSED: " + why + "\nResult " + fmtR(res) + "  ($" + str.tostring(math.round(res * tR * tQ * pv)) + ")\nBest reached " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "  Exit " + fmtP(tE + tDir * res * tR))
+    label.set_tooltip(lb, (tDir > 0 ? "IB LONG " : "IB SHORT ") + str.tostring(tQ) + " MNQ | CLOSED: " + why + "\nResult " + fmtR(res) + "  ($" + str.tostring(math.round(res * tR * tQ * pv)) + ")\nBest reached " + fmtR(mfe) + "\nEntry " + fmtP(tE) + "  Exit " + fmtP(tE + tDir * res0 * tR) + (locked and q1 > 0 ? "\n" + str.tostring(q1) + " closed at " + fmtR(lockAt) + ", " + str.tostring(tQ - q1) + " at " + fmtR(res0) : ""))
 
 // ---------- 1) manage the open signal ----------
 if tDir != 0

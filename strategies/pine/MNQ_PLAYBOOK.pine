@@ -164,7 +164,8 @@ trendDir = pdc > sma20 ? 1 : -1
 // ---------- prior-day levels (replaces the NT Look indicator) ----------
 // Main set = full CME session (18:00-17:00 ET): PDH / PDL / PDC, solid lines with labels on the right.
 // The RTH (9:30-16:00) high / low / close used by the strategies is drawn only when it differs by more than pdDiff points (thin dotted).
-pdDiff = input.float(3.0, "Show RTH prior-day line only if it differs from the session level by more than (pts)", group="Chart")
+pdDiff = input.float(10.0, "Show RTH prior-day line only if it differs from the session level by more than (pts)", group="Chart")
+pdStub = input.int(40, "Prior-day lines: length in bars at the right edge (0 = whole session)", group="Chart")
 sDay = dayofmonth(time + 6 * 3600000, tz)
 sNew = ta.change(sDay) != 0
 var float sCH = na
@@ -189,9 +190,10 @@ var line[] pdLines = array.new_line()
 var label[] pdLabels = array.new_label()
 pdBarMs = time - time[1]
 pdLvl(float v, color c, string txt, string tip, string st, int w) =>
-    x2 = time + 8 * pdBarMs
-    ln = line.new(sStart, v, x2, v, xloc=xloc.bar_time, color=c, style=st, width=w)
-    lb = label.new(x2, v, txt + " " + str.tostring(v, "#.00"), xloc=xloc.bar_time, style=label.style_label_left, color=color.new(color.black, 100), textcolor=c, size=size.small, tooltip=tip)
+    x2 = time + 6 * pdBarMs
+    x1 = pdStub > 0 ? time - pdStub * pdBarMs : sStart
+    ln = line.new(x1, v, x2, v, xloc=xloc.bar_time, color=color.new(c, 45), style=st, width=w)
+    lb = label.new(x2, v, txt, xloc=xloc.bar_time, style=label.style_label_left, color=color.new(color.black, 100), textcolor=color.new(c, 20), size=size.tiny, tooltip=tip + "\n" + str.tostring(v, "#.00"))
     [ln, lb]
 if showPD and barstate.islast and not na(sPH)
     while array.size(pdLines) > 0
@@ -294,8 +296,41 @@ if inRTH and mnt >= 585 and not biasSet and not na(rOpen) and not na(adr10)
     odir = (close[1] - rOpen) / math.max(orH - orL, tick)
     bias := math.abs(gapA) >= gapTh ? (gapA > 0 ? 1 : -1) : math.abs(odir) >= dirTh ? (odir > 0 ? 1 : -1) : 0
     biasSet := true
-plot(showOR and inRTH and mnt >= 585 ? orH : na, "OR high", color=color.new(color.yellow, 60), style=plot.style_linebr)
-plot(showOR and inRTH and mnt >= 585 ? orL : na, "OR low", color=color.new(color.yellow, 60), style=plot.style_linebr)
+var box orBox = na
+var line orHl = na
+var line orLl = na
+var label orLb = na
+if showOR and newDay
+    orBox := box.new(bar_index, high, bar_index, low, border_color=color.new(color.yellow, 60), border_width=1, bgcolor=color.new(color.yellow, 92))
+    orHl := na
+    orLl := na
+if showOR and inRTH and not newDay and mnt < 585 and not na(orBox)
+    box.set_right(orBox, bar_index)
+    box.set_top(orBox, orH)
+    box.set_bottom(orBox, orL)
+if showOR and inRTH and mnt >= 585
+    if na(orHl)
+        orHl := line.new(bar_index, orH, bar_index, orH, color=color.new(color.yellow, 45), style=line.style_dashed, width=1)
+        orLl := line.new(bar_index, orL, bar_index, orL, color=color.new(color.yellow, 45), style=line.style_dashed, width=1)
+        orLb := label.new(bar_index, orH, "ORB", style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=color.new(color.yellow, 30), size=size.tiny, tooltip="Opening range 9:30-9:45\nHigh " + fmt(orH) + " · Low " + fmt(orL) + " · " + fmt(orH - orL) + " pts")
+    line.set_x2(orHl, bar_index)
+    line.set_x2(orLl, bar_index)
+    label.set_x(orLb, bar_index)
+
+// ---------- session markers: Globex open 18:00, London 03:00, NY open 09:30, NY close 16:00 (last 3 days) ----------
+showSess = input.bool(true, "Session markers (18:00 Globex, 03:00 London, 09:30 NY open, 16:00 close)", group="Chart")
+sessMark(nm, tip) =>
+    line.new(bar_index, low, bar_index, high, extend=extend.both, color=color.new(color.gray, 75), style=line.style_dotted, width=1)
+    label.new(bar_index, high, nm, style=label.style_label_down, color=color.new(color.black, 100), textcolor=color.new(color.gray, 25), size=size.tiny, tooltip=tip)
+if showSess and time > timenow - 3 * 86400000 and mnt != nz(mnt[1], -1)
+    if mnt == 1080
+        sessMark("Globex", "18:00 ET: futures session opens (new trading day for the prop firm)")
+    else if mnt == 180
+        sessMark("London", "03:00 ET: London open, volume picks up")
+    else if mnt == 570
+        sessMark("NY open", "09:30 ET: stock market opens. ORB range forms until 9:45")
+    else if mnt == 960
+        sessMark("NY close", "16:00 ET: stock market closes. Futures keep trading until 17:00")
 
 // ---------- shared daily budget (resets at 8:00 ET, or at the first bar after it) ----------
 var float rkNW = 0.0
@@ -1308,6 +1343,7 @@ ib_showSkip  = input.bool(true, "Show skipped breakouts (gray, hover for reason)
 ib_daysBack  = input.int(3, "Draw signals for the last N days", minval=1, maxval=10, group=ib_gS)
 ib_lvlNear   = input.float(0.35, "Warn when a key level is within this many R", step=0.05, group=ib_gS)
 ib_tagDist   = input.float(1.5, "Tag distance from candles (x ATR)", step=0.25, group=ib_gS)
+ib_minimal   = input.bool(true, "Minimal drawing: only stop and target lines (no entry / 1R / connector lines)", group=ib_gS)
 ib_gT = "Inside Bar trend (2 of 3 must agree)"
 ib_tf1    = input.timeframe("15", "Trend timeframe 1", group=ib_gT)
 ib_tf2    = input.timeframe("60", "Trend timeframe 2", group=ib_gT)
@@ -1330,11 +1366,26 @@ ib_trend = ib_d1 + ib_d2 + ib_d3 > 0 ? 1 : -1
 
 ib_arrowTxt(ib_d) => ib_d > 0 ? "▲" : "▼"
 ib_dirCol(ib_d) => ib_d > 0 ? color.lime : color.red
-var table ib_tt = table.new(position.top_right, 2, 1, bgcolor=color.new(color.black, 20), border_width=0)
+// ---------- TREND BANNER (top right): higher-timeframe bias + what the last 30 min are actually doing ----------
+// Bias: close vs EMA21 on the last closed 15-minute, 60-minute (1 hour) and 240-minute (4 hour) candles. 2 of 3 decide.
+// Now (chart timeframe, made for 1m): EMA21 slope over the last 10 bars (in ATRs), price vs VWAP, and how often price crossed the EMA in the last 30 bars.
+ib_e21 = ta.ema(close, 21)
+ib_atrB = ta.atr(14)
+ib_slope = (ib_e21 - ib_e21[10]) / math.max(ib_atrB, syminfo.mintick)
+ib_vw = ta.vwap(hlc3)
+ib_xN = math.sum(ta.cross(close, ib_e21) ? 1 : 0, 30)
+ib_now = ib_xN >= 5 and math.abs(ib_slope) < 1.0 ? 0 : ib_slope > 1.0 ? 1 : ib_slope < -1.0 ? -1 : 2
+// regime: 1 strong up, 2 up weak, 3 up pullback, 4 turning down, -1 strong down, -2 down weak, -3 down bounce, -4 turning up, 0 sideways
+ib_reg = ib_now == 0 ? 0 : ib_trend > 0 ? (ib_now == 1 ? 1 : ib_now == 2 ? 2 : close > ib_vw ? 3 : 4) : (ib_now == -1 ? -1 : ib_now == 2 ? -2 : close < ib_vw ? -3 : -4)
+ib_regTxt(r) => r == 1 ? "▲ UP · STRONG" : r == 2 ? "▲ UP · WEAK" : r == 3 ? "▲ UP · PULLBACK" : r == 4 ? "⚠ UP TREND BREAKING DOWN" : r == -1 ? "▼ DOWN · STRONG" : r == -2 ? "▼ DOWN · WEAK" : r == -3 ? "▼ DOWN · BOUNCE" : r == -4 ? "⚠ DOWN TREND BREAKING UP" : "◆ SIDEWAYS / CHOP"
+ib_regDo(r) => r == 1 ? "longs" : r == 2 ? "longs, only clean signals" : r == 3 ? "wait: long only at support" : r == 4 ? "no longs · shorts not confirmed yet" : r == -1 ? "shorts" : r == -2 ? "shorts, only clean signals" : r == -3 ? "wait: short only at resistance" : r == -4 ? "no shorts · longs not confirmed yet" : "stand aside or trade range edges"
+ib_regCol(r) => r == 1 ? color.new(color.lime, 0) : r == 2 ? color.new(color.lime, 45) : r == 3 ? color.new(#c0ca33, 10) : r == 4 ? color.new(color.orange, 0) : r == -1 ? color.new(color.red, 0) : r == -2 ? color.new(color.red, 45) : r == -3 ? color.new(#e57373, 10) : r == -4 ? color.new(#ab47bc, 0) : color.new(color.gray, 20)
+var table ib_tt = table.new(position.top_right, 1, 2, bgcolor=color.new(color.black, 20), border_width=0)
 if ib_showTrend and barstate.islast
     ib_agree = math.abs(ib_d1 + ib_d2 + ib_d3) == 3 ? "3/3" : "2/3"
-    table.cell(ib_tt, 0, 0, "TREND " + ib_arrowTxt(ib_trend) + (ib_trend > 0 ? " UP " : " DOWN ") + ib_agree + (ib_trend > 0 ? " · LONGS ONLY" : " · SHORTS ONLY"), text_color=color.black, bgcolor=color.new(ib_dirCol(ib_trend), ib_agree == "3/3" ? 0 : 35), text_size=size.normal, tooltip="Close vs EMA21 on the last closed 15m / 60m / 240m candle. 2 of 3 must agree.\n3/3 = strong trend, 2/3 = weaker, be pickier.\nDo not take trades against this direction.")
-    table.cell(ib_tt, 1, 0, ib_tf1 + ib_arrowTxt(ib_d1) + " " + ib_tf2 + ib_arrowTxt(ib_d2) + " " + ib_tf3 + ib_arrowTxt(ib_d3), text_color=color.new(color.white, 20), text_size=size.small)
+    ib_tip = "WHAT THE NUMBERS MEAN\n15 = 15-minute chart, 60 = 1-hour chart, 240 = 4-hour chart.\n▲ = that chart's last closed candle is above its 21-candle average (EMA21), ▼ = below.\nBias = what 2 or 3 of them say (" + ib_agree + " agree).\n\nNOW = the last 10-30 minutes on this chart:\nslope of the 21-bar average " + str.tostring(ib_slope, "+0.0;-0.0") + " ATR (above +1 = rising, below -1 = falling),\nprice " + (close > ib_vw ? "above" : "below") + " VWAP " + str.tostring(ib_vw, "#.00") + ",\n" + str.tostring(ib_xN) + " crosses of the average in 30 bars (5+ = chop).\n\nSTRONG = bias and the last 30 min agree. WEAK = bias, but the last 30 min are flat.\nPULLBACK / BOUNCE = last 30 min against the bias, price still on the bias side of VWAP.\nBREAKING = last 30 min against the bias AND price crossed VWAP: possible reversal."
+    table.cell(ib_tt, 0, 0, ib_regTxt(ib_reg) + " · " + ib_regDo(ib_reg), text_color=color.black, bgcolor=ib_regCol(ib_reg), text_size=size.normal, tooltip=ib_tip)
+    table.cell(ib_tt, 0, 1, "bias " + (ib_trend > 0 ? "▲" : "▼") + " " + ib_agree + " (15m" + ib_arrowTxt(ib_d1) + " 1h" + ib_arrowTxt(ib_d2) + " 4h" + ib_arrowTxt(ib_d3) + ") · last 30m " + (ib_now == 1 ? "▲" : ib_now == -1 ? "▼" : ib_now == 0 ? "◆ chop" : "flat"), text_color=color.new(color.white, 15), text_size=size.small, tooltip=ib_tip)
 
 // ---------- key levels: prior session (18:00-17:00) high/low/close + current session high/low ----------
 var float ib_pH = na
@@ -1502,12 +1553,12 @@ if ib_armed
             ib_mfe := 0.0
             ib_c = ib_side > 0 ? color.lime : color.red
             ib_bx := box.new(ib_mbBar, ib_mbH, bar_index, ib_mbL, border_color=color.new(ib_c, 30), border_width=1, border_style=line.style_dashed, bgcolor=color.new(ib_c, 88))
-            ib_lE := line.new(bar_index, ib_e, bar_index + 1, ib_e, color=color.new(color.white, 40), width=1)
-            ib_lS := line.new(bar_index, ib_s, bar_index + 1, ib_s, color=color.new(color.red, 20), style=line.style_dashed, width=1)
-            ib_lT := line.new(bar_index, ib_t, bar_index + 1, ib_t, color=color.new(color.lime, 20), style=line.style_dashed, width=1)
-            ib_l1 := ib_lockAt > 0 ? line.new(bar_index, ib_e + ib_side * ib_lockAt * ib_r, bar_index + 1, ib_e + ib_side * ib_lockAt * ib_r, color=color.new(color.lime, 55), style=line.style_dotted, width=1) : na
+            ib_lE := ib_minimal ? na : line.new(bar_index, ib_e, bar_index + 1, ib_e, color=color.new(color.white, 40), width=1)
+            ib_lS := line.new(bar_index, ib_s, bar_index + 1, ib_s, color=color.new(color.red, 45), style=line.style_dotted, width=1)
+            ib_lT := line.new(bar_index, ib_t, bar_index + 1, ib_t, color=color.new(color.lime, 45), style=line.style_dotted, width=1)
+            ib_l1 := ib_lockAt > 0 and not ib_minimal ? line.new(bar_index, ib_e + ib_side * ib_lockAt * ib_r, bar_index + 1, ib_e + ib_side * ib_lockAt * ib_r, color=color.new(color.lime, 55), style=line.style_dotted, width=1) : na
             ib_ly = ib_side > 0 ? ib_yUp : ib_yDn
-            ib_lC := line.new(bar_index, ib_side > 0 ? low : high, bar_index, ib_ly, color=color.new(ib_c, 50), style=line.style_dotted, width=1)
+            ib_lC := ib_minimal ? na : line.new(bar_index, ib_side > 0 ? low : high, bar_index, ib_ly, color=color.new(ib_c, 50), style=line.style_dotted, width=1)
             ib_lb := label.new(bar_index, ib_ly, ib_arrowTxt(ib_side) + " " + str.tostring(ib_q), style=ib_side > 0 ? label.style_label_up : label.style_label_down, color=color.new(ib_c, 0), textcolor=color.black, size=size.normal, text_font_family=ib_font0)
             label.set_tooltip(ib_lb, ib_liveTip("NEW", "") + "\nOrder panel: Stop loss " + str.tostring(math.round(ib_r / ib_tick)) + " ticks, Take profit " + str.tostring(math.round(ib_rr * ib_r / ib_tick)) + " ticks\nTrend " + (ib_trend > 0 ? "UP" : "DOWN") + " (" + ib_tf1 + "/" + ib_tf2 + "/" + ib_tf3 + ")")
             ib_evt := "IB " + (ib_side > 0 ? "LONG " : "SHORT ") + str.tostring(ib_q) + " at " + ib_fmtP(ib_e) + ", stop " + ib_fmtP(ib_s) + ", target " + ib_fmtP(ib_t)

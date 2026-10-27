@@ -19,6 +19,7 @@ sessIn    = input.session("1800-1700", "Signal hours (New York time)", group=gS)
 minStop   = input.float(5, "Min stop (pts)", group=gS)
 maxStop   = input.float(80, "Max stop (pts)", group=gS)
 expiry    = input.int(30, "Setup expires after N bars", group=gS)
+showSkip  = input.bool(true, "Show skipped breakouts (gray, hover for reason)", group=gS)
 daysBack  = input.int(3, "Draw signals for the last N days", minval=1, maxval=10, group=gS)
 gT = "Trend (2 of 3 must agree)"
 tf1    = input.timeframe("15", "Trend timeframe 1", group=gT)
@@ -134,6 +135,10 @@ if armed
             lb := label.new(bar_index, ly, txt, style=side > 0 ? label.style_label_up : label.style_label_down, color=color.new(c, 0), textcolor=color.black, size=size.small, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " " + str.tostring(q) + " MNQ\nSL " + str.tostring(ticksS) + " ticks · TP " + str.tostring(ticksT) + " ticks\n" + tip)
             longSig := side > 0
             shortSig := side < 0
+        else if showSkip and inSess
+            why = (withTrend and side != trend) ? "against the trend (" + tf1 + arrowTxt(d1) + " " + tf2 + arrowTxt(d2) + " " + tf3 + arrowTxt(d3) + ")" : tDir != 0 ? "another IB trade is still open" : r > maxStop ? "stop too big (" + fmtP(r) + " pts > " + str.tostring(maxStop) + ")" : r < minStop ? "stop too small (" + fmtP(r) + " pts)" : "risk too big for 1 MNQ at $" + str.tostring(riskUsd)
+            sy = side > 0 ? low - gap * 0.25 : high + gap * 0.25
+            label.new(bar_index, sy, side > 0 ? "▲" : "▼", style=label.style_none, textcolor=color.new(color.gray, 25), size=size.small, tooltip="IB " + (side > 0 ? "LONG" : "SHORT") + " breakout SKIPPED: " + why + "\nMother candle " + fmtP(mbH) + " / " + fmtP(mbL) + ", breakout close " + fmtP(e) + ", stop would be " + fmtP(r) + " pts")
     else if bar_index - mbBar > expiry
         armed := false
 

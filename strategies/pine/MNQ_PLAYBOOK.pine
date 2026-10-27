@@ -8,6 +8,8 @@
 // Hover any marker for the full reason, entry, stop, target, size and risk.
 indicator("MNQ Playbook v6", shorttitle="Playbook", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=300)
 
+// ---------- phone switch (first setting, one tap) ----------
+ib_compact = input.bool(false, "📱 PHONE MODE: short trend banner (tick on the phone, untick on Mac / iPad)", group="📱 Phone")
 // ---------- chart group ----------
 G_ALL = "All strategies"
 G_1 = "Chart 1: Open & News (NEWS, V4+, D2)"
@@ -1407,7 +1409,6 @@ ib_tf3    = input.timeframe("240", "Trend timeframe 3", group=ib_gT)
 ib_emaLen = input.int(21, "EMA length", group=ib_gT)
 ib_showTrend = input.bool(true, "Show trend banner", group=ib_gT)
 ib_bPos = input.string("Top right", "Trend banner position", options=["Bottom left", "Bottom center", "Bottom right", "Top right", "Top center"], group=ib_gT)
-ib_compact = input.bool(false, "Compact banner (phone friendly: one short line, details on tap/hover)", group=ib_gT)
 
 ib_pv   = syminfo.pointvalue
 ib_tick = syminfo.mintick

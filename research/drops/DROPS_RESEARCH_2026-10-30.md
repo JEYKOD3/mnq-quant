@@ -20,3 +20,11 @@ Meaning: a 15-25 pt stop sits inside normal noise. Stops need ~2 ATR (55 pts in 
 
 ## Built
 Playbook banner line 3, "bounce meter": live bounce/dip size in points and ATR, new low/high odds, normal-bounce stop distance, warning at 2.5 ATR. Informational, not an entry signal.
+
+## Update with Oct 16-30 data (MNQZ6 1m from Databento, week_drops.py)
+- 44 drops of >= 4 x 5m ATR within 1 hour in 2 weeks (about 3 per day, 70-290 pts).
+- Only 13 of 44 started with price already below the 5m EMA21; most started while the chart still looked fine (above the EMA, flat slope). Waiting for "downtrend confirmed" means missing the start.
+- Pre-drop conditions were ordinary: the hour before ranged about 2.5-4 ATR, volume near normal. No squeeze or volume tell.
+- Timing clusters: 7:00-10:45 ET (8:30 data, 9:30 open; drop volume 4-8x normal), 15:00-16:00 ET, and 19:45-21:00 ET.
+- Bounce sizes matched the 5-year stats: median 0.97 ATR (30 pts), 80% < 2.0 ATR (67 pts), 90% < 3.1 ATR (103 pts).
+- This period trended harder: after a 3 ATR bounce, 64% still made a new low (5-year: 43%). The bounce meter's 2.5 ATR warning reworded to "trend weakening: no new shorts until it rolls over".

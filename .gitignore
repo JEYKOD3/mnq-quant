@@ -8,3 +8,5 @@ journal/*.db
 db/mnq.sqlite
 scripts/y2026/mc_struct_trades.json
 data/live/new/*.csv
+research/drops/*.log
+research/drops/*.pkl

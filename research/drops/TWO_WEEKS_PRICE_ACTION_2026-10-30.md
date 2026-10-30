@@ -39,3 +39,10 @@ Breaks below lows (PDL/ONL): 7 trades, +386 pts. Downside breaks followed throug
 | 10:00 long if above VWAP, stop below 9:30-10:00 low, exit 12:00 | 5 (4 wins) | +370 | PF 0.99 |
 | Buy a break of PDH/ONH | 11 | -390 | avoid in this regime |
 These describe the current regime only. Stop using a rule after 3 losses in a row.
+
+## Can an indicator call the trend? (trend_engine.py, Oct 19 -> Oct 30 07:00)
+- 69 swings of 150+ pts in ~10 sessions (about 6 per day, both directions).
+- Engine (5m EMA21 slope + close beyond last 5m swing) confirmed a new direction 30-120 min and 100-200 pts after the turn.
+- Its states did not predict the next hour: DOWN -> price lower 60 min later 52% of the time; UP -> higher 44%. Coin flip.
+- Conclusion: direction indicators confirm, they do not forecast. Use them only as a filter for pullback entries;
+  invalidation = close beyond the last lower high / higher low (pullback > 100% of the leg continued only 21%).

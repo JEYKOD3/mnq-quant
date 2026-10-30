@@ -1,0 +1,20 @@
+name: fetch_range
+on:
+  workflow_dispatch:
+    inputs:
+      start: { required: true }
+      end: { required: true }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install databento pandas
+      - env: { DATABENTO_API_KEY: '${{ secrets.DATABENTO_API_KEY }}' }
+        run: python scripts/fetch_range_1m.py ${{ inputs.start }} ${{ inputs.end }}
+      - run: |
+          git config user.name "mnq-quant bot"; git config user.email "bot@mnq-quant"
+          git add -f data/live && git commit -m "data: MNQ 1m ${{ inputs.start }}..${{ inputs.end }}" && git push

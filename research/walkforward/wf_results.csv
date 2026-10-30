@@ -1,0 +1,17 @@
+model,calls_pct,call_accuracy,RR,trades,win,pts,PF,maxDD_pts
+1 Trend (EMA slope),47,42.0,1:1,122,47,-182,0.94,614
+1 Trend (EMA slope),47,42.0,1:2,94,35,-550,0.78,907
+2 Fade the last hour,34,61.4,1:1,115,58,723,1.32,297
+2 Fade the last hour,34,61.4,1:2,99,52,570,1.26,298
+3 VWAP side,85,43.4,1:1,186,46,-492,0.89,942
+3 VWAP side,85,43.4,1:2,145,35,-353,0.91,699
+4 Swing structure (HH/HL vs LH/LL),61,47.8,1:1,149,50,37,1.01,588
+4 Swing structure (HH/HL vs LH/LL),61,47.8,1:2,122,36,-723,0.78,989
+5 Breakout of last hour high/low,15,42.1,1:1,90,46,-270,0.87,622
+5 Breakout of last hour high/low,15,42.1,1:2,82,32,-687,0.7,872
+6 Pullback 61.8 + trend,5,46.9,1:1,39,51,-27,0.97,351
+6 Pullback 61.8 + trend,5,46.9,1:2,38,37,-2,1.0,351
+7 ML probability (walk-forward),46,44.9,1:1,140,51,-30,0.99,581
+7 ML probability (walk-forward),46,44.9,1:2,113,45,138,1.05,542
+0 Always short (benchmark),100,51.1,1:1,189,50,167,1.04,802
+0 Always short (benchmark),100,51.1,1:2,142,43,56,1.02,881

@@ -7,3 +7,4 @@ journal/*.db
 .env
 db/mnq.sqlite
 scripts/y2026/mc_struct_trades.json
+data/live/new/*.csv

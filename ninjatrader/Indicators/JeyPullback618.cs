@@ -2,7 +2,7 @@
 // Core setup (tested 5y RTH 1m: PF 1.34, every year >= 1.22; Oct 19-23: 1.13/1.29, Oct 26-30: 1.81/1.88 shorts/longs):
 //   Leg: A = highest high (shorts) of the last Lookback bars, B = lowest low after A, leg = A-B >= LegMin points.
 //   Setup when price has bounced >= BounceFrac of the leg off B AND the 5-minute EMA21 slopes in the leg direction (30 min).
-//   Entry: limit at B + Fib x leg. Stop: A + 2 pts (beyond the lower high). Target: B. Cancel on a new low below B or after 60 bars.
+//   Entry: limit at B + Fib x leg. Stop: A + 2 pts (beyond the lower high). Target: 80% of the way from entry to B (Lucid MC: same pass rate, fewer fails than B). Cancel on a new low below B or after 60 bars.
 //   Size: floor(RiskUsd / (stop distance x $2)).
 // Optional (current-regime only, NOT a long-run edge): exhaustion arrows on 5m closes
 //   Sell: 60-min change > 1.6 ATR, RSI > 59, in the top 42% of the 4h range. Buy: 30-min change < -1.34 ATR, volume z > 0.72, RSI < 39, bottom 17% of the 60-min range.
@@ -44,7 +44,7 @@ namespace NinjaTrader.NinjaScript.Indicators
                 DrawOnPricePanel = true;
                 IsSuspendedWhileInactive = true;
                 LegMin = 60; Fib = 0.618; Lookback = 120; BounceFrac = 0.3; MaxBarsActive = 60;
-                RiskUsd = 300; PointValue = 2; StopBuffer = 2;
+                RiskUsd = 300; PointValue = 2; StopBuffer = 2; TargetFrac = 0.8;
                 ShowExhaustion = true; AlertsOn = true;
             }
             else if (State == State.Configure)
@@ -133,13 +133,14 @@ namespace NinjaTrader.NinjaScript.Indicators
             if (side < 0 && shortKey < 0) { shortKey = key; shortBorn = CurrentBar; }
             if (side > 0 && longKey < 0) { longKey = key; longBorn = CurrentBar; }
 
+            double tgt = entry + (B - entry) * TargetFrac;
             double riskPts = Math.Abs(stop - entry);
             int qty = (int)Math.Floor(RiskUsd / Math.Max(riskPts * PointValue, 1));
             int startAgo = CurrentBar - key;
             Brush c = side < 0 ? Brushes.OrangeRed : Brushes.LimeGreen;
             Draw.Line(this, p + "E", false, startAgo, entry, 0, entry, c, DashStyleHelper.Solid, 2);
             Draw.Line(this, p + "S", false, startAgo, stop, 0, stop, Brushes.Red, DashStyleHelper.Dash, 1);
-            Draw.Line(this, p + "T", false, startAgo, B, 0, B, Brushes.DodgerBlue, DashStyleHelper.Dash, 1);
+            Draw.Line(this, p + "T", false, startAgo, tgt, 0, tgt, Brushes.DodgerBlue, DashStyleHelper.Dash, 1);
             Draw.Text(this, p + "X", (side < 0 ? "SELL LIMIT " : "BUY LIMIT ") + entry.ToString("0.00") + "  stop " + stop.ToString("0.00") + " (" + riskPts.ToString("0") + " pts)  target " + B.ToString("0.00") + "  size " + qty + " MNQ", 0, entry + side * -4 * TickSize, c);
 
             if (AlertsOn && born < 0)
@@ -159,6 +160,8 @@ namespace NinjaTrader.NinjaScript.Indicators
         public int MaxBarsActive { get; set; }
         [NinjaScriptProperty][Range(0, 50)][Display(Name = "Stop buffer beyond A (pts)", Order = 6, GroupName = "Setup")]
         public double StopBuffer { get; set; }
+        [NinjaScriptProperty][Range(0.2, 1.0)][Display(Name = "Target (share of the way to B)", Order = 7, GroupName = "Setup")]
+        public double TargetFrac { get; set; }
         [NinjaScriptProperty][Range(25, 5000)][Display(Name = "Risk per trade ($)", Order = 1, GroupName = "Size")]
         public double RiskUsd { get; set; }
         [NinjaScriptProperty][Range(0.1, 100)][Display(Name = "$ per point per contract (MNQ=2)", Order = 2, GroupName = "Size")]
